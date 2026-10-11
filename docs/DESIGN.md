@@ -124,7 +124,7 @@ Filters: kommune (defaults to the one from the user's Vipps address or a manual 
 | `danger` | `#C2410C` | `#F28B5B` | Destructive actions |
 | `border` | `#E6E1DA` | `#2A2F2D` | Dividers |
 
-- **Typography:** Inter (UI) with tabular numbers for times. Sizes 13 / 15 / 17 / 20 / 28.
+- **Typography:** Figtree (UI) with tabular numbers for times. Sizes 13 / 15 / 17 / 20 / 28. Visual mockups: https://claude.ai/artifact/NLcpvB8gnKQVaqcbxRjQg2
 - **Shape:** 12px radius on cards, 999px on pills and RSVP buttons. Generous spacing on an 8pt grid.
 - **Icons:** Lucide.
 - **Vipps button:** the official Vipps "Fortsett med Vipps" button assets, per Vipps brand guidelines.
