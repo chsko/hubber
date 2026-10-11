@@ -1,0 +1,183 @@
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+/**
+ * Data model — see docs/PLAN.md §3.
+ *
+ * `users` keeps the optional `name`/`email`/`phone`/`image` fields and the
+ * `email`/`phone` indexes so it stays compatible with Convex Auth (HUB-9/10).
+ */
+
+export const hubTemplate = v.union(
+  v.literal("class"),
+  v.literal("kindergarten"),
+  v.literal("family"),
+  v.literal("friends"),
+  v.literal("other"),
+);
+
+export const hubRole = v.union(v.literal("owner"), v.literal("admin"), v.literal("member"));
+
+export const notifyLevel = v.union(v.literal("all"), v.literal("important"), v.literal("muted"));
+
+export const rsvpStatus = v.union(v.literal("yes"), v.literal("maybe"), v.literal("no"));
+
+export default defineSchema({
+  users: defineTable({
+    name: v.optional(v.string()),
+    email: v.optional(v.string()),
+    phone: v.optional(v.string()),
+    image: v.optional(v.string()),
+    vippsSub: v.optional(v.string()),
+    birthYear: v.optional(v.number()),
+    photoId: v.optional(v.id("_storage")),
+    locale: v.optional(v.union(v.literal("nb"), v.literal("en"))),
+    kommuneNr: v.optional(v.string()),
+    deletedAt: v.optional(v.number()),
+  })
+    .index("email", ["email"])
+    .index("phone", ["phone"])
+    .index("by_vippsSub", ["vippsSub"]),
+
+  hubs: defineTable({
+    name: v.string(),
+    template: hubTemplate,
+    iconId: v.optional(v.id("_storage")),
+    ownerId: v.id("users"),
+    joinApproval: v.boolean(),
+  }),
+
+  hubMembers: defineTable({
+    hubId: v.id("hubs"),
+    userId: v.id("users"),
+    role: hubRole,
+    status: v.union(v.literal("active"), v.literal("pending")),
+    notifyLevel,
+  })
+    .index("by_hub", ["hubId"])
+    .index("by_user", ["userId"])
+    .index("by_hub_user", ["hubId", "userId"]),
+
+  invites: defineTable({
+    hubId: v.id("hubs"),
+    code: v.string(),
+    createdBy: v.id("users"),
+    expiresAt: v.optional(v.number()),
+    revokedAt: v.optional(v.number()),
+    uses: v.number(),
+  })
+    .index("by_code", ["code"])
+    .index("by_hub", ["hubId"]),
+
+  conversations: defineTable({
+    kind: v.union(v.literal("hub"), v.literal("event"), v.literal("dm")),
+    hubId: v.optional(v.id("hubs")),
+    eventId: v.optional(v.id("events")),
+    lastMessageAt: v.optional(v.number()),
+  })
+    .index("by_hub", ["hubId"])
+    .index("by_event", ["eventId"]),
+
+  messages: defineTable({
+    conversationId: v.id("conversations"),
+    authorId: v.id("users"),
+    body: v.string(),
+    imageIds: v.array(v.id("_storage")),
+    replyToId: v.optional(v.id("messages")),
+    mentions: v.array(v.id("users")),
+    editedAt: v.optional(v.number()),
+    deletedAt: v.optional(v.number()),
+  }).index("by_conversation", ["conversationId"]),
+
+  reactions: defineTable({
+    messageId: v.id("messages"),
+    userId: v.id("users"),
+    emoji: v.string(),
+  })
+    .index("by_message", ["messageId"])
+    .index("by_message_user", ["messageId", "userId"]),
+
+  readStates: defineTable({
+    conversationId: v.id("conversations"),
+    userId: v.id("users"),
+    lastReadAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_conversation_user", ["conversationId", "userId"]),
+
+  events: defineTable({
+    hubId: v.optional(v.id("hubs")),
+    visibility: v.union(v.literal("hub"), v.literal("public")),
+    title: v.string(),
+    description: v.optional(v.string()),
+    startsAt: v.number(),
+    endsAt: v.optional(v.number()),
+    place: v.optional(
+      v.object({
+        text: v.string(),
+        lat: v.optional(v.number()),
+        lon: v.optional(v.number()),
+      }),
+    ),
+    // Top-level so Discover can index on it (M5).
+    kommuneNr: v.optional(v.string()),
+    coverId: v.optional(v.id("_storage")),
+    capacity: v.optional(v.number()),
+    rsvpDeadline: v.optional(v.number()),
+    createdBy: v.id("users"),
+    cancelledAt: v.optional(v.number()),
+  })
+    .index("by_hub_start", ["hubId", "startsAt"])
+    .index("by_visibility_kommune_start", ["visibility", "kommuneNr", "startsAt"])
+    .searchIndex("search_title", {
+      searchField: "title",
+      filterFields: ["visibility", "kommuneNr"],
+    }),
+
+  rsvps: defineTable({
+    eventId: v.id("events"),
+    userId: v.id("users"),
+    status: rsvpStatus,
+    guests: v.number(),
+    note: v.optional(v.string()),
+  })
+    .index("by_event", ["eventId"])
+    .index("by_user", ["userId"])
+    .index("by_event_user", ["eventId", "userId"]),
+
+  pushTokens: defineTable({
+    userId: v.id("users"),
+    token: v.string(),
+    platform: v.union(v.literal("ios"), v.literal("android"), v.literal("web")),
+  })
+    .index("by_user", ["userId"])
+    .index("by_token", ["token"]),
+
+  notifications: defineTable({
+    userId: v.id("users"),
+    kind: v.string(),
+    refId: v.string(),
+    deliveredAt: v.optional(v.number()),
+    bundledAt: v.optional(v.number()),
+  }).index("by_user", ["userId"]),
+
+  reports: defineTable({
+    reporterId: v.id("users"),
+    targetType: v.union(
+      v.literal("message"),
+      v.literal("event"),
+      v.literal("user"),
+      v.literal("hub"),
+    ),
+    targetId: v.string(),
+    reason: v.string(),
+    status: v.union(v.literal("open"), v.literal("resolved"), v.literal("dismissed")),
+  }).index("by_status", ["status"]),
+
+  blocks: defineTable({
+    blockerId: v.id("users"),
+    blockedId: v.id("users"),
+  })
+    .index("by_blocker", ["blockerId"])
+    .index("by_pair", ["blockerId", "blockedId"]),
+});
