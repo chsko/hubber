@@ -1,6 +1,6 @@
 # Hubber — Technical Plan
 
-Companion to [`DESIGN.md`](./DESIGN.md). Project management happens in Linear (team **Hubber**, project **Hubber**). Each milestone below becomes a Linear milestone, and each bullet becomes an issue.
+Companion to [`DESIGN.md`](./DESIGN.md). Project management happens in Linear: [Hubber project](https://linear.app/elug/project/hubber-d87743f1ed72) (team `HUB`). Each milestone below is a Linear milestone (M0–M6), and each bullet is an issue (HUB-1 … HUB-36). Branch names follow the Linear issue (`hub-<n>-…`).
 
 ## 1. Architecture
 
@@ -80,7 +80,7 @@ No fixed dates; milestones are ordered by dependency. Sizes: S ≈ ≤1 day, M �
 
 ### M0 — Foundations
 - Register an ENK and apply for a Vipps Login merchant agreement *(you; blocks M1 Vipps)* — S
-- Trademark search for "Hubber" (Patentstyret) and secure domains (hubber.no / hubber.app) *(you)* — S
+- Register domain hubberapp.io; trademark search for "Hubber" (Patentstyret) *(you)* — S
 - Monorepo scaffold: pnpm, Turborepo, TypeScript strict, ESLint/Prettier — S
 - Convex project in the EU region, schema skeleton, `convex-test` set-up — S
 - Expo app skeleton: Expo Router tabs, NativeWind, design tokens, light/dark — M
@@ -120,7 +120,7 @@ No fixed dates; milestones are ordered by dependency. Sizes: S ≈ ≤1 day, M �
 - Public visibility, rate limits — S
 - Discover: filter by kommune, date and category — M
 - Public event page `/e/[id]` (server-rendered, Open Graph image) with "Join with Vipps" — M
-- Universal links / app links (hubber.no opens the app) — S
+- Universal links / app links (hubberapp.io opens the app) — S
 
 ### M6 — Safety and beta launch
 - Report, block, admin moderation actions — M
@@ -146,7 +146,6 @@ Decisions are scored with **Jev** (TypeSafe System One) by calling the API direc
 
 ## 7. Open items for you
 
-1. Register an ENK and apply to Vipps (blocks real sign-in, not development).
-2. Confirm the name **Hubber** after the trademark search; buy domains.
-3. Create the **Hubber** team in Linear (key `HUB`) so I can create the project, milestones and issues.
-4. Switch the GitHub default branch to `main`; then I'll delete `master`.
+1. Register an ENK and apply to Vipps — **postponed**. Development continues with the dev-only sign-in; real Vipps sign-in (HUB issue in M1) stays blocked until then.
+2. Register **hubberapp.io** (available as of 2026-10-11); trademark search for "Hubber".
+3. Delete the old `master` branch on GitHub (`main` is now default and contains all of `master`).

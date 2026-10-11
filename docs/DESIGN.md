@@ -1,6 +1,6 @@
 # Hubber — Product & Design
 
-> Working name **Hubber** (from "hub"). Replaces "Hubby" (English slang for husband). Final name pending trademark check at Patentstyret and domain availability.
+> Working name **Hubber** (from "hub"). Replaces "Hubby" (English slang for husband). Domain: **hubberapp.io**. Trademark check at Patentstyret still pending.
 
 ## 1. Why Hubber exists
 
@@ -79,7 +79,7 @@ Bottom tabs:
 3. Invite links can expire, be revoked, or require admin approval (default: approval off for Family and Friends, on for Class and Kindergarten).
 
 ### 5.3 Join via link
-`hubber.no/i/{code}` opens a server-rendered web page showing the hub's name, icon and member count (no member names), with buttons **Open in app** / **Download the app** and **Continue in browser**. Then Vipps sign-in, then joined (or "waiting for admin approval").
+`hubberapp.io/i/{code}` opens a server-rendered web page showing the hub's name, icon and member count (no member names), with buttons **Open in app** / **Download the app** and **Continue in browser**. Then Vipps sign-in, then joined (or "waiting for admin approval").
 
 ### 5.4 Create an event
 In a hub: Events → **+** → title, date/time (Norwegian date picker, 24h), place, description, RSVP settings, visibility (**Only this hub** / **Public**). Members get one push: "New event in 3B: Juleavslutning fre 13. des".
