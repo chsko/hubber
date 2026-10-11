@@ -16,12 +16,12 @@ Many Norwegians keep Facebook only to stay in their groups and to see events. Hu
 
 ## 2. Who it's for (first version)
 
-| Persona | Situation | What they need |
-|---|---|---|
-| **Klassekontakt / FAU parent** | Runs the class parents group, birthday parties, dugnad, class events. Today: a Facebook group plus a Messenger chat plus Spond or SMS. | One place for the class: chat, events with RSVP, a members list without exposing phone numbers. |
-| **Parent in the class** | Wants info about their kid's class without joining Facebook. | Join by link, see upcoming events, answer yes/no, mute chatter. |
-| **Family organizer** | Coordinates the extended family: birthdays, Christmas, cabin trips. | A family hub with a chat and events, and older relatives able to join easily (they all have Vipps). |
-| **Friend group** | Plans dinners, trips, parties. | Chat plus quick events, and public events for larger gatherings. |
+| Persona                        | Situation                                                                                                                              | What they need                                                                                      |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| **Klassekontakt / FAU parent** | Runs the class parents group, birthday parties, dugnad, class events. Today: a Facebook group plus a Messenger chat plus Spond or SMS. | One place for the class: chat, events with RSVP, a members list without exposing phone numbers.     |
+| **Parent in the class**        | Wants info about their kid's class without joining Facebook.                                                                           | Join by link, see upcoming events, answer yes/no, mute chatter.                                     |
+| **Family organizer**           | Coordinates the extended family: birthdays, Christmas, cabin trips.                                                                    | A family hub with a chat and events, and older relatives able to join easily (they all have Vipps). |
+| **Friend group**               | Plans dinners, trips, parties.                                                                                                         | Chat plus quick events, and public events for larger gatherings.                                    |
 
 **Leading segment:** school and kindergarten parent groups. Jev leaned this way (0.64 against 0.36, but with low confidence 0.28), and it has a clear seasonal moment: school start in August. Friend groups and families use the same product with different hub templates.
 
@@ -64,6 +64,7 @@ Bottom tabs:
 ## 5. Key flows
 
 ### 5.1 Sign up / sign in (Vipps)
+
 1. Landing screen shows the value proposition and one button: **"Fortsett med Vipps"** ("Continue with Vipps").
 2. The Vipps app (or web flow) asks for consent to share name, phone number, email and birth date.
 3. Server checks age ≥ 18 from `birthDate`. If under 18, a friendly rejection screen; nothing is stored.
@@ -71,6 +72,7 @@ Bottom tabs:
 5. If they arrived via an invite link, they go straight into that hub.
 
 ### 5.2 Create a hub and invite people
+
 1. Hubs → **Create hub** → pick a template → name → optional icon or photo → done.
 2. The invite sheet offers:
    - **Share link**: native share sheet, so Messenger/SMS/email all work.
@@ -79,28 +81,33 @@ Bottom tabs:
 3. Invite links can expire, be revoked, or require admin approval (default: approval off for Family and Friends, on for Class and Kindergarten).
 
 ### 5.3 Join via link
+
 `hubberapp.io/i/{code}` opens a server-rendered web page showing the hub's name, icon and member count (no member names), with buttons **Open in app** / **Download the app** and **Continue in browser**. Then Vipps sign-in, then joined (or "waiting for admin approval").
 
 ### 5.4 Create an event
+
 In a hub: Events → **+** → title, date/time (Norwegian date picker, 24h), place, description, RSVP settings, visibility (**Only this hub** / **Public**). Members get one push: "New event in 3B: Juleavslutning fre 13. des".
 
 ### 5.5 RSVP and reminders
+
 - One tap on Yes / Maybe / No, with optional guest count and a short note.
 - Automatic reminders: 24 hours before for Yes/Maybe, and 2 days before the RSVP deadline for those who haven't replied (the host can turn this off).
 - The host sees counts and the list. Exporting the attendee list is a later feature.
 
 ### 5.6 Chat
+
 - Text, emoji reactions, replies (quote), @mentions, images (several per message), link previews.
 - Lightweight read state: unread counts per conversation, and "seen by N" on the latest message only.
 - Edit within 15 minutes; delete your own message any time; admins can remove messages in their hub.
-- Push notifications by default for @mentions, replies to you and new events. All other chat messages are bundled. The user can set each hub to *All* / *Important only* / *Muted*.
+- Push notifications by default for @mentions, replies to you and new events. All other chat messages are bundled. The user can set each hub to _All_ / _Important only_ / _Muted_.
 
 ### 5.7 Discover public events
+
 Filters: kommune (defaults to the one from the user's Vipps address or a manual choice), date (today / this weekend / next 30 days) and category. The list is ordered by start time. No recommendations, no ranking.
 
 ## 6. Trust, safety and privacy
 
-- **Verified identity:** every user has a Vipps-verified name; the display name *is* the Vipps name. A small badge shows "Verifisert med Vipps" ("Verified with Vipps").
+- **Verified identity:** every user has a Vipps-verified name; the display name _is_ the Vipps name. A small badge shows "Verifisert med Vipps" ("Verified with Vipps").
 - **Phone numbers and emails are never shown** to other users. They are used only for account recovery and notifications.
 - **Report and block:** report a message, event, user or hub. Blocking hides each person's messages from the other and stops direct contact.
 - **Hub admin tools:** approve joins, remove members, remove messages, transfer ownership.
@@ -113,16 +120,16 @@ Filters: kommune (defaults to the one from the user's Vipps address or a manual 
 
 **Colour tokens** (light / dark):
 
-| Token | Light | Dark | Use |
-|---|---|---|---|
-| `bg` | `#FAF8F5` | `#121413` | App background (warm off-white / near-black) |
-| `surface` | `#FFFFFF` | `#1C1F1E` | Cards, sheets |
-| `text` | `#1D2321` | `#ECEDEA` | Primary text |
-| `text-muted` | `#5F6B66` | `#9AA5A0` | Secondary text |
-| `primary` | `#2F5D50` | `#7FB8A6` | Pine green: primary buttons, active tab |
-| `accent` | `#E8A33D` | `#F0B95E` | Warm amber: highlights, "Going" state |
-| `danger` | `#C2410C` | `#F28B5B` | Destructive actions |
-| `border` | `#E6E1DA` | `#2A2F2D` | Dividers |
+| Token        | Light     | Dark      | Use                                          |
+| ------------ | --------- | --------- | -------------------------------------------- |
+| `bg`         | `#FAF8F5` | `#121413` | App background (warm off-white / near-black) |
+| `surface`    | `#FFFFFF` | `#1C1F1E` | Cards, sheets                                |
+| `text`       | `#1D2321` | `#ECEDEA` | Primary text                                 |
+| `text-muted` | `#5F6B66` | `#9AA5A0` | Secondary text                               |
+| `primary`    | `#2F5D50` | `#7FB8A6` | Pine green: primary buttons, active tab      |
+| `accent`     | `#E8A33D` | `#F0B95E` | Warm amber: highlights, "Going" state        |
+| `danger`     | `#C2410C` | `#F28B5B` | Destructive actions                          |
+| `border`     | `#E6E1DA` | `#2A2F2D` | Dividers                                     |
 
 - **Typography:** Figtree (UI) with tabular numbers for times. Sizes 13 / 15 / 17 / 20 / 28. Visual mockups: https://claude.ai/artifact/NLcpvB8gnKQVaqcbxRjQg2
 - **Shape:** 12px radius on cards, 999px on pills and RSVP buttons. Generous spacing on an 8pt grid.
