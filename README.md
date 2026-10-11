@@ -32,5 +32,5 @@ Tasks run through [Turborepo](https://turbo.build); add `--filter @hubber/<packa
 
 ## Conventions
 
-- `main` is the default branch; work happens on branches named after the Linear issue (`hub-<n>-short-title`) and lands via pull request.
+- Commit and push directly to `main` (no feature branches or pull requests). Reference the Linear issue in the commit message (`HUB-<n>: …`).
 - TypeScript is strict everywhere (`tsconfig.base.json`).

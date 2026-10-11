@@ -1,6 +1,6 @@
 # Hubber — Technical Plan
 
-Companion to [`DESIGN.md`](./DESIGN.md). Project management happens in Linear: [Hubber project](https://linear.app/elug/project/hubber-d87743f1ed72) (team `HUB`). Each milestone below is a Linear milestone (M0–M6), and each bullet is an issue (HUB-1 … HUB-36). Branch names follow the Linear issue (`hub-<n>-…`).
+Companion to [`DESIGN.md`](./DESIGN.md). Project management happens in Linear: [Hubber project](https://linear.app/elug/project/hubber-d87743f1ed72) (team `HUB`). Each milestone below is a Linear milestone (M0–M6), and each bullet is an issue (HUB-1 … HUB-36). Commits reference the Linear issue (`HUB-<n>: …`).
 
 ## 1. Architecture
 
@@ -72,7 +72,7 @@ Companion to [`DESIGN.md`](./DESIGN.md). Project management happens in Linear: [
 - **CI (GitHub Actions):** typecheck, lint (ESLint + Prettier), unit tests, i18n key check, and Convex schema validation on every pull request. Preview deploys of `apps/web` on Vercel (EU region).
 - **Mobile builds:** EAS Build plus EAS Update; TestFlight and Play internal testing for the beta.
 - **Monitoring:** Sentry (EU data region) for the apps and the backend. Product analytics stay minimal and privacy-friendly (PostHog EU, cookieless; or none in the first version).
-- **Branching:** `main` is the default branch. Feature branches are named after Linear issues (`hub-123-…`), merged through pull requests.
+- **Branching:** commit and push directly to `main`; no feature branches or pull requests. Commit messages start with the Linear issue (`HUB-123: …`). Run `pnpm typecheck && pnpm lint && pnpm test` before every push.
 
 ## 5. Milestones
 
