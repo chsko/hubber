@@ -9,5 +9,10 @@
   },
   "enabledPlugins": {
     "typesafe@typesafe-ai": true
+  },
+  "permissions": {
+    "allow": [
+      "mcp__Linear"
+    ]
   }
 }
