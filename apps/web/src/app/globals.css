@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* Values come from @hubber/shared via src/lib/theme-css.ts. */
+@theme inline {
+  --color-bg: var(--hb-bg);
+  --color-surface: var(--hb-surface);
+  --color-text: var(--hb-text);
+  --color-textMuted: var(--hb-textMuted);
+  --color-primary: var(--hb-primary);
+  --color-primaryStrong: var(--hb-primaryStrong);
+  --color-primarySoft: var(--hb-primarySoft);
+  --color-accent: var(--hb-accent);
+  --color-accentSoft: var(--hb-accentSoft);
+  --color-onAccentSoft: var(--hb-onAccentSoft);
+  --color-danger: var(--hb-danger);
+  --color-border: var(--hb-border);
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
