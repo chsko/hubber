@@ -24,6 +24,7 @@ describe("users.me", () => {
       photoUrl: null,
       verified: false,
       onboarded: false,
+      quietHours: true,
     });
   });
 

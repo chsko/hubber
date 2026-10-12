@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { useLocale } from "@/lib/i18n";
 import { takePendingInvite } from "@/lib/invite-link";
+import { usePush } from "@/lib/push";
 
 /**
  * The app's screens, gated on the account (HUB-12): signed out → welcome,
@@ -32,6 +33,7 @@ export function AppStack() {
     <>
       {me ? <LocaleSync stored={me.locale} /> : null}
       {onboarded ? <ResumeInvite /> : null}
+      {onboarded ? <PushSetup /> : null}
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Protected guard={signedIn && onboarded}>
           <Stack.Screen name="(tabs)" />
@@ -75,5 +77,11 @@ function ResumeInvite() {
       if (code !== null) router.push({ pathname: "/i/[code]", params: { code } });
     });
   }, []);
+  return null;
+}
+
+/** Registers this device for push once the person is signed in and onboarded. */
+function PushSetup() {
+  usePush();
   return null;
 }

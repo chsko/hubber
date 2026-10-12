@@ -53,7 +53,10 @@
     "addPhotoOptional": "Legg til bilde (valgfritt)",
     "changePhoto": "Bytt bilde",
     "removePhoto": "Fjern",
-    "photoFailed": "Kunne ikke lagre bildet. Prøv igjen."
+    "photoFailed": "Kunne ikke lagre bildet. Prøv igjen.",
+    "notifications": "Varsler",
+    "quietHours": "Stille timer (22–07)",
+    "quietHoursBody": "Varsler om natten kommer uten lyd."
   },
   "notFound": {
     "title": "Fant ikke siden",
@@ -144,7 +147,17 @@
     "approveLabel": "Godkjenn {{name}}",
     "declineLabel": "Avslå {{name}}",
     "notMemberTitle": "Du er ikke med i denne huben",
-    "notMemberBody": "Du kan ha forlatt den eller blitt fjernet. Be om en ny invitasjon for å bli med igjen."
+    "notMemberBody": "Du kan ha forlatt den eller blitt fjernet. Be om en ny invitasjon for å bli med igjen.",
+    "notify": {
+      "title": "Varsler fra denne huben",
+      "label": "Varsler: {{level}}",
+      "all": "Alle meldinger",
+      "allBody": "Samlet i ett varsel noen minutter etter, pluss når noen nevner eller svarer deg.",
+      "important": "Bare viktig",
+      "importantBody": "Når noen nevner deg eller svarer deg.",
+      "muted": "Av",
+      "mutedBody": "Ingen varsler fra denne huben. Uleste vises fortsatt i appen."
+    }
   },
   "join": {
     "invitedTo": "Du er invitert til",

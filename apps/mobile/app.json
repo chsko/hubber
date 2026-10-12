@@ -52,6 +52,12 @@
           "cameraPermission": "Hubber uses the camera so you can take photos to share in chats.",
           "microphonePermission": false
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#2F5D50"
+        }
       ]
     ],
     "experiments": {

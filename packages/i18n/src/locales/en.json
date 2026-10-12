@@ -53,7 +53,10 @@
     "addPhotoOptional": "Add a photo (optional)",
     "changePhoto": "Change photo",
     "removePhoto": "Remove",
-    "photoFailed": "Couldn't save the photo. Please try again."
+    "photoFailed": "Couldn't save the photo. Please try again.",
+    "notifications": "Notifications",
+    "quietHours": "Quiet hours (22–07)",
+    "quietHoursBody": "Notifications at night arrive without sound."
   },
   "notFound": {
     "title": "Page not found",
@@ -144,7 +147,17 @@
     "approveLabel": "Approve {{name}}",
     "declineLabel": "Decline {{name}}",
     "notMemberTitle": "You're not in this hub",
-    "notMemberBody": "You may have left or been removed. Ask for a new invite to join again."
+    "notMemberBody": "You may have left or been removed. Ask for a new invite to join again.",
+    "notify": {
+      "title": "Notifications from this hub",
+      "label": "Notifications: {{level}}",
+      "all": "All messages",
+      "allBody": "Bundled into one notification a few minutes later, plus when someone mentions or replies to you.",
+      "important": "Important only",
+      "importantBody": "When someone mentions you or replies to you.",
+      "muted": "Off",
+      "mutedBody": "No notifications from this hub. Unread still shows in the app."
+    }
   },
   "join": {
     "invitedTo": "You're invited to",

@@ -5,7 +5,7 @@ import { getHubMember, requireHubMember, requireUser } from "./lib/auth";
 import { HUB_TEMPLATES } from "./lib/hubTemplates";
 import { requireImage } from "./lib/images";
 import { lastReadAt, unreadCount } from "./lib/unread";
-import { hubTemplate } from "./schema";
+import { hubTemplate, notifyLevel } from "./schema";
 
 const MAX_NAME_LENGTH = 60;
 
@@ -142,6 +142,7 @@ export const get = query({
       joinApproval: hub.joinApproval,
       memberCount: await activeMemberCount(ctx, hub._id),
       myRole: membership.role,
+      myNotifyLevel: membership.notifyLevel,
     };
   },
 });
@@ -325,5 +326,14 @@ export const leave = mutation({
     const { membership } = await requireHubMember(ctx, args.hubId);
     if (membership.role === "owner") throw new ConvexError({ code: "OWNER_MUST_TRANSFER" });
     await ctx.db.delete(membership._id);
+  },
+});
+
+/** Your notification level for this hub: All / Important only / Muted (HUB-22). */
+export const setNotifyLevel = mutation({
+  args: { hubId: v.id("hubs"), level: notifyLevel },
+  handler: async (ctx, args) => {
+    const { membership } = await requireHubMember(ctx, args.hubId);
+    await ctx.db.patch(membership._id, { notifyLevel: args.level });
   },
 });

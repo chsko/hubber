@@ -1,19 +1,22 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "@hubber/backend/api";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, Switch, Text, View } from "react-native";
 import { Avatar } from "@/components/avatar";
 import { LanguagePicker } from "@/components/language-picker";
 import { Screen } from "@/components/screen";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { useProfilePhoto } from "@/lib/profile-photo";
+import { useForgetDevice } from "@/lib/push";
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const me = useQuery(api.users.me);
   const { signOut } = useAuthActions();
   const photo = useProfilePhoto();
+  const forgetDevice = useForgetDevice();
+  const setQuietHours = useMutation(api.push.setQuietHours);
 
   async function pickPhoto() {
     try {
@@ -70,10 +73,33 @@ export default function ProfileScreen() {
 
       <LanguagePicker />
 
+      <View className="gap-1 rounded-2xl border border-border bg-surface p-4">
+        <Text className="font-sans-semibold text-xs uppercase tracking-widest text-textMuted">
+          {t("profile.notifications")}
+        </Text>
+        <View className="flex-row items-center gap-3 pt-2">
+          <View className="flex-1 gap-0.5">
+            <Text className="font-sans-medium text-[15px] text-text">
+              {t("profile.quietHours")}
+            </Text>
+            <Text className="font-sans text-[13px] text-textMuted">
+              {t("profile.quietHoursBody")}
+            </Text>
+          </View>
+          <Switch
+            testID="quiet-hours"
+            accessibilityLabel={t("profile.quietHours")}
+            value={me?.quietHours ?? true}
+            disabled={!me}
+            onValueChange={(enabled) => void setQuietHours({ enabled })}
+          />
+        </View>
+      </View>
+
       <Pressable
         testID="sign-out"
         accessibilityRole="button"
-        onPress={() => void signOut()}
+        onPress={() => void forgetDevice().then(() => signOut())}
         className="items-center rounded-2xl border border-border bg-surface px-4 py-3 active:opacity-60"
       >
         <Text className="font-sans-semibold text-[15px] text-danger">{t("profile.signOut")}</Text>

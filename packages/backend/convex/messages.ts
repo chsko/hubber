@@ -1,5 +1,6 @@
 import { paginationOptsValidator } from "convex/server";
 import { ConvexError, v } from "convex/values";
+import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import {
   internalQuery,
@@ -201,6 +202,7 @@ export const send = mutation({
     });
     await ctx.db.patch(conversation._id, { lastMessageAt: now });
     await ctx.db.patch(hubId, { lastActivityAt: now });
+    await ctx.scheduler.runAfter(0, internal.push.onMessage, { messageId });
     return messageId;
   },
 });

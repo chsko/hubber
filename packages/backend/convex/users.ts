@@ -22,6 +22,7 @@ export const me = query({
       /** Signed in with Vipps (or its dev stand-in), so the name is the verified Vipps name. */
       verified: user.vippsSub !== undefined,
       onboarded: user.onboardedAt !== undefined,
+      quietHours: user.quietHours !== false,
     };
   },
 });

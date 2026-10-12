@@ -39,6 +39,8 @@ export default defineSchema({
     kommuneNr: v.optional(v.string()),
     /** Set when the user finishes onboarding (HUB-12). */
     onboardedAt: v.optional(v.number()),
+    /** Quiet hours 22–07 (Oslo): pushes arrive silently. On unless set to false (HUB-22). */
+    quietHours: v.optional(v.boolean()),
     deletedAt: v.optional(v.number()),
   })
     .index("email", ["email"])
@@ -176,7 +178,9 @@ export default defineSchema({
     refId: v.string(),
     deliveredAt: v.optional(v.number()),
     bundledAt: v.optional(v.number()),
-  }).index("by_user", ["userId"]),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_kind_ref", ["userId", "kind", "refId"]),
 
   reports: defineTable({
     reporterId: v.id("users"),

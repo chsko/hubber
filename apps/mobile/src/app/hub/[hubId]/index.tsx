@@ -19,6 +19,7 @@ import { ChatView } from "@/components/chat/chat-view";
 import { HubIcon } from "@/components/hub-icon";
 import { ComingSoon } from "@/components/screen";
 import { NotAMember } from "@/components/not-a-member";
+import { NotifyLevelButton } from "@/components/notify-level";
 import { StackHeader } from "@/components/stack-header";
 
 const segments = ["chat", "events", "members"] as const;
@@ -45,16 +46,21 @@ export default function HubScreen() {
     <SafeAreaView className="flex-1 bg-bg">
       <StackHeader
         action={
-          <Pressable
-            testID="invite"
-            accessibilityRole="button"
-            onPress={() =>
-              router.push({ pathname: "/hub/[hubId]/invite", params: { hubId: hub._id } })
-            }
-            className="mr-2 rounded-full bg-primarySoft px-4 py-2 active:opacity-80"
-          >
-            <Text className="font-sans-bold text-[14px] text-primaryStrong">{t("hub.invite")}</Text>
-          </Pressable>
+          <View className="flex-row items-center">
+            <NotifyLevelButton hubId={hub._id} level={hub.myNotifyLevel} />
+            <Pressable
+              testID="invite"
+              accessibilityRole="button"
+              onPress={() =>
+                router.push({ pathname: "/hub/[hubId]/invite", params: { hubId: hub._id } })
+              }
+              className="mr-2 rounded-full bg-primarySoft px-4 py-2 active:opacity-80"
+            >
+              <Text className="font-sans-bold text-[14px] text-primaryStrong">
+                {t("hub.invite")}
+              </Text>
+            </Pressable>
+          </View>
         }
       />
       <View className="gap-3 px-5 pb-2">
