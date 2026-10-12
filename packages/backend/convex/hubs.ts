@@ -1,7 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import { type MutationCtx, mutation, type QueryCtx, query } from "./_generated/server";
-import { requireHubMember, requireUser } from "./lib/auth";
+import { getHubMember, requireHubMember, requireUser } from "./lib/auth";
 import { HUB_TEMPLATES } from "./lib/hubTemplates";
 import { requireImage } from "./lib/images";
 import { hubTemplate } from "./schema";
@@ -110,13 +110,14 @@ export const mine = query({
   },
 });
 
-/** One hub, for its members. Throws `FORBIDDEN` for everyone else. */
+/** One hub, for its members; null for everyone else (or once you're removed). */
 export const get = query({
   args: { hubId: v.id("hubs") },
   handler: async (ctx, args) => {
-    const { membership } = await requireHubMember(ctx, args.hubId);
+    const member = await getHubMember(ctx, args.hubId);
     const hub = await ctx.db.get(args.hubId);
-    if (hub === null) throw new ConvexError({ code: "FORBIDDEN" });
+    if (member === null || hub === null) return null;
+    const { membership } = member;
     return {
       ...(await hubSummary(ctx, hub)),
       joinApproval: hub.joinApproval,
@@ -126,11 +127,13 @@ export const get = query({
   },
 });
 
-/** Active members of a hub with name and photo, owners and admins first, for members only. */
+/** Active members with name and photo, owners and admins first; empty for non-members. */
 export const members = query({
   args: { hubId: v.id("hubs") },
   handler: async (ctx, args) => {
-    await requireHubMember(ctx, args.hubId);
+    const member = await getHubMember(ctx, args.hubId);
+    if (member === null) return [];
+    const me = member.user;
     const rows = await ctx.db
       .query("hubMembers")
       .withIndex("by_hub", (q) => q.eq("hubId", args.hubId))
@@ -147,6 +150,7 @@ export const members = query({
             name: user.name ?? null,
             photoUrl: user.photoId ? await ctx.storage.getUrl(user.photoId) : null,
             role: m.role,
+            isMe: user._id === me._id,
           };
         }),
     );
@@ -167,11 +171,11 @@ export const setJoinApproval = mutation({
   },
 });
 
-/** Admins: people waiting for approval to join (HUB-16), oldest request first. */
+/** Admins: people waiting for approval to join (HUB-16), oldest first; empty for others. */
 export const pending = query({
   args: { hubId: v.id("hubs") },
   handler: async (ctx, args) => {
-    await requireHubMember(ctx, args.hubId, "admin");
+    if ((await getHubMember(ctx, args.hubId, "admin")) === null) return [];
     const rows = await ctx.db
       .query("hubMembers")
       .withIndex("by_hub", (q) => q.eq("hubId", args.hubId))
@@ -232,6 +236,75 @@ export const cancelRequest = mutation({
   handler: async (ctx, args) => {
     const user = await requireUser(ctx);
     const membership = await pendingMembership(ctx, args.hubId, user._id);
+    await ctx.db.delete(membership._id);
+  },
+});
+
+async function activeMembership(ctx: MutationCtx, hubId: Id<"hubs">, userId: Id<"users">) {
+  const membership = await ctx.db
+    .query("hubMembers")
+    .withIndex("by_hub_user", (q) => q.eq("hubId", hubId).eq("userId", userId))
+    .unique();
+  if (membership === null || membership.status !== "active") {
+    throw new ConvexError({ code: "NOT_FOUND" });
+  }
+  return membership;
+}
+
+/**
+ * Admins: make someone an admin or a regular member (HUB-17). The owner's
+ * role only changes through `transferOwnership`, and only the owner can
+ * demote another admin.
+ */
+export const setRole = mutation({
+  args: {
+    hubId: v.id("hubs"),
+    userId: v.id("users"),
+    role: v.union(v.literal("admin"), v.literal("member")),
+  },
+  handler: async (ctx, args) => {
+    const { user, membership: mine } = await requireHubMember(ctx, args.hubId, "admin");
+    const target = await activeMembership(ctx, args.hubId, args.userId);
+    if (target.role === "owner") throw new ConvexError({ code: "FORBIDDEN" });
+    const demotingOtherAdmin = target.role === "admin" && args.userId !== user._id;
+    if (demotingOtherAdmin && mine.role !== "owner") throw new ConvexError({ code: "FORBIDDEN" });
+    await ctx.db.patch(target._id, { role: args.role });
+  },
+});
+
+/** Admins: remove a member. Only the owner can remove an admin; nobody can remove the owner. */
+export const removeMember = mutation({
+  args: { hubId: v.id("hubs"), userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const { user, membership: mine } = await requireHubMember(ctx, args.hubId, "admin");
+    if (args.userId === user._id) throw new ConvexError({ code: "USE_LEAVE" });
+    const target = await activeMembership(ctx, args.hubId, args.userId);
+    if (target.role === "owner" || (target.role === "admin" && mine.role !== "owner")) {
+      throw new ConvexError({ code: "FORBIDDEN" });
+    }
+    await ctx.db.delete(target._id);
+  },
+});
+
+/** Owner: hand the hub to another active member. The old owner stays on as admin. */
+export const transferOwnership = mutation({
+  args: { hubId: v.id("hubs"), userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const { user, membership: mine } = await requireHubMember(ctx, args.hubId, "owner");
+    if (args.userId === user._id) return;
+    const target = await activeMembership(ctx, args.hubId, args.userId);
+    await ctx.db.patch(target._id, { role: "owner" });
+    await ctx.db.patch(mine._id, { role: "admin" });
+    await ctx.db.patch(args.hubId, { ownerId: args.userId });
+  },
+});
+
+/** Leave a hub. The owner has to transfer ownership first. */
+export const leave = mutation({
+  args: { hubId: v.id("hubs") },
+  handler: async (ctx, args) => {
+    const { membership } = await requireHubMember(ctx, args.hubId);
+    if (membership.role === "owner") throw new ConvexError({ code: "OWNER_MUST_TRANSFER" });
     await ctx.db.delete(membership._id);
   },
 });

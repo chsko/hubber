@@ -56,7 +56,7 @@ describe("invites.redeem", () => {
       hubId,
       status: "active",
     });
-    expect((await asOla.query(api.hubs.get, { hubId })).memberCount).toBe(2);
+    expect((await asOla.query(api.hubs.get, { hubId }))?.memberCount).toBe(2);
     expect((await t.run((ctx) => ctx.db.query("invites").first()))?.uses).toBe(1);
 
     // Redeeming again changes nothing.
@@ -68,15 +68,15 @@ describe("invites.redeem", () => {
     const { hubId, ola, asKari, asOla } = await setup("class");
     const { code } = await asKari.mutation(api.invites.current, { hubId });
     expect(await asOla.mutation(api.invites.redeem, { code })).toMatchObject({ status: "pending" });
-    await expect(asOla.query(api.hubs.get, { hubId })).rejects.toThrow(/FORBIDDEN/);
+    expect(await asOla.query(api.hubs.get, { hubId })).toBeNull();
     expect((await asOla.query(api.invites.preview, { code }))?.myStatus).toBe("pending");
 
     expect(await asKari.query(api.hubs.pending, { hubId })).toEqual([
       expect.objectContaining({ userId: ola, name: "Ola Hansen" }),
     ]);
-    await expect(asOla.query(api.hubs.pending, { hubId })).rejects.toThrow(/FORBIDDEN/);
+    expect(await asOla.query(api.hubs.pending, { hubId })).toEqual([]);
     await asKari.mutation(api.hubs.approve, { hubId, userId: ola });
-    expect((await asOla.query(api.hubs.get, { hubId })).myRole).toBe("member");
+    expect((await asOla.query(api.hubs.get, { hubId }))?.myRole).toBe("member");
     expect(await asKari.query(api.hubs.pending, { hubId })).toEqual([]);
   });
 

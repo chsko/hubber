@@ -134,7 +134,9 @@
     "approve": "Approve",
     "decline": "Decline",
     "approveLabel": "Approve {{name}}",
-    "declineLabel": "Decline {{name}}"
+    "declineLabel": "Decline {{name}}",
+    "notMemberTitle": "You're not in this hub",
+    "notMemberBody": "You may have left or been removed. Ask for a new invite to join again."
   },
   "join": {
     "invitedTo": "You're invited to",
@@ -175,5 +177,19 @@
     "stopTitle": "Stop all links",
     "stopBody": "Nobody can join with the current links any more.",
     "stop": "Stop links"
+  },
+  "members": {
+    "you": "you",
+    "makeAdmin": "Make admin",
+    "removeAdmin": "Remove as admin",
+    "makeOwner": "Make owner",
+    "makeOwnerTitle": "Make {{name}} the owner?",
+    "makeOwnerBody": "You'll stay on as an admin. Only the new owner can undo this.",
+    "remove": "Remove from hub",
+    "removeTitle": "Remove {{name}} from the hub?",
+    "leave": "Leave hub",
+    "leaveTitle": "Leave this hub?",
+    "leaveBody": "You'll need a new invite to come back.",
+    "ownerCantLeave": "You're the owner. To leave, first make someone else the owner."
   }
 }

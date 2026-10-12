@@ -67,7 +67,7 @@ describe("hubs.create", () => {
       template: "other",
       emoji: "⚽",
     });
-    expect((await asKari.query(api.hubs.get, { hubId })).emoji).toBe("⚽");
+    expect((await asKari.query(api.hubs.get, { hubId }))?.emoji).toBe("⚽");
     await expect(
       asKari.mutation(api.hubs.create, { name: "X", template: "other", emoji: "hi" }),
     ).rejects.toThrow(/INVALID_EMOJI/);
@@ -123,7 +123,7 @@ describe("hubs.mine", () => {
 });
 
 describe("hubs.get and hubs.members", () => {
-  it("are for members only", async () => {
+  it("are for members only (null and empty for others, so live views don't crash)", async () => {
     const { asKari, asOla } = await setup();
     const hubId = await asKari.mutation(api.hubs.create, { name: "3B", template: "class" });
     expect(await asKari.query(api.hubs.get, { hubId })).toMatchObject({
@@ -132,8 +132,8 @@ describe("hubs.get and hubs.members", () => {
       memberCount: 1,
       joinApproval: true,
     });
-    await expect(asOla.query(api.hubs.get, { hubId })).rejects.toThrow(/FORBIDDEN/);
-    await expect(asOla.query(api.hubs.members, { hubId })).rejects.toThrow(/FORBIDDEN/);
+    expect(await asOla.query(api.hubs.get, { hubId })).toBeNull();
+    expect(await asOla.query(api.hubs.members, { hubId })).toEqual([]);
   });
 
   it("lists owners and admins first, then by name", async () => {
@@ -161,5 +161,6 @@ describe("hubs.get and hubs.members", () => {
       ["Anna Berg", "member"],
     ]);
     expect(members[0]).not.toHaveProperty("phone");
+    expect(members.map((m) => m.isMe)).toEqual([true, false, false]);
   });
 });

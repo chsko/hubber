@@ -4,11 +4,12 @@ import { useMutation, useQuery } from "convex/react";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar } from "@/components/avatar";
 import { HubIcon } from "@/components/hub-icon";
 import { ComingSoon } from "@/components/screen";
+import { NotAMember } from "@/components/not-a-member";
 import { StackHeader } from "@/components/stack-header";
 
 const segments = ["chat", "events", "members"] as const;
@@ -28,6 +29,7 @@ export default function HubScreen() {
       </SafeAreaView>
     );
   }
+  if (hub === null) return <NotAMember />;
 
   return (
     <SafeAreaView className="flex-1 bg-bg">
@@ -98,7 +100,7 @@ export default function HubScreen() {
         {segment === "members" ? (
           <>
             {hub.myRole !== "member" ? <PendingRequests hubId={hub._id} /> : null}
-            <Members hubId={hub._id} />
+            <Members hubId={hub._id} myRole={hub.myRole} />
           </>
         ) : null}
       </ScrollView>
@@ -106,28 +108,129 @@ export default function HubScreen() {
   );
 }
 
-function Members({ hubId }: { hubId: Id<"hubs"> }) {
+type Role = "owner" | "admin" | "member";
+
+/**
+ * Members (HUB-17): name, photo and role. Admins tap someone for actions;
+ * everyone except the owner can leave.
+ */
+function Members({ hubId, myRole }: { hubId: Id<"hubs">; myRole: Role }) {
   const { t } = useTranslation();
   const members = useQuery(api.hubs.members, { hubId });
+  const setRole = useMutation(api.hubs.setRole);
+  const removeMember = useMutation(api.hubs.removeMember);
+  const transferOwnership = useMutation(api.hubs.transferOwnership);
+  const leave = useMutation(api.hubs.leave);
   if (members === undefined) return <ActivityIndicator />;
+
+  type Member = (typeof members)[number];
+
+  function actionsFor(m: Member) {
+    const name = m.name ?? t("profile.noName");
+    const actions: { text: string; style?: "destructive"; onPress: () => void }[] = [];
+    if (m.isMe || m.role === "owner" || myRole === "member") return actions;
+    if (m.role === "member") {
+      actions.push({
+        text: t("members.makeAdmin"),
+        onPress: () => void setRole({ hubId, userId: m.userId, role: "admin" }),
+      });
+    } else if (myRole === "owner") {
+      actions.push({
+        text: t("members.removeAdmin"),
+        onPress: () => void setRole({ hubId, userId: m.userId, role: "member" }),
+      });
+    }
+    if (myRole === "owner") {
+      actions.push({
+        text: t("members.makeOwner"),
+        onPress: () =>
+          Alert.alert(t("members.makeOwnerTitle", { name }), t("members.makeOwnerBody"), [
+            { text: t("common.cancel"), style: "cancel" },
+            {
+              text: t("members.makeOwner"),
+              onPress: () => void transferOwnership({ hubId, userId: m.userId }),
+            },
+          ]),
+      });
+    }
+    if (m.role === "member" || myRole === "owner") {
+      actions.push({
+        text: t("members.remove"),
+        style: "destructive",
+        onPress: () =>
+          Alert.alert(t("members.removeTitle", { name }), undefined, [
+            { text: t("common.cancel"), style: "cancel" },
+            {
+              text: t("members.remove"),
+              style: "destructive",
+              onPress: () => void removeMember({ hubId, userId: m.userId }),
+            },
+          ]),
+      });
+    }
+    return actions;
+  }
+
+  function confirmLeave() {
+    Alert.alert(t("members.leaveTitle"), t("members.leaveBody"), [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("members.leave"),
+        style: "destructive",
+        onPress: () => void leave({ hubId }).then(() => router.replace("/hubs")),
+      },
+    ]);
+  }
+
   return (
-    <View className="overflow-hidden rounded-2xl border border-border bg-surface">
-      {members.map((m, i) => (
-        <View
-          key={m.userId}
-          className={`flex-row items-center gap-3 px-4 py-3 ${i > 0 ? "border-t border-border" : ""}`}
+    <View className="gap-4">
+      <View className="overflow-hidden rounded-2xl border border-border bg-surface">
+        {members.map((m, i) => {
+          const actions = actionsFor(m);
+          return (
+            <Pressable
+              key={m.userId}
+              testID={`member-${m.userId}`}
+              accessibilityRole={actions.length > 0 ? "button" : undefined}
+              disabled={actions.length === 0}
+              onPress={() =>
+                Alert.alert(m.name ?? t("profile.noName"), undefined, [
+                  ...actions,
+                  { text: t("common.cancel"), style: "cancel" },
+                ])
+              }
+              className={`flex-row items-center gap-3 px-4 py-3 active:opacity-70 ${i > 0 ? "border-t border-border" : ""}`}
+            >
+              <Avatar name={m.name} photoUrl={m.photoUrl} size={40} />
+              <Text numberOfLines={1} className="flex-1 font-sans-semibold text-[15px] text-text">
+                {m.name ?? t("profile.noName")}
+                {m.isMe ? (
+                  <Text className="font-sans text-textMuted"> ({t("members.you")})</Text>
+                ) : null}
+              </Text>
+              {m.role !== "member" ? (
+                <Text className="font-sans-semibold text-[13px] text-textMuted">
+                  {t(`hub.role.${m.role}`)}
+                </Text>
+              ) : null}
+            </Pressable>
+          );
+        })}
+      </View>
+      {myRole === "owner" ? (
+        <Text className="text-center font-sans text-[13px] leading-5 text-textMuted">
+          {t("members.ownerCantLeave")}
+        </Text>
+      ) : (
+        <Pressable
+          testID="leave-hub"
+          accessibilityRole="button"
+          onPress={confirmLeave}
+          className="items-center rounded-2xl border border-border bg-surface px-4 py-3 active:opacity-60"
         >
-          <Avatar name={m.name} photoUrl={m.photoUrl} size={40} />
-          <Text numberOfLines={1} className="flex-1 font-sans-semibold text-[15px] text-text">
-            {m.name ?? t("profile.noName")}
-          </Text>
-          {m.role !== "member" ? (
-            <Text className="font-sans-semibold text-[13px] text-textMuted">
-              {t(`hub.role.${m.role}`)}
-            </Text>
-          ) : null}
-        </View>
-      ))}
+          <Text className="font-sans-semibold text-[15px] text-danger">{t("members.leave")}</Text>
+        </Pressable>
+      )}
     </View>
   );
 }

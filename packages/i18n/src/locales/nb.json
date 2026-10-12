@@ -134,7 +134,9 @@
     "approve": "Godkjenn",
     "decline": "Avslå",
     "approveLabel": "Godkjenn {{name}}",
-    "declineLabel": "Avslå {{name}}"
+    "declineLabel": "Avslå {{name}}",
+    "notMemberTitle": "Du er ikke med i denne huben",
+    "notMemberBody": "Du kan ha forlatt den eller blitt fjernet. Be om en ny invitasjon for å bli med igjen."
   },
   "join": {
     "invitedTo": "Du er invitert til",
@@ -175,5 +177,19 @@
     "stopTitle": "Stopp alle lenker",
     "stopBody": "Ingen kan bli med via de nåværende lenkene lenger.",
     "stop": "Stopp lenker"
+  },
+  "members": {
+    "you": "deg",
+    "makeAdmin": "Gjør til admin",
+    "removeAdmin": "Fjern som admin",
+    "makeOwner": "Gjør til eier",
+    "makeOwnerTitle": "Gjøre {{name}} til eier?",
+    "makeOwnerBody": "Du fortsetter som admin. Bare den nye eieren kan endre dette tilbake.",
+    "remove": "Fjern fra huben",
+    "removeTitle": "Fjerne {{name}} fra huben?",
+    "leave": "Forlat huben",
+    "leaveTitle": "Forlate denne huben?",
+    "leaveBody": "Du trenger en ny invitasjon for å komme tilbake.",
+    "ownerCantLeave": "Du er eier. For å forlate huben må du først gjøre noen andre til eier."
   }
 }

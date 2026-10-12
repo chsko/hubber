@@ -19,6 +19,7 @@ import {
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { NotAMember } from "@/components/not-a-member";
 import { StackHeader } from "@/components/stack-header";
 import { formatCode, inviteUrl } from "@/lib/invite-link";
 import { formatDate } from "@hubber/i18n";
@@ -47,9 +48,10 @@ export default function InviteScreen() {
   const [invite, setInvite] = useState<Invite | null | undefined>(undefined);
 
   useEffect(() => {
-    void getCurrent({ hubId }).then(setInvite);
+    getCurrent({ hubId }).then(setInvite, () => setInvite(null));
   }, [getCurrent, hubId]);
 
+  if (hub === null) return <NotAMember />;
   if (hub === undefined || invite === undefined) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-bg">
