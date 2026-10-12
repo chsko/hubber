@@ -20,20 +20,21 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StackHeader } from "@/components/stack-header";
 import { useLocale } from "@/lib/i18n";
+import type { PickedPlace } from "@/lib/geonorge";
 import { pickCoverImage, useUploadImage } from "@/lib/image-upload";
 import { useScheme } from "@/lib/use-scheme";
 import { type Day, MonthCalendar } from "./month-calendar";
+import { PlaceField } from "./place-field";
 
 /** Kept in step with packages/backend/convex/events.ts. */
 const MAX_TITLE_LENGTH = 120;
-const MAX_PLACE_LENGTH = 200;
 const MAX_DESCRIPTION_LENGTH = 4000;
 
 export type EventInput = {
   title: string;
   startsAt: number;
   endsAt: number | null;
-  place: string | null;
+  place: string | PickedPlace | null;
   description: string | null;
   coverId: Id<"_storage"> | null;
   capacity: number | null;
@@ -42,7 +43,11 @@ export type EventInput = {
 };
 
 /** What an existing event starts the form with. */
-export type EventInitial = EventInput & { coverUrl: string | null };
+export type EventInitial = Omit<EventInput, "place"> & {
+  place: string | null;
+  placeGeo: { lat: number; lon: number; kommuneNr: string } | null;
+  coverUrl: string | null;
+};
 
 type Time = { hour: number; minute: number };
 
@@ -84,6 +89,9 @@ export function EventForm({
   const [start, setStart] = useState(initial ? timeText(osloTimeParts(initial.startsAt)) : "18:00");
   const [end, setEnd] = useState(initial?.endsAt ? timeText(osloTimeParts(initial.endsAt)) : "");
   const [place, setPlace] = useState(initial?.place ?? "");
+  const [pickedPlace, setPickedPlace] = useState<PickedPlace | null>(
+    initial?.place && initial.placeGeo ? { text: initial.place, ...initial.placeGeo } : null,
+  );
   const [description, setDescription] = useState(initial?.description ?? "");
   const [capacity, setCapacity] = useState(initial?.capacity ? String(initial.capacity) : "");
   const [deadline, setDeadline] = useState<Day | null>(
@@ -142,7 +150,7 @@ export function EventForm({
         title: title.trim(),
         startsAt,
         endsAt,
-        place: place.trim() || null,
+        place: pickedPlace ?? (place.trim() || null),
         description: description.trim() || null,
         coverId,
         capacity: capacityNumber,
@@ -261,14 +269,14 @@ export function EventForm({
           </View>
 
           <Field label={t("events.place")}>
-            <TextInput
-              testID="event-place"
-              value={place}
-              onChangeText={setPlace}
-              placeholder={t("events.placePlaceholder")}
-              placeholderTextColor={c.textMuted}
-              maxLength={MAX_PLACE_LENGTH}
-              className={input}
+            <PlaceField
+              text={place}
+              picked={pickedPlace}
+              onChange={(text, picked) => {
+                setPlace(text);
+                setPickedPlace(picked);
+              }}
+              inputClassName={input}
             />
           </Field>
 

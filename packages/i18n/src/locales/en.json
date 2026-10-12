@@ -331,6 +331,8 @@
     "past": "Past",
     "reminders": "Reminders",
     "remindersBody": "Remind those coming the day before, and those who haven't replied two days before the deadline.",
-    "addToCalendar": "Add to my calendar"
+    "addToCalendar": "Add to my calendar",
+    "placeOnMap": "The address opens on the map",
+    "addressSource": "Addresses from Kartverket"
   }
 }

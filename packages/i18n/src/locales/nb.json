@@ -331,6 +331,8 @@
     "past": "Tidligere",
     "reminders": "Påminnelser",
     "remindersBody": "Varsle dem som kommer dagen før, og dem som ikke har svart to dager før svarfristen.",
-    "addToCalendar": "Legg til i kalenderen"
+    "addToCalendar": "Legg til i kalenderen",
+    "placeOnMap": "Adressen vises i kartet",
+    "addressSource": "Adresser fra Kartverket"
   }
 }

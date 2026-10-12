@@ -123,6 +123,18 @@ describe("events", () => {
     );
   });
 
+  it("keeps the coordinates and kommune of an address picked from the search", async () => {
+    const { ids, as, create } = await setup();
+    const eventId = await create({
+      place: { text: "Lia skole, Oslo", lat: 59.95, lon: 10.86, kommuneNr: "0301" },
+    });
+    const event = await as(ids.ola).query(api.events.get, { eventId });
+    expect(event?.place).toBe("Lia skole, Oslo");
+    expect(event?.placeGeo).toEqual({ lat: 59.95, lon: 10.86, kommuneNr: "0301" });
+    const stored = await as(ids.kari).query(api.events.get, { eventId });
+    expect(stored?.placeGeo?.kommuneNr).toBe("0301");
+  });
+
   it("validates the form", async () => {
     const { create } = await setup();
     await expect(create({ title: "  " })).rejects.toThrow(/INVALID_EVENT/);

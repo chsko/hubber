@@ -27,7 +27,14 @@ const eventFields = {
   title: v.string(),
   startsAt: v.number(),
   endsAt: v.optional(v.union(v.number(), v.null())),
-  place: v.optional(v.union(v.string(), v.null())),
+  /** Free text, or an address picked from Geonorge's search (HUB-28). */
+  place: v.optional(
+    v.union(
+      v.string(),
+      v.null(),
+      v.object({ text: v.string(), lat: v.number(), lon: v.number(), kommuneNr: v.string() }),
+    ),
+  ),
   description: v.optional(v.union(v.string(), v.null())),
   coverId: v.optional(v.union(v.id("_storage"), v.null())),
   capacity: v.optional(v.union(v.number(), v.null())),
@@ -50,7 +57,7 @@ type Fields = {
   title: string;
   startsAt: number;
   endsAt?: number | null;
-  place?: string | null;
+  place?: string | null | { text: string; lat: number; lon: number; kommuneNr: string };
   description?: string | null;
   coverId?: Id<"_storage"> | null;
   capacity?: number | null;
@@ -76,12 +83,22 @@ async function cleanFields(ctx: MutationCtx, args: Fields) {
   if (rsvpDeadline !== undefined && rsvpDeadline > args.startsAt) invalid("rsvpDeadline");
   const coverId = args.coverId ?? undefined;
   if (coverId !== undefined) await requireImage(ctx, coverId);
-  const placeText = optionalText(args.place, MAX_PLACE_LENGTH, "place");
+  const picked = typeof args.place === "object" && args.place !== null ? args.place : null;
+  const rawPlace = typeof args.place === "string" ? args.place : (picked?.text ?? null);
+  const placeText = optionalText(rawPlace, MAX_PLACE_LENGTH, "place");
+  const geo =
+    picked && placeText !== undefined && /^\d{4}$/.test(picked.kommuneNr)
+      ? { lat: picked.lat, lon: picked.lon, kommuneNr: picked.kommuneNr }
+      : null;
   return {
     title,
     startsAt: args.startsAt,
     endsAt,
-    place: placeText === undefined ? undefined : { text: placeText },
+    place:
+      placeText === undefined
+        ? undefined
+        : { text: placeText, ...(geo && { lat: geo.lat, lon: geo.lon }) },
+    kommuneNr: geo?.kommuneNr,
     description: optionalText(args.description, MAX_DESCRIPTION_LENGTH, "description"),
     coverId,
     capacity,
@@ -283,6 +300,10 @@ export const get = query({
       capacity: event.capacity ?? null,
       rsvpDeadline: event.rsvpDeadline ?? null,
       reminders: event.remindersOff !== true,
+      placeGeo:
+        event.place?.lat !== undefined && event.place.lon !== undefined && event.kommuneNr
+          ? { lat: event.place.lat, lon: event.place.lon, kommuneNr: event.kommuneNr }
+          : null,
       hub: hub ? { _id: hub._id, name: hub.name, emoji: hub.emoji ?? null } : null,
       host: {
         _id: event.createdBy,

@@ -34,14 +34,15 @@ import { useScheme } from "@/lib/use-scheme";
 const MAX_GUESTS = 10;
 const MAX_NOTE_LENGTH = 200;
 
-function openInMaps(place: string) {
+function openInMaps(place: string, geo: { lat: number; lon: number } | null) {
   const q = encodeURIComponent(place);
+  const at = geo ? `${geo.lat},${geo.lon}` : null;
   const url =
     Platform.OS === "ios"
-      ? `https://maps.apple.com/?q=${q}`
+      ? `https://maps.apple.com/?q=${q}${at ? `&ll=${at}` : ""}`
       : Platform.OS === "android"
-        ? `geo:0,0?q=${q}`
-        : `https://www.google.com/maps/search/?api=1&query=${q}`;
+        ? `geo:${at ?? "0,0"}?q=${at ? `${at}(${q})` : q}`
+        : `https://www.google.com/maps/search/?api=1&query=${at ?? q}`;
   void Linking.openURL(url);
 }
 
@@ -139,7 +140,7 @@ export default function EventScreen() {
             <Pressable
               accessibilityRole="link"
               accessibilityHint={t("events.openInMaps")}
-              onPress={() => openInMaps(event.place ?? "")}
+              onPress={() => openInMaps(event.place ?? "", event.placeGeo)}
               className="flex-row items-center gap-1.5 active:opacity-60"
             >
               <MapPin color={c.primary} size={16} strokeWidth={2.2} />
