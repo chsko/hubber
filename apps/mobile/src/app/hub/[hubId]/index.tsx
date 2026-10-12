@@ -4,9 +4,18 @@ import { useMutation, useQuery } from "convex/react";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar } from "@/components/avatar";
+import { ChatView } from "@/components/chat/chat-view";
 import { HubIcon } from "@/components/hub-icon";
 import { ComingSoon } from "@/components/screen";
 import { NotAMember } from "@/components/not-a-member";
@@ -14,6 +23,7 @@ import { StackHeader } from "@/components/stack-header";
 
 const segments = ["chat", "events", "members"] as const;
 type Segment = (typeof segments)[number];
+type Template = "class" | "kindergarten" | "family" | "friends" | "other";
 
 /** Hub screen (docs/DESIGN.md §4): header plus Chat · Events · Members. */
 export default function HubScreen() {
@@ -47,11 +57,11 @@ export default function HubScreen() {
           </Pressable>
         }
       />
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-10">
-        <View className="flex-row items-center gap-4">
-          <HubIcon emoji={hub.emoji} iconUrl={hub.iconUrl} size={64} />
+      <View className="gap-3 px-5 pb-2">
+        <View className="flex-row items-center gap-3">
+          <HubIcon emoji={hub.emoji} iconUrl={hub.iconUrl} size={44} />
           <View className="flex-1 gap-0.5">
-            <Text accessibilityRole="header" className="font-sans-extrabold text-[24px] text-text">
+            <Text accessibilityRole="header" className="font-sans-extrabold text-[20px] text-text">
               {hub.name}
             </Text>
             <Text className="font-sans text-[14px] text-textMuted">
@@ -82,28 +92,23 @@ export default function HubScreen() {
             );
           })}
         </View>
+      </View>
 
-        {segment === "chat" ? (
-          <>
-            <View className="gap-2 rounded-2xl border border-border bg-surface p-4">
-              <Text className="font-sans-bold text-[16px] text-text">
-                {t("hub.welcomeTitle", { name: hub.name })}
-              </Text>
-              <Text className="font-sans text-[15px] leading-6 text-textMuted">
-                {t(`hubTemplates.${hub.template}.welcome`)}
-              </Text>
-            </View>
-            <ComingSoon>{t("hub.chatSoon")}</ComingSoon>
-          </>
-        ) : null}
-        {segment === "events" ? <ComingSoon>{t("hub.eventsSoon")}</ComingSoon> : null}
-        {segment === "members" ? (
-          <>
-            {hub.myRole !== "member" ? <PendingRequests hubId={hub._id} /> : null}
-            <Members hubId={hub._id} myRole={hub.myRole} />
-          </>
-        ) : null}
-      </ScrollView>
+      {segment === "chat" ? (
+        <KeyboardAvoidingView behavior="padding" className="flex-1">
+          <HubChat hubId={hub._id} hubName={hub.name} template={hub.template} />
+        </KeyboardAvoidingView>
+      ) : (
+        <ScrollView contentContainerClassName="gap-5 px-5 pb-10">
+          {segment === "events" ? <ComingSoon>{t("hub.eventsSoon")}</ComingSoon> : null}
+          {segment === "members" ? (
+            <>
+              {hub.myRole !== "member" ? <PendingRequests hubId={hub._id} /> : null}
+              <Members hubId={hub._id} myRole={hub.myRole} />
+            </>
+          ) : null}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
@@ -281,5 +286,35 @@ function PendingRequests({ hubId }: { hubId: Id<"hubs"> }) {
         ))}
       </View>
     </View>
+  );
+}
+
+/** The hub's chat, opening with the template's welcome text (HUB-18). */
+function HubChat({
+  hubId,
+  hubName,
+  template,
+}: {
+  hubId: Id<"hubs">;
+  hubName: string;
+  template: Template;
+}) {
+  const { t } = useTranslation();
+  const conversationId = useQuery(api.messages.hubConversation, { hubId });
+  if (!conversationId) return <ActivityIndicator className="py-6" />;
+  return (
+    <ChatView
+      conversationId={conversationId}
+      header={
+        <View className="mb-2 gap-2 rounded-2xl border border-border bg-surface p-4">
+          <Text className="font-sans-bold text-[16px] text-text">
+            {t("hub.welcomeTitle", { name: hubName })}
+          </Text>
+          <Text className="font-sans text-[15px] leading-6 text-textMuted">
+            {t(`hubTemplates.${template}.welcome`)}
+          </Text>
+        </View>
+      }
+    />
   );
 }

@@ -123,7 +123,6 @@
     "events": "Arrangementer",
     "members": "Medlemmer",
     "welcomeTitle": "Velkommen til {{name}}",
-    "chatSoon": "Chat kommer i M3.",
     "eventsSoon": "Arrangementer kommer i M4.",
     "role": {
       "owner": "Eier",
@@ -191,5 +190,15 @@
     "leaveTitle": "Forlate denne huben?",
     "leaveBody": "Du trenger en ny invitasjon for å komme tilbake.",
     "ownerCantLeave": "Du er eier. For å forlate huben må du først gjøre noen andre til eier."
+  },
+  "chat": {
+    "placeholder": "Melding",
+    "send": "Send",
+    "today": "I dag",
+    "yesterday": "I går",
+    "notSent": "Ikke sendt. Trykk for å prøve igjen.",
+    "deleted": "Meldingen er slettet",
+    "deletedUser": "Slettet bruker",
+    "edited": "redigert"
   }
 }

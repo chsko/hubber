@@ -123,7 +123,6 @@
     "events": "Events",
     "members": "Members",
     "welcomeTitle": "Welcome to {{name}}",
-    "chatSoon": "Chat is coming in M3.",
     "eventsSoon": "Events are coming in M4.",
     "role": {
       "owner": "Owner",
@@ -191,5 +190,15 @@
     "leaveTitle": "Leave this hub?",
     "leaveBody": "You'll need a new invite to come back.",
     "ownerCantLeave": "You're the owner. To leave, first make someone else the owner."
+  },
+  "chat": {
+    "placeholder": "Message",
+    "send": "Send",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "notSent": "Not sent. Tap to try again.",
+    "deleted": "Message deleted",
+    "deletedUser": "Deleted user",
+    "edited": "edited"
   }
 }
