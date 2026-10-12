@@ -48,9 +48,13 @@ export default defineSchema({
   hubs: defineTable({
     name: v.string(),
     template: hubTemplate,
+    /** Emoji icon, defaulting to the template's; a photo (`iconId`) takes precedence. */
+    emoji: v.optional(v.string()),
     iconId: v.optional(v.id("_storage")),
     ownerId: v.id("users"),
     joinApproval: v.boolean(),
+    /** Bumped on new messages, events and members; the Hubs tab sorts by it. */
+    lastActivityAt: v.optional(v.number()),
   }),
 
   hubMembers: defineTable({

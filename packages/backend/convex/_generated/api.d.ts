@@ -10,11 +10,15 @@
 
 import type * as auth from "../auth.js";
 import type * as devSignIn from "../devSignIn.js";
+import type * as files from "../files.js";
 import type * as http from "../http.js";
+import type * as hubs from "../hubs.js";
 import type * as lib_age from "../lib/age.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_devPersonas from "../lib/devPersonas.js";
 import type * as lib_devSignIn from "../lib/devSignIn.js";
+import type * as lib_hubTemplates from "../lib/hubTemplates.js";
+import type * as lib_images from "../lib/images.js";
 import type * as lib_vipps from "../lib/vipps.js";
 import type * as users from "../users.js";
 
@@ -27,11 +31,15 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   devSignIn: typeof devSignIn;
+  files: typeof files;
   http: typeof http;
+  hubs: typeof hubs;
   "lib/age": typeof lib_age;
   "lib/auth": typeof lib_auth;
   "lib/devPersonas": typeof lib_devPersonas;
   "lib/devSignIn": typeof lib_devSignIn;
+  "lib/hubTemplates": typeof lib_hubTemplates;
+  "lib/images": typeof lib_images;
   "lib/vipps": typeof lib_vipps;
   users: typeof users;
 }>;

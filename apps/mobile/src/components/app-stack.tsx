@@ -33,6 +33,8 @@ export function AppStack() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Protected guard={signedIn && onboarded}>
           <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="hub/new" />
+          <Stack.Screen name="hub/[hubId]" />
         </Stack.Protected>
         <Stack.Protected guard={signedIn && !onboarded}>
           <Stack.Screen name="onboarding" />

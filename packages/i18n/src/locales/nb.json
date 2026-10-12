@@ -1,7 +1,8 @@
 {
   "common": {
     "appName": "Hubber",
-    "loading": "Laster"
+    "loading": "Laster",
+    "back": "Tilbake"
   },
   "tabs": {
     "home": "Hjem",
@@ -14,7 +15,11 @@
     "comingSoon": "Her kommer dine neste arrangementer, uleste hubber og invitasjoner. Ingen feed."
   },
   "hubs": {
-    "comingSoon": "Klassen, familien og vennegjengen samles her. Kommer i M2."
+    "create": "Opprett hub",
+    "emptyTitle": "Ingen huber ennå",
+    "emptyBody": "Opprett en for klassen til barnet ditt, familien eller vennene dine, og inviter de andre.",
+    "memberCount_one": "{{count}} medlem",
+    "memberCount_other": "{{count}} medlemmer"
   },
   "calendar": {
     "comingSoon": "Alle arrangementene dine på ett sted. Kommer i M4."
@@ -65,5 +70,63 @@
     "subtitle": "Sjekk at dette ser riktig ut. Du kan endre det senere under Profil.",
     "nameFromVipps": "Navnet ditt kommer fra Vipps, så alle vet hvem du er. Det kan ikke endres her.",
     "continue": "Fortsett"
+  },
+  "hubTemplates": {
+    "class": {
+      "name": "Klasse",
+      "description": "Foreldre i en skoleklasse. Nye medlemmer må godkjennes.",
+      "namePlaceholder": "f.eks. 3B Foreldre",
+      "welcome": "Her samles foreldrene i klassen: praktisk info, arrangementer og raske spørsmål. Hold tonen vennlig og saklig."
+    },
+    "kindergarten": {
+      "name": "Barnehage",
+      "description": "Foreldre i en barnehagegruppe. Nye medlemmer må godkjennes.",
+      "namePlaceholder": "f.eks. Blåbærgruppa foreldre",
+      "welcome": "Her samles foreldrene i gruppa: praktisk info, bursdager og treff."
+    },
+    "family": {
+      "name": "Familie",
+      "description": "Familien din, nær og fjern.",
+      "namePlaceholder": "f.eks. Familien Hansen",
+      "welcome": "Del nyheter, planlegg besøk og hold familiekalenderen på ett sted."
+    },
+    "friends": {
+      "name": "Venner",
+      "description": "En vennegjeng som legger planer sammen.",
+      "namePlaceholder": "f.eks. Fredagsgjengen",
+      "welcome": "Legg planer, del bilder og finn en dato som passer for alle."
+    },
+    "other": {
+      "name": "Annet",
+      "description": "Alt annet: et lag, et kor, naboene.",
+      "namePlaceholder": "f.eks. Gatefestkomiteen",
+      "welcome": "Velkommen! Chat, planlegg arrangementer og hold alle oppdatert."
+    }
+  },
+  "newHub": {
+    "pickTemplate": "Hva slags hub?",
+    "nameTitle": "Gi huben et navn",
+    "changeTemplate": "Endre",
+    "nameLabel": "Navn på hub",
+    "icon": "Ikon",
+    "usePhoto": "Bruk et bilde i stedet",
+    "changePhoto": "Velg et annet bilde",
+    "create": "Opprett hub",
+    "failed": "Kunne ikke opprette huben. Prøv igjen."
+  },
+  "hub": {
+    "invite": "Inviter",
+    "inviteSoonTitle": "Kommer snart",
+    "inviteSoonBody": "Invitasjonslenker og QR-koder kommer som neste steg.",
+    "chat": "Chat",
+    "events": "Arrangementer",
+    "members": "Medlemmer",
+    "welcomeTitle": "Velkommen til {{name}}",
+    "chatSoon": "Chat kommer i M3.",
+    "eventsSoon": "Arrangementer kommer i M4.",
+    "role": {
+      "owner": "Eier",
+      "admin": "Admin"
+    }
   }
 }

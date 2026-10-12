@@ -1,11 +1,70 @@
+import { api } from "@hubber/backend/api";
+import { colors } from "@hubber/shared";
+import { useQuery } from "convex/react";
+import { Link } from "expo-router";
+import { ChevronRight, Plus } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { ComingSoon, Screen } from "@/components/screen";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { HubIcon } from "@/components/hub-icon";
+import { Screen } from "@/components/screen";
+import { useScheme } from "@/lib/use-scheme";
 
+/** Your hubs, most recently active first, plus "Create hub" (HUB-14). */
 export default function HubsScreen() {
   const { t } = useTranslation();
+  const hubs = useQuery(api.hubs.mine);
+  const c = colors[useScheme()];
+
   return (
     <Screen title={t("tabs.hubs")}>
-      <ComingSoon>{t("hubs.comingSoon")}</ComingSoon>
+      <Link href="/hub/new" asChild>
+        <Pressable
+          testID="create-hub"
+          accessibilityRole="button"
+          className="flex-row items-center justify-center gap-2 rounded-xl bg-primarySoft px-4 py-3.5 active:opacity-80"
+        >
+          <Plus color={c.primaryStrong} size={20} strokeWidth={2.4} />
+          <Text className="font-sans-bold text-[16px] text-primaryStrong">{t("hubs.create")}</Text>
+        </Pressable>
+      </Link>
+
+      {hubs === undefined ? (
+        <ActivityIndicator accessibilityLabel={t("common.loading")} />
+      ) : hubs.length === 0 ? (
+        <View className="gap-2 rounded-2xl border border-dashed border-border bg-surface p-5">
+          <Text className="font-sans-bold text-[17px] text-text">{t("hubs.emptyTitle")}</Text>
+          <Text className="font-sans text-[15px] leading-6 text-textMuted">
+            {t("hubs.emptyBody")}
+          </Text>
+        </View>
+      ) : (
+        <View className="overflow-hidden rounded-2xl border border-border bg-surface">
+          {hubs.map((hub, i) => (
+            <Link
+              key={hub._id}
+              href={{ pathname: "/hub/[hubId]", params: { hubId: hub._id } }}
+              asChild
+            >
+              <Pressable
+                testID={`hub-${hub._id}`}
+                accessibilityRole="button"
+                className={`flex-row items-center gap-3 px-4 py-3 active:opacity-70 ${i > 0 ? "border-t border-border" : ""}`}
+              >
+                <HubIcon emoji={hub.emoji} iconUrl={hub.iconUrl} size={44} />
+                <View className="flex-1">
+                  <Text numberOfLines={1} className="font-sans-semibold text-[16px] text-text">
+                    {hub.name}
+                  </Text>
+                  <Text className="font-sans text-[13px] text-textMuted">
+                    {t("hubs.memberCount", { count: hub.memberCount })}
+                  </Text>
+                </View>
+                <ChevronRight color={c.textMuted} size={20} />
+              </Pressable>
+            </Link>
+          ))}
+        </View>
+      )}
     </Screen>
   );
 }

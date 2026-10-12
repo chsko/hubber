@@ -126,6 +126,6 @@ describe("profile photo", () => {
   it("rejects images over 2 MB", async () => {
     const { t, as } = await signedIn();
     const storageId = await storeImage(t, 2 * 1024 * 1024 + 1);
-    await expect(as.mutation(api.users.setPhoto, { storageId })).rejects.toThrow(/INVALID_PHOTO/);
+    await expect(as.mutation(api.users.setPhoto, { storageId })).rejects.toThrow(/INVALID_IMAGE/);
   });
 });

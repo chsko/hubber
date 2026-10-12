@@ -1,7 +1,8 @@
 {
   "common": {
     "appName": "Hubber",
-    "loading": "Loading"
+    "loading": "Loading",
+    "back": "Back"
   },
   "tabs": {
     "home": "Home",
@@ -14,7 +15,11 @@
     "comingSoon": "Your next events, unread hubs and invitations will show up here. No feed."
   },
   "hubs": {
-    "comingSoon": "Your class, family and friends get together here. Coming in M2."
+    "create": "Create hub",
+    "emptyTitle": "No hubs yet",
+    "emptyBody": "Create one for your child's class, your family or your friends, then invite the others.",
+    "memberCount_one": "{{count}} member",
+    "memberCount_other": "{{count}} members"
   },
   "calendar": {
     "comingSoon": "All your events in one place. Coming in M4."
@@ -65,5 +70,63 @@
     "subtitle": "Check that this looks right. You can change it later under Profile.",
     "nameFromVipps": "Your name comes from Vipps, so everyone knows who you are. It can't be changed here.",
     "continue": "Continue"
+  },
+  "hubTemplates": {
+    "class": {
+      "name": "Class",
+      "description": "Parents in a school class. New members need approval.",
+      "namePlaceholder": "e.g. 3B Parents",
+      "welcome": "This is the place for parents in the class: practical info, events and quick questions. Keep it friendly and to the point."
+    },
+    "kindergarten": {
+      "name": "Kindergarten",
+      "description": "Parents in a kindergarten group. New members need approval.",
+      "namePlaceholder": "e.g. Blåbær group parents",
+      "welcome": "This is the place for parents in the group: practical info, birthdays and get-togethers."
+    },
+    "family": {
+      "name": "Family",
+      "description": "Your family, near and far.",
+      "namePlaceholder": "e.g. The Hansen family",
+      "welcome": "Share news, plan visits and keep the family calendar in one place."
+    },
+    "friends": {
+      "name": "Friends",
+      "description": "A group of friends who make plans together.",
+      "namePlaceholder": "e.g. Friday crew",
+      "welcome": "Make plans, share photos and find a date that works for everyone."
+    },
+    "other": {
+      "name": "Other",
+      "description": "Anything else: a team, a choir, the neighbours.",
+      "namePlaceholder": "e.g. Street party committee",
+      "welcome": "Welcome! Chat, plan events and keep everyone in the loop."
+    }
+  },
+  "newHub": {
+    "pickTemplate": "What kind of hub?",
+    "nameTitle": "Name your hub",
+    "changeTemplate": "Change",
+    "nameLabel": "Hub name",
+    "icon": "Icon",
+    "usePhoto": "Use a photo instead",
+    "changePhoto": "Choose another photo",
+    "create": "Create hub",
+    "failed": "Couldn't create the hub. Please try again."
+  },
+  "hub": {
+    "invite": "Invite",
+    "inviteSoonTitle": "Coming soon",
+    "inviteSoonBody": "Invite links and QR codes are next.",
+    "chat": "Chat",
+    "events": "Events",
+    "members": "Members",
+    "welcomeTitle": "Welcome to {{name}}",
+    "chatSoon": "Chat is coming in M3.",
+    "eventsSoon": "Events are coming in M4.",
+    "role": {
+      "owner": "Owner",
+      "admin": "Admin"
+    }
   }
 }
