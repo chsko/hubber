@@ -25,14 +25,18 @@
   },
   "profile": {
     "account": "Konto",
-    "signedOut": "Ikke logget inn",
     "noName": "Uten navn",
-    "comingSoon": "Innlogging med Vipps kommer i M1.",
     "language": "Språk",
     "languageSystem": "Som enheten",
     "languageNb": "Norsk (bokmål)",
     "languageEn": "English",
-    "signOut": "Logg ut"
+    "signOut": "Logg ut",
+    "verified": "Verifisert med Vipps",
+    "addPhoto": "Legg til bilde",
+    "addPhotoOptional": "Legg til bilde (valgfritt)",
+    "changePhoto": "Bytt bilde",
+    "removePhoto": "Fjern",
+    "photoFailed": "Kunne ikke lagre bildet. Prøv igjen."
   },
   "notFound": {
     "title": "Fant ikke siden",
@@ -45,5 +49,21 @@
     "title": "Hubber er for voksne",
     "body": "Du må være 18 år eller eldre for å bruke Hubber. Vi har ikke lagret noe om deg. Velkommen tilbake når du fyller 18!",
     "ok": "OK"
+  },
+  "welcome": {
+    "tagline": "Gruppene, chatten og arrangementene dine. Ikke noe mer.",
+    "point1": "Bare ekte folk: alle logger inn med Vipps.",
+    "point2": "Ingen feed, ingen algoritme, ingen reklame.",
+    "point3": "Rolige varsler, bare for det som betyr noe.",
+    "continueWithVipps": "Fortsett med Vipps",
+    "adultsOnly": "Hubber er for voksne (18+).",
+    "vippsSoonTitle": "Kommer snart",
+    "vippsSoonBody": "Innlogging med Vipps er ikke tilgjengelig ennå."
+  },
+  "onboarding": {
+    "title": "Velkommen, {{name}}!",
+    "subtitle": "Sjekk at dette ser riktig ut. Du kan endre det senere under Profil.",
+    "nameFromVipps": "Navnet ditt kommer fra Vipps, så alle vet hvem du er. Det kan ikke endres her.",
+    "continue": "Fortsett"
   }
 }

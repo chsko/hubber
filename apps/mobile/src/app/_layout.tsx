@@ -10,10 +10,11 @@ import {
 } from "@expo-google-fonts/figtree";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { colors } from "@hubber/shared";
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
+import { AppStack } from "@/components/app-stack";
 import { ThemeRoot } from "@/components/theme-root";
 import { authStorage } from "@/lib/auth-storage";
 import { convex } from "@/lib/convex";
@@ -63,7 +64,7 @@ export default function RootLayout() {
       <ThemeProvider value={navTheme}>
         <ThemeRoot>
           <StatusBar style={scheme === "dark" ? "light" : "dark"} />
-          <Stack screenOptions={{ headerShown: false }} />
+          <AppStack />
         </ThemeRoot>
       </ThemeProvider>
     </ConvexAuthProvider>

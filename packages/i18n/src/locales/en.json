@@ -25,14 +25,18 @@
   },
   "profile": {
     "account": "Account",
-    "signedOut": "Not signed in",
     "noName": "No name",
-    "comingSoon": "Sign-in with Vipps is coming in M1.",
     "language": "Language",
     "languageSystem": "Same as device",
     "languageNb": "Norsk (bokmål)",
     "languageEn": "English",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "verified": "Verified with Vipps",
+    "addPhoto": "Add photo",
+    "addPhotoOptional": "Add a photo (optional)",
+    "changePhoto": "Change photo",
+    "removePhoto": "Remove",
+    "photoFailed": "Couldn't save the photo. Please try again."
   },
   "notFound": {
     "title": "Page not found",
@@ -45,5 +49,21 @@
     "title": "Hubber is for adults",
     "body": "You need to be 18 or older to use Hubber. We haven't saved anything about you. Welcome back when you turn 18!",
     "ok": "OK"
+  },
+  "welcome": {
+    "tagline": "Your groups, chat and events. Nothing else.",
+    "point1": "Only real people: everyone signs in with Vipps.",
+    "point2": "No feed, no algorithm, no ads.",
+    "point3": "Calm notifications, only for what matters.",
+    "continueWithVipps": "Continue with Vipps",
+    "adultsOnly": "Hubber is for adults (18+).",
+    "vippsSoonTitle": "Coming soon",
+    "vippsSoonBody": "Sign-in with Vipps isn't available yet."
+  },
+  "onboarding": {
+    "title": "Welcome, {{name}}!",
+    "subtitle": "Check that this looks right. You can change it later under Profile.",
+    "nameFromVipps": "Your name comes from Vipps, so everyone knows who you are. It can't be changed here.",
+    "continue": "Continue"
   }
 }

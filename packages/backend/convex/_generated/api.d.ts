@@ -11,6 +11,7 @@
 import type * as auth from "../auth.js";
 import type * as devSignIn from "../devSignIn.js";
 import type * as http from "../http.js";
+import type * as lib_age from "../lib/age.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_devPersonas from "../lib/devPersonas.js";
 import type * as lib_devSignIn from "../lib/devSignIn.js";
@@ -27,6 +28,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   devSignIn: typeof devSignIn;
   http: typeof http;
+  "lib/age": typeof lib_age;
   "lib/auth": typeof lib_auth;
   "lib/devPersonas": typeof lib_devPersonas;
   "lib/devSignIn": typeof lib_devSignIn;

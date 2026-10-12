@@ -44,6 +44,14 @@
             "backgroundColor": "#121413"
           }
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Hubber uses your photos so you can choose a profile picture.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
       ]
     ],
     "experiments": {

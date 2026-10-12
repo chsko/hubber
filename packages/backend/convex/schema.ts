@@ -37,6 +37,8 @@ export default defineSchema({
     photoId: v.optional(v.id("_storage")),
     locale: v.optional(v.union(v.literal("nb"), v.literal("en"))),
     kommuneNr: v.optional(v.string()),
+    /** Set when the user finishes onboarding (HUB-12). */
+    onboardedAt: v.optional(v.number()),
     deletedAt: v.optional(v.number()),
   })
     .index("email", ["email"])
