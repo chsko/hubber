@@ -37,5 +37,11 @@ export default tseslint.config(
     files: ["**/*.{js,mjs,cjs}"],
     ...tseslint.configs.disableTypeChecked,
   },
+  {
+    // CommonJS tool configs (babel, metro) are loaded with require().
+    files: ["**/*.config.js", "**/*.cjs"],
+    languageOptions: { sourceType: "commonjs" },
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
   prettier,
 );

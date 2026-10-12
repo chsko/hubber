@@ -151,6 +151,8 @@ Decisions are scored with **Jev** (TypeSafe System One) by calling the API direc
 | 2026-10-11 | Frontend             | Expo app plus a small Next.js site for public pages 0.99                                                                              | **Expo Router + Next.js (public pages only)**                                                     |
 | 2026-10-11 | Leading segment      | School parents 0.64 / friends & families 0.36 (confidence 0.28)                                                                       | Low confidence; **school parents** lead, both are supported via templates                         |
 | 2026-10-11 | Name                 | Hubber 0.97 vs Hubby; "has unwanted meaning" 0.37 (inconclusive)                                                                      | **Hubber** as working name, pending trademark and domain check                                    |
+| 2026-10-12 | Tab bar              | Custom JS tabs 1.00 (asked twice, options reversed, downsides stated) vs NativeTabs                                                   | **Expo Router JS Tabs** styled to the design, Lucide icons                                        |
+| 2026-10-12 | Styling              | Not asked: NativeWind 4.2.7 officially supports Expo SDK 57; v5 is still a release candidate                                          | **NativeWind 4.2.7 + Tailwind 3.4**, colours as CSS variables from `@hubber/shared`               |
 
 ## 7. Open items for you
 
