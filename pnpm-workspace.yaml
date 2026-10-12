@@ -3,5 +3,5 @@ packages:
   - packages/*
 
 # Packages allowed to run install scripts (esbuild: Convex CLI bundler).
-onlyBuiltDependencies:
-  - esbuild
+allowBuilds:
+  esbuild: true

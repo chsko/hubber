@@ -18,7 +18,7 @@ Groups, chat and events for Norway, with Vipps-verified people only. No feed, no
 
 ## Getting started
 
-Requirements: Node.js 22 (see `.nvmrc`) and pnpm 10 (`corepack enable`).
+Requirements: Node.js 22 (see `.nvmrc`) and pnpm 12 (`npm i -g pnpm`; the repo pins the exact version in `packageManager` and pnpm switches to it automatically).
 
 ```sh
 pnpm install

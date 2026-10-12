@@ -19,6 +19,8 @@
 ## Stack notes
 
 - TypeScript is pinned to 6.0.x because typescript-eslint supports <6.1.
+- pnpm 12 (`packageManager`). Its default `minimumReleaseAge` rejects packages published less than a day ago; keep it as supply-chain protection, so "latest" means the newest version that passes it. Packages that may run install scripts are listed under `allowBuilds` in `pnpm-workspace.yaml` (add with `pnpm approve-builds <pkg>`).
+- Expo-managed native packages (react, react-native, reanimated, …) must match the SDK table, not npm `latest`. NativeWind 4 requires Tailwind 3 in `apps/mobile`.
 - `AGENTS.md` is maintained automatically by Turborepo (root), Expo (`apps/mobile`) and Next.js (`apps/web`); leave them in place.
 - Convex CLI in cloud sessions: HTTP-based commands work (`convex dev --once`, `deploy`, `codegen`) with `CONVEX_DEPLOY_KEY`; WebSocket-based ones (`env list`, `data`, `logs`, `run`) hang because Node's WebSocket client bypasses the HTTP proxy. Never print `CONVEX_DEPLOY_KEY`.
 - Expo: `api.expo.dev` and `docs.expo.dev` are blocked here; use `EXPO_OFFLINE=1` for `expo export` and check versions against `expo/bundledNativeModules.json`.
