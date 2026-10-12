@@ -13,7 +13,15 @@
     "profile": "Profile"
   },
   "home": {
-    "comingSoon": "Your next events, unread hubs and invitations will show up here. No feed."
+    "goodMorning": "Good morning, {{name}}",
+    "goodDay": "Hi, {{name}}",
+    "goodEvening": "Good evening, {{name}}",
+    "goodNight": "Good night, {{name}}",
+    "nextUp": "Next up",
+    "eventsSoon": "Your next events will show up here. Events are coming in M4.",
+    "unread": "Unread",
+    "allRead": "You're all caught up.",
+    "waiting": "Waiting for approval"
   },
   "hubs": {
     "create": "Create hub",
@@ -209,6 +217,10 @@
     "replyingTo": "Replying to {{name}}",
     "editFailed": "Couldn't save the change. Edits are possible for 15 minutes.",
     "longPressHint": "Long-press to react, reply, edit or delete",
-    "reactionLabel": "{{emoji}} {{count}}"
+    "reactionLabel": "{{emoji}} {{count}}",
+    "seenBy_one": "Seen by {{count}}",
+    "seenBy_other": "Seen by {{count}}",
+    "unread_one": "{{count}} unread message",
+    "unread_other": "{{count}} unread messages"
   }
 }

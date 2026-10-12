@@ -6,6 +6,7 @@ import { ChevronRight, Plus } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { HubIcon } from "@/components/hub-icon";
+import { UnreadBadge } from "@/components/unread-badge";
 import { Screen } from "@/components/screen";
 import { useScheme } from "@/lib/use-scheme";
 
@@ -69,6 +70,7 @@ export default function HubsScreen() {
                       : t("hubs.memberCount", { count: hub.memberCount })}
                   </Text>
                 </View>
+                {hub.unread > 0 ? <UnreadBadge count={hub.unread} /> : null}
                 {hub.status === "active" ? <ChevronRight color={c.textMuted} size={20} /> : null}
               </Pressable>
             );

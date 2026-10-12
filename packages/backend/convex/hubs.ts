@@ -4,6 +4,7 @@ import { type MutationCtx, mutation, type QueryCtx, query } from "./_generated/s
 import { getHubMember, requireHubMember, requireUser } from "./lib/auth";
 import { HUB_TEMPLATES } from "./lib/hubTemplates";
 import { requireImage } from "./lib/images";
+import { lastReadAt, unreadCount } from "./lib/unread";
 import { hubTemplate } from "./schema";
 
 const MAX_NAME_LENGTH = 60;
@@ -31,6 +32,23 @@ async function activeMemberCount(ctx: QueryCtx, hubId: Id<"hubs">): Promise<numb
     .withIndex("by_hub", (q) => q.eq("hubId", hubId))
     .collect();
   return members.filter((m) => m.status === "active").length;
+}
+
+/** Unread messages in the hub's chat for this member (HUB-21), capped at UNREAD_CAP. */
+async function hubUnread(
+  ctx: QueryCtx,
+  hubId: Id<"hubs">,
+  userId: Id<"users">,
+  membership: Doc<"hubMembers">,
+): Promise<number> {
+  const conversation = await ctx.db
+    .query("conversations")
+    .withIndex("by_hub", (q) => q.eq("hubId", hubId))
+    .filter((q) => q.eq(q.field("kind"), "hub"))
+    .first();
+  if (conversation === null) return 0;
+  const since = await lastReadAt(ctx, conversation._id, userId, membership._creationTime);
+  return await unreadCount(ctx, conversation._id, userId, since);
 }
 
 /** The fields every hub view shows: name, icon and template. */
@@ -102,6 +120,7 @@ export const mine = query({
           ...(await hubSummary(ctx, hub)),
           role: m.role,
           status: m.status,
+          unread: m.status === "active" ? await hubUnread(ctx, hub._id, user._id, m) : 0,
           memberCount: await activeMemberCount(ctx, hub._id),
         };
       }),

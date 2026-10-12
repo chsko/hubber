@@ -1,7 +1,7 @@
 import { api } from "@hubber/backend/api";
 import type { Id } from "@hubber/backend/dataModel";
 import { insertAtTop, useMutation, usePaginatedQuery, useQuery } from "convex/react";
-import { type ReactElement, useState } from "react";
+import { type ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Alert, FlatList, Pressable, Text, View } from "react-native";
 import { useLocale } from "@/lib/i18n";
@@ -77,6 +77,16 @@ export function ChatView({
   const edit = useMutation(api.messages.edit);
   const remove = useMutation(api.messages.remove);
   const toggleReaction = useMutation(api.messages.toggleReaction);
+  const markRead = useMutation(api.readStates.markRead);
+  const seenBy = useQuery(api.readStates.seenBy, { conversationId });
+
+  // Reading happens while the chat is on screen: mark read on open and on each new message.
+  const newestId = results[0]?._id;
+  useEffect(() => {
+    if (newestId === undefined || !newestId.startsWith("optimistic-")) {
+      markRead({ conversationId }).catch(() => undefined);
+    }
+  }, [conversationId, newestId, markRead]);
 
   const [draft, setDraft] = useState("");
   const [mode, setMode] = useState<Mode>(null);
@@ -175,6 +185,13 @@ export function ChatView({
           onLongPress={() => setActionsFor(item)}
           onToggleReaction={(emoji) => void toggleReaction({ messageId: item._id, emoji })}
         />
+        {index === 0 && seenBy?.messageId === item._id && seenBy.count > 0 ? (
+          <Text
+            className={`mt-1 font-sans text-[11px] text-textMuted ${item.isMine ? "self-end" : "ml-10"}`}
+          >
+            {t("chat.seenBy", { count: seenBy.count })}
+          </Text>
+        ) : null}
       </View>
     );
   }

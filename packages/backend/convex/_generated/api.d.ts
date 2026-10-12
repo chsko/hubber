@@ -22,8 +22,10 @@ import type * as lib_devSignIn from "../lib/devSignIn.js";
 import type * as lib_hubTemplates from "../lib/hubTemplates.js";
 import type * as lib_images from "../lib/images.js";
 import type * as lib_rateLimit from "../lib/rateLimit.js";
+import type * as lib_unread from "../lib/unread.js";
 import type * as lib_vipps from "../lib/vipps.js";
 import type * as messages from "../messages.js";
+import type * as readStates from "../readStates.js";
 import type * as users from "../users.js";
 
 import type {
@@ -47,8 +49,10 @@ declare const fullApi: ApiFromModules<{
   "lib/hubTemplates": typeof lib_hubTemplates;
   "lib/images": typeof lib_images;
   "lib/rateLimit": typeof lib_rateLimit;
+  "lib/unread": typeof lib_unread;
   "lib/vipps": typeof lib_vipps;
   messages: typeof messages;
+  readStates: typeof readStates;
   users: typeof users;
 }>;
 

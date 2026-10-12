@@ -13,7 +13,15 @@
     "profile": "Profil"
   },
   "home": {
-    "comingSoon": "Her kommer dine neste arrangementer, uleste hubber og invitasjoner. Ingen feed."
+    "goodMorning": "God morgen, {{name}}",
+    "goodDay": "Hei, {{name}}",
+    "goodEvening": "God kveld, {{name}}",
+    "goodNight": "God natt, {{name}}",
+    "nextUp": "Neste",
+    "eventsSoon": "De neste arrangementene dine vises her. Arrangementer kommer i M4.",
+    "unread": "Uleste",
+    "allRead": "Du har lest alt.",
+    "waiting": "Venter på godkjenning"
   },
   "hubs": {
     "create": "Opprett hub",
@@ -209,6 +217,10 @@
     "replyingTo": "Svarer {{name}}",
     "editFailed": "Kunne ikke lagre endringen. Du kan redigere i 15 minutter.",
     "longPressHint": "Trykk og hold for å reagere, svare, redigere eller slette",
-    "reactionLabel": "{{emoji}} {{count}}"
+    "reactionLabel": "{{emoji}} {{count}}",
+    "seenBy_one": "Sett av {{count}}",
+    "seenBy_other": "Sett av {{count}}",
+    "unread_one": "{{count}} ulest melding",
+    "unread_other": "{{count}} uleste meldinger"
   }
 }
