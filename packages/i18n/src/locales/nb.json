@@ -40,5 +40,10 @@
   },
   "devSignIn": {
     "title": "Testinnlogging (kun utvikling)"
+  },
+  "under18": {
+    "title": "Hubber er for voksne",
+    "body": "Du må være 18 år eller eldre for å bruke Hubber. Vi har ikke lagret noe om deg. Velkommen tilbake når du fyller 18!",
+    "ok": "OK"
   }
 }

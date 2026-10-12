@@ -1,6 +1,7 @@
 import { ConvexCredentials } from "@convex-dev/auth/providers/ConvexCredentials";
 import { createAccount } from "@convex-dev/auth/server";
 import { ConvexError } from "convex/values";
+import { assertAdult } from "./age";
 import { DEV_PERSONAS, devSignInEnabled, isDevPersonaId } from "./devPersonas";
 import { vippsProfile } from "./vipps";
 
@@ -18,7 +19,10 @@ export const DevSignIn = ConvexCredentials({
     if (!isDevPersonaId(params.persona)) {
       throw new ConvexError({ code: "UNKNOWN_PERSONA" });
     }
-    const { id, ...profile } = vippsProfile(DEV_PERSONAS[params.persona]);
+    const info = DEV_PERSONAS[params.persona];
+    // Before createAccount, so an under-18 sign-in stores nothing (HUB-11).
+    assertAdult(info.birthdate);
+    const { id, ...profile } = vippsProfile(info);
     const { user } = await createAccount(ctx, {
       provider: "dev",
       account: { id },

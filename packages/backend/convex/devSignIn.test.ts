@@ -99,6 +99,15 @@ describe("dev sign-in", () => {
     expect(await t.run((ctx) => ctx.db.query("users").collect())).toHaveLength(1);
   });
 
+  it("rejects under-18 personas and stores nothing", async () => {
+    const t = setup("enabled");
+    await expect(
+      t.action(api.auth.signIn, { provider: "dev", params: { persona: "nora" } }),
+    ).rejects.toThrow(/UNDER_18/);
+    expect(await t.run((ctx) => ctx.db.query("users").collect())).toEqual([]);
+    expect(await t.run((ctx) => ctx.db.query("authAccounts").collect())).toEqual([]);
+  });
+
   it("rejects unknown personas", async () => {
     const t = setup("enabled");
     await expect(

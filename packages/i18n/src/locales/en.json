@@ -40,5 +40,10 @@
   },
   "devSignIn": {
     "title": "Test sign-in (development only)"
+  },
+  "under18": {
+    "title": "Hubber is for adults",
+    "body": "You need to be 18 or older to use Hubber. We haven't saved anything about you. Welcome back when you turn 18!",
+    "ok": "OK"
   }
 }

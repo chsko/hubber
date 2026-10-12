@@ -1,9 +1,11 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "@hubber/backend/api";
 import { useQuery } from "convex/react";
+import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
+import { convexErrorCode } from "@/lib/errors";
 
 /**
  * Dev-only stand-in for "Logg inn med Vipps" (HUB-9). Renders nothing unless
@@ -21,6 +23,9 @@ export function DevSignIn() {
     setPending(persona);
     try {
       await signIn("dev", { persona });
+    } catch (error) {
+      if (convexErrorCode(error) !== "UNDER_18") throw error;
+      router.push("/under-18");
     } finally {
       setPending(null);
     }
