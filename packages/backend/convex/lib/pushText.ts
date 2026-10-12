@@ -36,6 +36,9 @@ const texts = {
     changedEvent: (title: string) => `Endret: ${title}`,
     cancelledEvent: (title: string) => `Avlyst: ${title}`,
     when: (at: number) => whenFormat.nb.format(at),
+    startReminder: (title: string) => `Påminnelse: ${title}`,
+    deadlineReminder: (title: string) => `Har du svart? ${title}`,
+    answerBy: (when: string) => `Svarfrist ${when}`,
   },
   en: {
     mention: (author: string) => `${author} mentioned you`,
@@ -46,6 +49,9 @@ const texts = {
     changedEvent: (title: string) => `Changed: ${title}`,
     cancelledEvent: (title: string) => `Cancelled: ${title}`,
     when: (at: number) => whenFormat.en.format(at),
+    startReminder: (title: string) => `Reminder: ${title}`,
+    deadlineReminder: (title: string) => `Have you replied? ${title}`,
+    answerBy: (when: string) => `Reply by ${when}`,
   },
 } as const;
 

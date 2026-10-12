@@ -70,7 +70,13 @@ async function setup() {
       place: "Gymsalen, Lia skole",
       ...extra,
     });
-  const settle = () => t.finishAllScheduledFunctions(() => vi.runAllTimers());
+  // Runs what's due now (pushes), not reminders scheduled for later.
+  const settle = async () => {
+    for (let i = 0; i < 3; i++) {
+      vi.advanceTimersByTime(1);
+      await t.finishInProgressScheduledFunctions();
+    }
+  };
   return { t, ids, as, hubId, create, settle };
 }
 
@@ -252,5 +258,85 @@ describe("event chat", () => {
     await expect(
       as(ids.eva).mutation(api.messages.send, { conversationId, body: "Hei" }),
     ).rejects.toThrow(/FORBIDDEN/);
+  });
+});
+
+describe("reminders", () => {
+  /** Moves the clock to `at` and runs whatever has fallen due. */
+  async function advanceTo(t: Awaited<ReturnType<typeof setup>>["t"], at: number) {
+    vi.advanceTimersByTime(at - Date.now());
+    for (let i = 0; i < 3; i++) {
+      await t.finishInProgressScheduledFunctions();
+      vi.advanceTimersByTime(1);
+    }
+  }
+
+  it("reminds those coming a day before, and those who haven't answered before the deadline", async () => {
+    const { t, ids, as, create, settle } = await setup();
+    const eventId = await create({ rsvpDeadline: NOW + 40 * HOUR }); // starts NOW + 48h
+    await settle();
+    sent = [];
+    // Deadline reminder at deadline - 48h = NOW - 8h: already passed, so not scheduled.
+    await as(ids.ola).mutation(api.events.rsvp, { eventId, status: "maybe" });
+    await advanceTo(t, NOW + 24 * HOUR);
+    // Kari (host, going) and Ola (maybe); Per has muted the hub.
+    expect(sent.map((p) => [p.to, p.title]).sort()).toEqual(
+      [
+        [`ExponentPushToken[${ids.kari}]`, "Påminnelse: Juleavslutning"],
+        [`ExponentPushToken[${ids.ola}]`, "Reminder: Juleavslutning"],
+      ].sort(),
+    );
+  });
+
+  it("sends the deadline reminder only to members without an answer", async () => {
+    const { t, ids, as, hubId, create, settle } = await setup();
+    await as(ids.per).mutation(api.hubs.setNotifyLevel, { hubId, level: "important" });
+    await create({
+      startsAt: NOW + 10 * 24 * HOUR,
+      endsAt: null,
+      rsvpDeadline: NOW + 5 * 24 * HOUR,
+    });
+    await settle();
+    sent = [];
+    await advanceTo(t, NOW + 3 * 24 * HOUR);
+    expect(sent.map((p) => [p.to, p.title]).sort()).toEqual(
+      [
+        [`ExponentPushToken[${ids.ola}]`, "Have you replied? Juleavslutning"],
+        [`ExponentPushToken[${ids.per}]`, "Har du svart? Juleavslutning"],
+      ].sort(),
+    );
+  });
+
+  it("reschedules on edit, and stops when cancelled or turned off", async () => {
+    const { t, ids, as, create, settle } = await setup();
+    const eventId = await create();
+    await settle();
+    const edit = (extra = {}) =>
+      as(ids.kari).mutation(api.events.update, {
+        eventId,
+        title: "Juleavslutning",
+        startsAt: NOW + 72 * HOUR,
+        endsAt: null,
+        ...extra,
+      });
+    await edit();
+    await settle();
+    sent = [];
+    await advanceTo(t, NOW + 24 * HOUR); // The old reminder time: nothing.
+    expect(sent).toEqual([]);
+    await advanceTo(t, NOW + 48 * HOUR); // 24 hours before the new start.
+    expect(sent.map((p) => p.title)).toEqual(["Påminnelse: Juleavslutning"]);
+
+    sent = [];
+    await edit({ startsAt: NOW + 96 * HOUR, reminders: false });
+    expect((await as(ids.kari).query(api.events.get, { eventId }))?.reminders).toBe(false);
+    await edit({ startsAt: NOW + 120 * HOUR });
+    await as(ids.kari).mutation(api.events.cancel, { eventId });
+    await settle();
+    sent = [];
+    await advanceTo(t, NOW + 100 * HOUR);
+    expect(sent).toEqual([]);
+    const jobs = await t.run(async (ctx) => (await ctx.db.get(eventId))?.reminderJobs ?? null);
+    expect(jobs).toBeNull();
   });
 });

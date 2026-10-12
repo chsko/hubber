@@ -317,6 +317,8 @@
     "clear": "Fjern",
     "none": "Ingen arrangementer ennå. Opprett det første, så får alle i huben beskjed.",
     "upcoming": "Kommende",
-    "past": "Tidligere"
+    "past": "Tidligere",
+    "reminders": "Påminnelser",
+    "remindersBody": "Varsle dem som kommer dagen før, og dem som ikke har svart to dager før svarfristen."
   }
 }

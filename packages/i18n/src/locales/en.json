@@ -317,6 +317,8 @@
     "clear": "Clear",
     "none": "No events yet. Create the first one and everyone in the hub is told.",
     "upcoming": "Upcoming",
-    "past": "Past"
+    "past": "Past",
+    "reminders": "Reminders",
+    "remindersBody": "Remind those coming the day before, and those who haven't replied two days before the deadline."
   }
 }

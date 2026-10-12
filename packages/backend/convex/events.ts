@@ -33,6 +33,7 @@ const eventFields = {
   coverId: v.optional(v.union(v.id("_storage"), v.null())),
   capacity: v.optional(v.union(v.number(), v.null())),
   rsvpDeadline: v.optional(v.union(v.number(), v.null())),
+  reminders: v.optional(v.boolean()),
 };
 
 function invalid(field: string): never {
@@ -55,6 +56,7 @@ type Fields = {
   coverId?: Id<"_storage"> | null;
   capacity?: number | null;
   rsvpDeadline?: number | null;
+  reminders?: boolean;
 };
 
 /** Validates the form; the result is a full patch, with `undefined` clearing a field. */
@@ -85,7 +87,43 @@ async function cleanFields(ctx: MutationCtx, args: Fields) {
     coverId,
     capacity,
     rsvpDeadline,
+    remindersOff: args.reminders === false ? true : undefined,
   };
+}
+
+/** Reminders go out this long before the start (HUB-26)... */
+export const START_REMINDER_MS = 24 * 60 * 60 * 1000;
+/** ...and this long before the reply deadline, to those who haven't answered. */
+export const DEADLINE_REMINDER_MS = 2 * 24 * 60 * 60 * 1000;
+
+/**
+ * (Re)schedules an event's reminders: cancels the old ones and, unless the
+ * event is cancelled or the host turned them off, schedules those still ahead.
+ */
+async function scheduleReminders(ctx: MutationCtx, eventId: Id<"events">) {
+  const event = await ctx.db.get(eventId);
+  if (event === null) return;
+  for (const job of event.reminderJobs ?? []) {
+    const scheduled = await ctx.db.system.get(job);
+    if (scheduled?.state.kind === "pending") await ctx.scheduler.cancel(job);
+  }
+  const jobs: Id<"_scheduled_functions">[] = [];
+  const now = Date.now();
+  if (event.cancelledAt === undefined && event.remindersOff !== true) {
+    const startAt = event.startsAt - START_REMINDER_MS;
+    if (startAt > now) {
+      jobs.push(
+        await ctx.scheduler.runAt(startAt, internal.push.remind, { eventId, kind: "start" }),
+      );
+    }
+    const deadlineAt = (event.rsvpDeadline ?? 0) - DEADLINE_REMINDER_MS;
+    if (event.rsvpDeadline !== undefined && deadlineAt > now) {
+      jobs.push(
+        await ctx.scheduler.runAt(deadlineAt, internal.push.remind, { eventId, kind: "deadline" }),
+      );
+    }
+  }
+  await ctx.db.patch(eventId, { reminderJobs: jobs.length > 0 ? jobs : undefined });
 }
 
 /** The event plus the caller's membership of its hub, or null for non-members. */
@@ -191,6 +229,7 @@ export const create = mutation({
       await ctx.db.patch(hubChat._id, { lastMessageAt: now });
     }
     await ctx.db.patch(hubId, { lastActivityAt: now });
+    await scheduleReminders(ctx, eventId);
     await ctx.scheduler.runAfter(0, internal.push.onEvent, {
       eventId,
       change: "new",
@@ -221,6 +260,7 @@ export const update = mutation({
       await ctx.storage.delete(event.coverId);
     }
     await ctx.db.patch(eventId, fields);
+    await scheduleReminders(ctx, eventId);
     const moved =
       fields.startsAt !== event.startsAt ||
       fields.endsAt !== event.endsAt ||
@@ -242,6 +282,7 @@ export const cancel = mutation({
     const { event, user } = await requireManager(ctx, args.eventId);
     if (event.cancelledAt !== undefined) return;
     await ctx.db.patch(event._id, { cancelledAt: Date.now() });
+    await scheduleReminders(ctx, event._id);
     await ctx.scheduler.runAfter(0, internal.push.onEvent, {
       eventId: event._id,
       change: "cancelled",
@@ -274,6 +315,7 @@ export const get = query({
       coverId: event.coverId ?? null,
       capacity: event.capacity ?? null,
       rsvpDeadline: event.rsvpDeadline ?? null,
+      reminders: event.remindersOff !== true,
       hub: hub ? { _id: hub._id, name: hub.name, emoji: hub.emoji ?? null } : null,
       host: {
         _id: event.createdBy,

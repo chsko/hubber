@@ -147,6 +147,10 @@ export default defineSchema({
     rsvpDeadline: v.optional(v.number()),
     createdBy: v.id("users"),
     cancelledAt: v.optional(v.number()),
+    /** The host turned reminders off (HUB-26); on by default. */
+    remindersOff: v.optional(v.boolean()),
+    /** Scheduled reminder pushes, replaced whenever the event changes. */
+    reminderJobs: v.optional(v.array(v.id("_scheduled_functions"))),
   })
     .index("by_hub_start", ["hubId", "startsAt"])
     .index("by_visibility_kommune_start", ["visibility", "kommuneNr", "startsAt"])

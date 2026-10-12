@@ -12,6 +12,7 @@ import {
   Platform,
   Pressable,
   ScrollView,
+  Switch,
   Text,
   TextInput,
   View,
@@ -37,6 +38,7 @@ export type EventInput = {
   coverId: Id<"_storage"> | null;
   capacity: number | null;
   rsvpDeadline: number | null;
+  reminders: boolean;
 };
 
 /** What an existing event starts the form with. */
@@ -90,6 +92,7 @@ export function EventForm({
   const [cover, setCover] = useState<{ uri: string; local: boolean } | null>(
     initial?.coverUrl ? { uri: initial.coverUrl, local: false } : null,
   );
+  const [reminders, setReminders] = useState(initial?.reminders ?? true);
   const [picking, setPicking] = useState<"date" | "deadline" | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -144,6 +147,7 @@ export function EventForm({
         coverId,
         capacity: capacityNumber,
         rsvpDeadline: deadlineAt !== null && deadline ? Math.min(deadlineAt, startsAt) : null,
+        reminders,
       });
     } catch {
       Alert.alert(t("events.saveFailed"));
@@ -325,6 +329,23 @@ export function EventForm({
                 />
               </Field>
             </View>
+          </View>
+
+          <View className="flex-row items-center gap-3">
+            <View className="flex-1 gap-0.5">
+              <Text className="font-sans-semibold text-[15px] text-text">
+                {t("events.reminders")}
+              </Text>
+              <Text className="font-sans text-[13px] leading-5 text-textMuted">
+                {t("events.remindersBody")}
+              </Text>
+            </View>
+            <Switch
+              testID="event-reminders"
+              accessibilityLabel={t("events.reminders")}
+              value={reminders}
+              onValueChange={setReminders}
+            />
           </View>
 
           <Pressable

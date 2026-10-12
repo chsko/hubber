@@ -328,6 +328,50 @@ export const onEvent = internalMutation({
   },
 });
 
+/**
+ * An event reminder (HUB-26): 24 hours before the start to those going or
+ * maybe, and two days before the reply deadline to members who haven't
+ * answered. Muted hubs stay quiet; quiet hours make it silent.
+ */
+export const remind = internalMutation({
+  args: { eventId: v.id("events"), kind: v.union(v.literal("start"), v.literal("deadline")) },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.eventId);
+    const hub = event?.hubId ? await ctx.db.get(event.hubId) : null;
+    if (event === null || hub === null) return;
+    if (event.cancelledAt !== undefined || event.remindersOff === true) return;
+    const members = await ctx.db
+      .query("hubMembers")
+      .withIndex("by_hub", (q) => q.eq("hubId", hub._id))
+      .collect();
+    const rsvps = await ctx.db
+      .query("rsvps")
+      .withIndex("by_event", (q) => q.eq("eventId", event._id))
+      .collect();
+    const answer = new Map(rsvps.map((r) => [r.userId, r.status]));
+    const now = Date.now();
+    const pushes: PushMessage[] = [];
+    for (const member of members) {
+      if (member.status !== "active" || member.notifyLevel === "muted") continue;
+      const status = answer.get(member.userId);
+      const wanted = args.kind === "start" ? status === "yes" || status === "maybe" : !status;
+      if (!wanted) continue;
+      const user = await ctx.db.get(member.userId);
+      if (user === null || user.deletedAt !== undefined) continue;
+      const t = pushText(user.locale);
+      const title =
+        args.kind === "start" ? t.startReminder(event.title) : t.deadlineReminder(event.title);
+      const body =
+        args.kind === "start"
+          ? [t.when(event.startsAt), event.place?.text].filter(Boolean).join(" · ")
+          : t.answerBy(t.when(event.rsvpDeadline ?? event.startsAt));
+      const push = await buildPush(ctx, user, eventTarget(event._id), title, body, now);
+      if (push) pushes.push(push);
+    }
+    if (pushes.length > 0) await ctx.scheduler.runAfter(0, internal.push.send, { pushes });
+  },
+});
+
 /** Drops a token Expo says is no longer registered (app uninstalled, etc.). */
 export const pruneToken = internalMutation({
   args: { token: v.string() },
