@@ -20,7 +20,7 @@ async function setup(template: "class" | "friends" = "friends") {
 describe("normalizeCode", () => {
   it("accepts codes typed loosely or pasted as links", () => {
     expect(normalizeCode("abcd-efgh-23")).toBe("ABCDEFGH23");
-    expect(normalizeCode(" https://hubberapp.io/i/ABCDEFGH23 ")).toBe("ABCDEFGH23");
+    expect(normalizeCode(" https://hubbr.no/i/ABCDEFGH23 ")).toBe("ABCDEFGH23");
     expect(normalizeCode("hubber://i/abcdefgh23")).toBe("ABCDEFGH23");
   });
 });

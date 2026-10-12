@@ -81,7 +81,7 @@ No fixed dates; milestones are ordered by dependency. Sizes: S ≈ ≤1 day, M �
 ### M0 — Foundations
 
 - Register an ENK and apply for a Vipps Login merchant agreement _(you; blocks M1 Vipps)_ — S
-- Register domain hubberapp.io; trademark search for "Hubber" (Patentstyret) _(you)_ — S
+- Register domain (done: hubbr.no); trademark search for "Hubbr" (Patentstyret) _(you)_ — S
 - Monorepo scaffold: pnpm, Turborepo, TypeScript strict, ESLint/Prettier — S
 - Convex project in the EU region, schema skeleton, `convex-test` set-up — S
 - Expo app skeleton: Expo Router tabs, NativeWind, design tokens, light/dark — M
@@ -126,7 +126,7 @@ No fixed dates; milestones are ordered by dependency. Sizes: S ≈ ≤1 day, M �
 - Public visibility, rate limits — S
 - Discover: filter by kommune, date and category — M
 - Public event page `/e/[id]` (server-rendered, Open Graph image) with "Join with Vipps" — M
-- Universal links / app links (hubberapp.io opens the app) — S
+- Universal links / app links (hubbr.no opens the app) — S
 
 ### M6 — Safety and beta launch
 
@@ -152,11 +152,12 @@ Decisions are scored with **Jev** (TypeSafe System One) by calling the API direc
 | 2026-10-11 | Leading segment      | School parents 0.64 / friends & families 0.36 (confidence 0.28)                                                                       | Low confidence; **school parents** lead, both are supported via templates                                                                   |
 | 2026-10-11 | Name                 | Hubber 0.97 vs Hubby; "has unwanted meaning" 0.37 (inconclusive)                                                                      | **Hubber** as working name, pending trademark and domain check                                                                              |
 | 2026-10-12 | Tab bar              | Custom JS tabs 1.00 (asked twice, options reversed, downsides stated) vs NativeTabs                                                   | **Expo Router JS Tabs** styled to the design, Lucide icons                                                                                  |
+| 2026-10-12 | Name and domain      | Not asked (owner's choice)                                                                                                            | **Hubbr**, domain **hubbr.no** (bought). Invite and universal links use hubbr.no; app and repo keep the name Hubber until renamed           |
 | 2026-10-12 | Styling              | Not asked: NativeWind 4.2.7 officially supports Expo SDK 57; v5 is still a release candidate                                          | **NativeWind 4.2.7 + Tailwind 3.4**, colours as CSS variables from `@hubber/shared`                                                         |
 | 2026-10-12 | Platform focus       | Not asked (founder's call)                                                                                                            | **Mobile app only (iOS, Android).** Next.js site (`apps/web`) and Expo web paused; code kept. HUB-4/31/32 to Backlog, HUB-16 is in-app only |
 
 ## 7. Open items for you
 
 1. Register an ENK and apply to Vipps — **postponed**. Development continues with the dev-only sign-in; real Vipps sign-in (HUB issue in M1) stays blocked until then.
-2. Register **hubberapp.io** (available as of 2026-10-11); trademark search for "Hubber".
+2. Domain registered: **hubbr.no** (2026-10-12). Trademark search for "Hubbr" still to do.
 3. Delete the old `master` branch on GitHub (`main` is now default and contains all of `master`).

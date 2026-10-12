@@ -6,7 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
  * "Join with code", and `hubber://i/<code>` opens the app directly.
  */
 export function inviteUrl(code: string): string {
-  return `https://hubberapp.io/i/${code}`;
+  return `https://hubbr.no/i/${code}`;
 }
 
 /** "ABCDEFGH23" → "ABCDE-FGH23", easier to read aloud and type. */

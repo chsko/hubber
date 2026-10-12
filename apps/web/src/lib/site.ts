@@ -1,1 +1,1 @@
-export const siteUrl = "https://hubberapp.io";
+export const siteUrl = "https://hubbr.no";

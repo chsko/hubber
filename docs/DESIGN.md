@@ -1,6 +1,6 @@
 # Hubber — Product & Design
 
-> Working name **Hubber** (from "hub"). Replaces "Hubby" (English slang for husband). Domain: **hubberapp.io**. Trademark check at Patentstyret still pending.
+> Working name **Hubber** (from "hub"). Replaces "Hubby" (English slang for husband). Domain: **hubbr.no** (2026-10-12: public name Hubbr chosen; the app is still called Hubber in code until renamed). Trademark check at Patentstyret still pending.
 
 ## 1. Why Hubber exists
 
@@ -82,7 +82,7 @@ Bottom tabs:
 
 ### 5.3 Join via link
 
-`hubberapp.io/i/{code}` opens a server-rendered web page showing the hub's name, icon and member count (no member names), with buttons **Open in app** / **Download the app** and **Continue in browser**. Then Vipps sign-in, then joined (or "waiting for admin approval").
+`hubbr.no/i/{code}` opens a server-rendered web page showing the hub's name, icon and member count (no member names), with buttons **Open in app** / **Download the app** and **Continue in browser**. Then Vipps sign-in, then joined (or "waiting for admin approval").
 
 ### 5.4 Create an event
 
