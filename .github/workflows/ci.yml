@@ -46,3 +46,57 @@ jobs:
       # Runs each package's `i18n:check` script (defined by packages/i18n).
       - name: i18n key check
         run: pnpm i18n:check
+
+  # Publishes the app's JavaScript to EAS Update (channel and branch "main") once checks pass on main,
+  # so Expo Go and installed builds on the "main" channel pick up the change without a rebuild.
+  # Skipped until the EXPO_TOKEN repository secret exists.
+  update:
+    name: Publish EAS Update
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      # Public URL, not a secret (same value as apps/mobile/.env.example). Inlined into the bundle.
+      EXPO_PUBLIC_CONVEX_URL: https://tangible-ox-76.eu-west-1.convex.cloud
+    steps:
+      - name: Check for EXPO_TOKEN
+        id: token
+        run: |
+          if [ -n "$EXPO_TOKEN" ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "::notice::EXPO_TOKEN is not set; skipping EAS Update."; fi
+
+      - if: steps.token.outputs.present == 'true'
+        uses: actions/checkout@v4
+
+      - if: steps.token.outputs.present == 'true'
+        uses: pnpm/action-setup@v4
+
+      - if: steps.token.outputs.present == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - if: steps.token.outputs.present == 'true'
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - if: steps.token.outputs.present == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - if: steps.token.outputs.present == 'true'
+        name: eas update
+        working-directory: apps/mobile
+        run: eas update --channel main --message "$(git log -1 --pretty=%s)" --non-interactive
+
+      - if: steps.token.outputs.present == 'true'
+        name: Expo Go link
+        working-directory: apps/mobile
+        run: |
+          id=$(node -p "require('./app.json').expo.extra?.eas?.projectId ?? ''")
+          sdk=$(node -p "require('expo/package.json').version.split('.')[0]")
+          link="exp://u.expo.dev/${id}?runtime-version=exposdk:${sdk}.0.0&channel-name=main"
+          echo "Open in Expo Go: \`${link}\`" >> "$GITHUB_STEP_SUMMARY"

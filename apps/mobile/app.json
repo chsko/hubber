@@ -7,6 +7,9 @@
     "icon": "./assets/images/icon.png",
     "scheme": "hubber",
     "userInterfaceStyle": "automatic",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
     "ios": {
       "bundleIdentifier": "io.hubberapp.app",
       "supportsTablet": false

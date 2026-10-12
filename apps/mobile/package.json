@@ -35,6 +35,7 @@
     "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.4",
+    "expo-updates": "~57.0.25",
     "i18next": "^26.4.3",
     "lucide-react-native": "^1.55.0",
     "nativewind": "^4.2.7",
