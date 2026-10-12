@@ -1,0 +1,40 @@
+{
+  "common": {
+    "appName": "Hubber",
+    "loading": "Laster"
+  },
+  "tabs": {
+    "home": "Hjem",
+    "hubs": "Hubber",
+    "calendar": "Kalender",
+    "discover": "Oppdag",
+    "profile": "Profil"
+  },
+  "home": {
+    "comingSoon": "Her kommer dine neste arrangementer, uleste hubber og invitasjoner. Ingen feed."
+  },
+  "hubs": {
+    "comingSoon": "Klassen, familien og vennegjengen samles her. Kommer i M2."
+  },
+  "calendar": {
+    "comingSoon": "Alle arrangementene dine på ett sted. Kommer i M4."
+  },
+  "discover": {
+    "subtitle": "Åpne arrangementer i nærheten. Ingen algoritme.",
+    "comingSoon": "Offentlige arrangementer etter kommune og dato. Kommer i M5."
+  },
+  "profile": {
+    "account": "Konto",
+    "signedOut": "Ikke logget inn",
+    "noName": "Uten navn",
+    "comingSoon": "Innlogging med Vipps kommer i M1.",
+    "language": "Språk",
+    "languageSystem": "Som enheten",
+    "languageNb": "Norsk (bokmål)",
+    "languageEn": "English"
+  },
+  "notFound": {
+    "title": "Fant ikke siden",
+    "goHome": "Gå til Hjem"
+  }
+}

@@ -1,11 +1,11 @@
+import { useTranslation } from "react-i18next";
 import { ComingSoon, Screen } from "@/components/screen";
 
 export default function HomeScreen() {
+  const { t } = useTranslation();
   return (
-    <Screen title="Hjem" subtitle="Hubber">
-      <ComingSoon>
-        Her kommer dine neste arrangementer, uleste hubber og invitasjoner. Ingen feed.
-      </ComingSoon>
+    <Screen title={t("tabs.home")} subtitle={t("common.appName")}>
+      <ComingSoon>{t("home.comingSoon")}</ComingSoon>
     </Screen>
   );
 }

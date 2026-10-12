@@ -1,0 +1,40 @@
+{
+  "common": {
+    "appName": "Hubber",
+    "loading": "Loading"
+  },
+  "tabs": {
+    "home": "Home",
+    "hubs": "Hubs",
+    "calendar": "Calendar",
+    "discover": "Discover",
+    "profile": "Profile"
+  },
+  "home": {
+    "comingSoon": "Your next events, unread hubs and invitations will show up here. No feed."
+  },
+  "hubs": {
+    "comingSoon": "Your class, family and friends get together here. Coming in M2."
+  },
+  "calendar": {
+    "comingSoon": "All your events in one place. Coming in M4."
+  },
+  "discover": {
+    "subtitle": "Open events nearby. No algorithm.",
+    "comingSoon": "Public events by municipality and date. Coming in M5."
+  },
+  "profile": {
+    "account": "Account",
+    "signedOut": "Not signed in",
+    "noName": "No name",
+    "comingSoon": "Sign-in with Vipps is coming in M1.",
+    "language": "Language",
+    "languageSystem": "Same as device",
+    "languageNb": "Norsk (bokmål)",
+    "languageEn": "English"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "goHome": "Go to Home"
+  }
+}

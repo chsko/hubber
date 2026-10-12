@@ -1,5 +1,6 @@
 import { colors } from "@hubber/shared";
 import { Tabs } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { CalendarDays, CircleUserRound, Compass, House, UsersRound } from "lucide-react-native";
 import type { LucideIcon } from "lucide-react-native";
 import type { ColorValue } from "react-native";
@@ -16,6 +17,7 @@ const tab = (title: string, Icon: LucideIcon) => ({
 export default function TabLayout() {
   const c = colors[useScheme()];
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   return (
     <Tabs
       screenOptions={{
@@ -32,11 +34,11 @@ export default function TabLayout() {
         tabBarLabelStyle: { fontFamily: "Figtree_600SemiBold", fontSize: 11, lineHeight: 16 },
       }}
     >
-      <Tabs.Screen name="index" options={tab("Hjem", House)} />
-      <Tabs.Screen name="hubs" options={tab("Hubber", UsersRound)} />
-      <Tabs.Screen name="calendar" options={tab("Kalender", CalendarDays)} />
-      <Tabs.Screen name="discover" options={tab("Oppdag", Compass)} />
-      <Tabs.Screen name="profile" options={tab("Profil", CircleUserRound)} />
+      <Tabs.Screen name="index" options={tab(t("tabs.home"), House)} />
+      <Tabs.Screen name="hubs" options={tab(t("tabs.hubs"), UsersRound)} />
+      <Tabs.Screen name="calendar" options={tab(t("tabs.calendar"), CalendarDays)} />
+      <Tabs.Screen name="discover" options={tab(t("tabs.discover"), Compass)} />
+      <Tabs.Screen name="profile" options={tab(t("tabs.profile"), CircleUserRound)} />
     </Tabs>
   );
 }

@@ -29,12 +29,20 @@
       "expo-router",
       "expo-font",
       [
+        "expo-localization",
+        {
+          "supportedLocales": ["nb", "en"]
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "backgroundColor": "#FAF8F5",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76,
-          "dark": { "backgroundColor": "#121413" }
+          "dark": {
+            "backgroundColor": "#121413"
+          }
         }
       ]
     ],
