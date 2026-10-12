@@ -4,6 +4,7 @@ import type { Doc, Id } from "./_generated/dataModel";
 import { type MutationCtx, mutation, type QueryCtx, query } from "./_generated/server";
 import { getHubMember, getUserId, requireHubMember } from "./lib/auth";
 import { requireImage } from "./lib/images";
+import { DEFAULT_DURATION_MS, endOf, eventSummary, goingCount, rsvpRows } from "./lib/events";
 import { lastReadAt, unreadCount } from "./lib/unread";
 import { rsvpStatus } from "./schema";
 
@@ -19,8 +20,6 @@ export const MAX_GUESTS = 10;
 export const MAX_CAPACITY = 1000;
 /** Past events in a hub's list. */
 const PAST_LIMIT = 20;
-/** An event without an end time counts as ongoing this long after it starts. */
-const DEFAULT_DURATION_MS = 2 * 60 * 60 * 1000;
 
 type Ctx = QueryCtx | MutationCtx;
 
@@ -158,38 +157,6 @@ async function eventConversation(ctx: Ctx, eventId: Id<"events">) {
     .query("conversations")
     .withIndex("by_event", (q) => q.eq("eventId", eventId))
     .first();
-}
-
-async function rsvpRows(ctx: Ctx, eventId: Id<"events">) {
-  return ctx.db
-    .query("rsvps")
-    .withIndex("by_event", (q) => q.eq("eventId", eventId))
-    .collect();
-}
-
-/** People coming (yes), counting their guests. */
-function goingCount(rows: Doc<"rsvps">[]) {
-  return rows.filter((r) => r.status === "yes").reduce((sum, r) => sum + 1 + r.guests, 0);
-}
-
-function endOf(event: Doc<"events">) {
-  return event.endsAt ?? event.startsAt + DEFAULT_DURATION_MS;
-}
-
-/** What a list row needs: title, time, place, and how it stands for me. */
-async function eventSummary(ctx: Ctx, event: Doc<"events">, userId: Id<"users">) {
-  const rows = await rsvpRows(ctx, event._id);
-  return {
-    _id: event._id,
-    hubId: event.hubId ?? null,
-    title: event.title,
-    startsAt: event.startsAt,
-    endsAt: event.endsAt ?? null,
-    place: event.place?.text ?? null,
-    cancelled: event.cancelledAt !== undefined,
-    going: goingCount(rows),
-    myRsvp: rows.find((r) => r.userId === userId)?.status ?? null,
-  };
 }
 
 /**

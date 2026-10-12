@@ -5,7 +5,7 @@ import { colors } from "@hubber/shared";
 import { useMutation, useQuery } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import { router, useLocalSearchParams } from "expo-router";
-import { BadgeCheck, MapPin, MessageCircle, Minus, Plus } from "lucide-react-native";
+import { BadgeCheck, CalendarPlus, MapPin, MessageCircle, Minus, Plus } from "lucide-react-native";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -26,6 +26,7 @@ import { formatWhen, type Rsvp } from "@/components/events/event-ui";
 import { NotAMember } from "@/components/not-a-member";
 import { StackHeader } from "@/components/stack-header";
 import { UnreadBadge } from "@/components/unread-badge";
+import { useAddToCalendar } from "@/lib/calendar-feed";
 import { convexErrorCode } from "@/lib/errors";
 import { useLocale } from "@/lib/i18n";
 import { useScheme } from "@/lib/use-scheme";
@@ -55,6 +56,7 @@ export default function EventScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: Id<"events"> }>();
   const event = useQuery(api.events.get, { eventId });
   const cancel = useMutation(api.events.cancel);
+  const addToCalendar = useAddToCalendar();
 
   if (event === undefined) {
     return (
@@ -179,6 +181,22 @@ export default function EventScreen() {
               {t("events.chat")}
             </Text>
             <UnreadBadge count={event.chatUnread} />
+          </Pressable>
+        ) : null}
+
+        {!event.cancelled && !event.past ? (
+          <Pressable
+            testID="add-to-calendar"
+            accessibilityRole="button"
+            onPress={() =>
+              void addToCalendar(eventId).catch(() => Alert.alert(t("events.saveFailed")))
+            }
+            className="flex-row items-center gap-3 rounded-2xl border border-border bg-surface px-4 py-3.5 active:opacity-70"
+          >
+            <CalendarPlus color={c.primary} size={20} strokeWidth={2.2} />
+            <Text className="flex-1 font-sans-semibold text-[16px] text-text">
+              {t("events.addToCalendar")}
+            </Text>
           </Pressable>
         ) : null}
 

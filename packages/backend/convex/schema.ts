@@ -170,6 +170,14 @@ export default defineSchema({
     .index("by_user", ["userId"])
     .index("by_event_user", ["eventId", "userId"]),
 
+  /** Secret calendar subscription links (HUB-27); resetting replaces the token. */
+  calendarFeeds: defineTable({
+    userId: v.id("users"),
+    token: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_token", ["token"]),
+
   pushTokens: defineTable({
     userId: v.id("users"),
     token: v.string(),

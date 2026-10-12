@@ -34,9 +34,20 @@
     "waitingForApproval": "Waiting for approval"
   },
   "calendar": {
-    "comingSoon": "All your events in one place. Coming in M4.",
     "previousMonth": "Previous month",
-    "nextMonth": "Next month"
+    "nextMonth": "Next month",
+    "agenda": "List",
+    "month": "Month",
+    "empty": "No events in the next 60 days.",
+    "nothingThatDay": "Nothing that day.",
+    "feedTitle": "Show in your calendar app",
+    "feedBody": "Subscribe and your events appear in your phone's calendar, kept up to date.",
+    "feedPrivate": "The link is private: anyone who has it sees your events. Make a new one if it was shared by mistake.",
+    "share": "Share the link",
+    "newLink": "Make a new link",
+    "turnOff": "Turn the link off",
+    "subscribe": "Subscribe",
+    "manageLink": "Manage link"
   },
   "discover": {
     "subtitle": "Open events nearby. No algorithm.",
@@ -319,6 +330,7 @@
     "upcoming": "Upcoming",
     "past": "Past",
     "reminders": "Reminders",
-    "remindersBody": "Remind those coming the day before, and those who haven't replied two days before the deadline."
+    "remindersBody": "Remind those coming the day before, and those who haven't replied two days before the deadline.",
+    "addToCalendar": "Add to my calendar"
   }
 }

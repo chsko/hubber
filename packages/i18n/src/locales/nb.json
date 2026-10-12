@@ -34,9 +34,20 @@
     "waitingForApproval": "Venter på godkjenning"
   },
   "calendar": {
-    "comingSoon": "Alle arrangementene dine på ett sted. Kommer i M4.",
     "previousMonth": "Forrige måned",
-    "nextMonth": "Neste måned"
+    "nextMonth": "Neste måned",
+    "agenda": "Liste",
+    "month": "Måned",
+    "empty": "Ingen arrangementer de neste 60 dagene.",
+    "nothingThatDay": "Ingenting denne dagen.",
+    "feedTitle": "Vis i kalenderappen",
+    "feedBody": "Abonner, så dukker arrangementene dine opp i kalenderen på telefonen og holdes oppdatert.",
+    "feedPrivate": "Lenken er privat: alle som har den, ser arrangementene dine. Lag en ny hvis den er delt ved en feil.",
+    "share": "Del lenken",
+    "newLink": "Lag ny lenke",
+    "turnOff": "Slå av lenken",
+    "subscribe": "Abonner",
+    "manageLink": "Administrer lenken"
   },
   "discover": {
     "subtitle": "Åpne arrangementer i nærheten. Ingen algoritme.",
@@ -319,6 +330,7 @@
     "upcoming": "Kommende",
     "past": "Tidligere",
     "reminders": "Påminnelser",
-    "remindersBody": "Varsle dem som kommer dagen før, og dem som ikke har svart to dager før svarfristen."
+    "remindersBody": "Varsle dem som kommer dagen før, og dem som ikke har svart to dager før svarfristen.",
+    "addToCalendar": "Legg til i kalenderen"
   }
 }

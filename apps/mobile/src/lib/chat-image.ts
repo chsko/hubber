@@ -1,11 +1,6 @@
 import { useAuthToken } from "@convex-dev/auth/react";
 import type { ImageURISource } from "react-native";
-
-// HTTP routes live on the deployment's .convex.site host.
-const siteUrl =
-  (process.env.EXPO_PUBLIC_CONVEX_SITE_URL as string | undefined) ??
-  (process.env.EXPO_PUBLIC_CONVEX_URL as string | undefined)?.replace(/\.cloud$/, ".site") ??
-  "";
+import { siteUrl } from "./site-url";
 
 /**
  * Image source for photo `index` of a chat message (HUB-20). Photos are

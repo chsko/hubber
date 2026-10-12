@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as calendar from "../calendar.js";
 import type * as devSignIn from "../devSignIn.js";
 import type * as events from "../events.js";
 import type * as files from "../files.js";
@@ -20,7 +21,9 @@ import type * as lib_auth from "../lib/auth.js";
 import type * as lib_conversations from "../lib/conversations.js";
 import type * as lib_devPersonas from "../lib/devPersonas.js";
 import type * as lib_devSignIn from "../lib/devSignIn.js";
+import type * as lib_events from "../lib/events.js";
 import type * as lib_hubTemplates from "../lib/hubTemplates.js";
+import type * as lib_ics from "../lib/ics.js";
 import type * as lib_images from "../lib/images.js";
 import type * as lib_pushText from "../lib/pushText.js";
 import type * as lib_rateLimit from "../lib/rateLimit.js";
@@ -39,6 +42,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  calendar: typeof calendar;
   devSignIn: typeof devSignIn;
   events: typeof events;
   files: typeof files;
@@ -50,7 +54,9 @@ declare const fullApi: ApiFromModules<{
   "lib/conversations": typeof lib_conversations;
   "lib/devPersonas": typeof lib_devPersonas;
   "lib/devSignIn": typeof lib_devSignIn;
+  "lib/events": typeof lib_events;
   "lib/hubTemplates": typeof lib_hubTemplates;
+  "lib/ics": typeof lib_ics;
   "lib/images": typeof lib_images;
   "lib/pushText": typeof lib_pushText;
   "lib/rateLimit": typeof lib_rateLimit;
