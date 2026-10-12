@@ -106,6 +106,8 @@ export default defineSchema({
     mentions: v.array(v.id("users")),
     editedAt: v.optional(v.number()),
     deletedAt: v.optional(v.number()),
+    /** A "New event" card posted in the hub chat (HUB-23); the body is empty. */
+    eventId: v.optional(v.id("events")),
   }).index("by_conversation", ["conversationId"]),
 
   reactions: defineTable({

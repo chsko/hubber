@@ -27,6 +27,27 @@ export async function pickSquareImage(): Promise<string | null> {
   return uri;
 }
 
+/** Event covers are wide (16:9) and sized for a phone screen. */
+const COVER_WIDTH = 1200;
+
+/** Lets the user pick and crop a 16:9 cover photo. Resolves to the local file URI, or null. */
+export async function pickCoverImage(): Promise<string | null> {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ["images"],
+    allowsEditing: true,
+    aspect: [16, 9],
+    quality: 1,
+    exif: false,
+  });
+  const asset = result.canceled ? undefined : result.assets[0];
+  if (asset === undefined) return null;
+  let context = ImageManipulator.manipulate(asset.uri);
+  if (asset.width > COVER_WIDTH) context = context.resize({ width: COVER_WIDTH });
+  const image = await context.renderAsync();
+  const { uri } = await image.saveAsync({ compress: 0.75, format: SaveFormat.JPEG });
+  return uri;
+}
+
 /** Chat photos keep enough detail for a phone screen; the long edge is capped here. */
 const CHAT_IMAGE_EDGE = 1600;
 

@@ -75,3 +75,39 @@ export function weekdayNames(locale: Locale, width: "short" | "long" = "short"):
     formatter(locale, { weekday: width }).format(Date.UTC(2024, 0, 1 + i, 12)),
   );
 }
+
+/** Hour and minute on the Oslo clock: { hour (0-23), minute }. */
+export function osloTimeParts(date: DateInput): { hour: number; minute: number } {
+  const parts = formatter("en", { hour: "numeric", minute: "numeric" }).formatToParts(date);
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(parts.find((part) => part.type === type)?.value);
+  return { hour: get("hour"), minute: get("minute") };
+}
+
+type OsloDateTime = { year: number; month: number; day: number; hour: number; minute: number };
+
+/** Oslo's offset from UTC in milliseconds at `instant` (+1h in winter, +2h in summer). */
+function osloOffset(instant: number): number {
+  const { year, month, day } = osloDateParts(instant);
+  const { hour, minute } = osloTimeParts(instant);
+  const asUtc = Date.UTC(year, month - 1, day, hour, minute);
+  return asUtc - (instant - (instant % 60_000));
+}
+
+/**
+ * The instant a wall-clock time in Oslo refers to, e.g. 13 Dec 17:00. In the
+ * hour skipped when clocks go forward, the time is read with the winter
+ * offset; in the hour repeated in autumn, the first one counts.
+ */
+export function osloToEpoch({ year, month, day, hour, minute }: OsloDateTime): number {
+  const asUtc = Date.UTC(year, month - 1, day, hour, minute);
+  const hourMs = 3_600_000;
+  // Oslo is UTC+2 in summer and UTC+1 in winter; keep the readings that land on this wall time.
+  const matches = [asUtc - 2 * hourMs, asUtc - hourMs].filter((t) => osloOffset(t) === asUtc - t);
+  return matches[0] ?? asUtc - hourMs;
+}
+
+/** "fre. 13. des." (nb) · "Fri 13 Dec" (en) */
+export function formatShortDate(date: DateInput, locale: Locale): string {
+  return formatter(locale, { weekday: "short", day: "numeric", month: "short" }).format(date);
+}

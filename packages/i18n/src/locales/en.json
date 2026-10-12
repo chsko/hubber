@@ -19,10 +19,10 @@
     "goodEvening": "Good evening, {{name}}",
     "goodNight": "Good night, {{name}}",
     "nextUp": "Next up",
-    "eventsSoon": "Your next events will show up here. Events are coming in M4.",
     "unread": "Unread",
     "allRead": "You're all caught up.",
-    "waiting": "Waiting for approval"
+    "waiting": "Waiting for approval",
+    "noEvents": "No upcoming events. Events you're going to or might go to show up here."
   },
   "hubs": {
     "create": "Create hub",
@@ -34,7 +34,9 @@
     "waitingForApproval": "Waiting for approval"
   },
   "calendar": {
-    "comingSoon": "All your events in one place. Coming in M4."
+    "comingSoon": "All your events in one place. Coming in M4.",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "discover": {
     "subtitle": "Open events nearby. No algorithm.",
@@ -135,7 +137,6 @@
     "events": "Events",
     "members": "Members",
     "welcomeTitle": "Welcome to {{name}}",
-    "eventsSoon": "Events are coming in M4.",
     "role": {
       "owner": "Owner",
       "admin": "Admin"
@@ -244,5 +245,78 @@
     "photoQuote": "📷 Photo",
     "photos_one": "📷 {{count}} photo",
     "photos_other": "📷 {{count}} photos"
+  },
+  "events": {
+    "new": "New event",
+    "create": "Create event",
+    "edit": "Edit",
+    "save": "Save",
+    "newEvent": "New event",
+    "answer": "Reply now",
+    "cancelled": "Cancelled",
+    "my": {
+      "yes": "You're going ✓",
+      "maybe": "You might go",
+      "no": "You're not going"
+    },
+    "rsvp": {
+      "yes": "Going",
+      "maybe": "Maybe",
+      "no": "No"
+    },
+    "goingCount_one": "{{count}} going",
+    "goingCount_other": "{{count}} going",
+    "maybeCount_one": "{{count}} maybe",
+    "maybeCount_other": "{{count}} maybe",
+    "capacityOf_one": "max {{count}} place",
+    "capacityOf_other": "max {{count}} places",
+    "answerBy": "reply by {{date}}",
+    "list": {
+      "yes_one": "Going ({{count}})",
+      "yes_other": "Going ({{count}})",
+      "maybe_one": "Maybe ({{count}})",
+      "maybe_other": "Maybe ({{count}})",
+      "no_one": "Not going ({{count}})",
+      "no_other": "Not going ({{count}})",
+      "noReply_one": "No reply yet ({{count}})",
+      "noReply_other": "No reply yet ({{count}})"
+    },
+    "guests": "Guests besides you",
+    "fewerGuests": "Fewer guests",
+    "moreGuests": "More guests",
+    "notePlaceholder": "Short note (optional), e.g. \"Bringing cake\"",
+    "full": "This event is full.",
+    "rsvpClosed": "The reply deadline has passed.",
+    "saveFailed": "Couldn't save. Try again.",
+    "host": "Host: {{name}}",
+    "openInMaps": "Opens the maps app",
+    "chat": "Event chat",
+    "cancelEvent": "Cancel event",
+    "cancelTitle": "Cancel this event?",
+    "cancelBody": "Everyone who said going or maybe will be told. This can't be undone.",
+    "addCover": "Add cover photo",
+    "changeCover": "Change cover photo",
+    "removeCover": "Remove photo",
+    "titleLabel": "Title",
+    "titlePlaceholder": "E.g. Christmas party",
+    "date": "Date",
+    "pickDate": "Pick a date",
+    "start": "Starts",
+    "end": "Ends",
+    "optional": "Optional",
+    "badTime": "Write the time as 18:00",
+    "place": "Place",
+    "placePlaceholder": "Address or \"At Kari's place\"",
+    "description": "Description",
+    "descriptionPlaceholder": "What's happening, what should people bring?",
+    "rsvpSettings": "Replies",
+    "deadline": "Reply by",
+    "deadlineAfterStart": "The deadline must be before the event",
+    "capacity": "Max people",
+    "badCapacity": "A number from 1 to 1000",
+    "clear": "Clear",
+    "none": "No events yet. Create the first one and everyone in the hub is told.",
+    "upcoming": "Upcoming",
+    "past": "Past"
   }
 }

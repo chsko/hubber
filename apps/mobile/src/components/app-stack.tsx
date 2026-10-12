@@ -41,6 +41,10 @@ export function AppStack() {
           <Stack.Screen name="hub/join" />
           <Stack.Screen name="hub/[hubId]/index" />
           <Stack.Screen name="hub/[hubId]/invite" />
+          <Stack.Screen name="event/new" />
+          <Stack.Screen name="event/[eventId]/index" />
+          <Stack.Screen name="event/[eventId]/edit" />
+          <Stack.Screen name="event/[eventId]/chat" />
         </Stack.Protected>
         <Stack.Protected guard={signedIn && !onboarded}>
           <Stack.Screen name="onboarding" />

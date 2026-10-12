@@ -19,10 +19,10 @@
     "goodEvening": "God kveld, {{name}}",
     "goodNight": "God natt, {{name}}",
     "nextUp": "Neste",
-    "eventsSoon": "De neste arrangementene dine vises her. Arrangementer kommer i M4.",
     "unread": "Uleste",
     "allRead": "Du har lest alt.",
-    "waiting": "Venter på godkjenning"
+    "waiting": "Venter på godkjenning",
+    "noEvents": "Ingen kommende arrangementer. Det du svarer kommer eller kanskje på, vises her."
   },
   "hubs": {
     "create": "Opprett hub",
@@ -34,7 +34,9 @@
     "waitingForApproval": "Venter på godkjenning"
   },
   "calendar": {
-    "comingSoon": "Alle arrangementene dine på ett sted. Kommer i M4."
+    "comingSoon": "Alle arrangementene dine på ett sted. Kommer i M4.",
+    "previousMonth": "Forrige måned",
+    "nextMonth": "Neste måned"
   },
   "discover": {
     "subtitle": "Åpne arrangementer i nærheten. Ingen algoritme.",
@@ -135,7 +137,6 @@
     "events": "Arrangementer",
     "members": "Medlemmer",
     "welcomeTitle": "Velkommen til {{name}}",
-    "eventsSoon": "Arrangementer kommer i M4.",
     "role": {
       "owner": "Eier",
       "admin": "Admin"
@@ -244,5 +245,78 @@
     "photoQuote": "📷 Bilde",
     "photos_one": "📷 {{count}} bilde",
     "photos_other": "📷 {{count}} bilder"
+  },
+  "events": {
+    "new": "Nytt arrangement",
+    "create": "Opprett arrangement",
+    "edit": "Rediger",
+    "save": "Lagre",
+    "newEvent": "Nytt arrangement",
+    "answer": "Svar nå",
+    "cancelled": "Avlyst",
+    "my": {
+      "yes": "Du kommer ✓",
+      "maybe": "Du kommer kanskje",
+      "no": "Du kommer ikke"
+    },
+    "rsvp": {
+      "yes": "Kommer",
+      "maybe": "Kanskje",
+      "no": "Nei"
+    },
+    "goingCount_one": "{{count}} kommer",
+    "goingCount_other": "{{count}} kommer",
+    "maybeCount_one": "{{count}} kanskje",
+    "maybeCount_other": "{{count}} kanskje",
+    "capacityOf_one": "maks {{count}} plass",
+    "capacityOf_other": "maks {{count}} plasser",
+    "answerBy": "svar innen {{date}}",
+    "list": {
+      "yes_one": "Kommer ({{count}})",
+      "yes_other": "Kommer ({{count}})",
+      "maybe_one": "Kanskje ({{count}})",
+      "maybe_other": "Kanskje ({{count}})",
+      "no_one": "Kommer ikke ({{count}})",
+      "no_other": "Kommer ikke ({{count}})",
+      "noReply_one": "Har ikke svart ({{count}})",
+      "noReply_other": "Har ikke svart ({{count}})"
+    },
+    "guests": "Gjester i tillegg til deg",
+    "fewerGuests": "Færre gjester",
+    "moreGuests": "Flere gjester",
+    "notePlaceholder": "Kort beskjed (valgfritt), f.eks. «Tar med kake»",
+    "full": "Arrangementet er fullt.",
+    "rsvpClosed": "Svarfristen har gått ut.",
+    "saveFailed": "Kunne ikke lagre. Prøv igjen.",
+    "host": "Arrangør: {{name}}",
+    "openInMaps": "Åpner kartappen",
+    "chat": "Chat for arrangementet",
+    "cancelEvent": "Avlys arrangementet",
+    "cancelTitle": "Avlyse arrangementet?",
+    "cancelBody": "Alle som har svart kommer eller kanskje får beskjed. Dette kan ikke angres.",
+    "addCover": "Legg til forsidebilde",
+    "changeCover": "Bytt forsidebilde",
+    "removeCover": "Fjern bildet",
+    "titleLabel": "Tittel",
+    "titlePlaceholder": "F.eks. Juleavslutning",
+    "date": "Dato",
+    "pickDate": "Velg dato",
+    "start": "Starter",
+    "end": "Slutter",
+    "optional": "Valgfritt",
+    "badTime": "Skriv tiden som 18:00",
+    "place": "Sted",
+    "placePlaceholder": "Adresse eller «Hjemme hos Kari»",
+    "description": "Beskrivelse",
+    "descriptionPlaceholder": "Hva skal skje, hva bør folk ta med?",
+    "rsvpSettings": "Påmelding",
+    "deadline": "Svarfrist",
+    "deadlineAfterStart": "Svarfristen må være før arrangementet",
+    "capacity": "Maks antall",
+    "badCapacity": "Et tall fra 1 til 1000",
+    "clear": "Fjern",
+    "none": "Ingen arrangementer ennå. Opprett det første, så får alle i huben beskjed.",
+    "upcoming": "Kommende",
+    "past": "Tidligere"
   }
 }

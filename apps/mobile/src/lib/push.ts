@@ -72,8 +72,12 @@ export function usePush() {
     if (Platform.OS === "web") return;
     function open(response: Notifications.NotificationResponse | null) {
       const url = response?.notification.request.content.data?.url;
-      if (typeof url === "string" && url.startsWith("/hub/")) {
+      if (typeof url !== "string") return;
+      if (url.startsWith("/hub/")) {
         router.push({ pathname: "/hub/[hubId]", params: { hubId: url.slice("/hub/".length) } });
+      } else if (url.startsWith("/event/")) {
+        const eventId = url.slice("/event/".length);
+        router.push({ pathname: "/event/[eventId]", params: { eventId } });
       }
     }
     // A tap that launched the app, then taps while it runs.

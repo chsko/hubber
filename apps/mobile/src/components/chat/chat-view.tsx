@@ -82,6 +82,7 @@ export function ChatView({
           : null,
         mentions: [],
         mentionsMe: false,
+        event: null,
       },
     });
   });

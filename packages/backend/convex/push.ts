@@ -15,8 +15,9 @@ import { lastReadAt, unreadCount } from "./lib/unread";
 /**
  * Push notifications, calm by default (HUB-22, docs/DESIGN.md §5.6):
  * - Mentions and replies to you push at once, unless the hub is muted.
+ * - New events push to the hub; changes and cancellations to those coming.
  * - Other messages only push for hubs set to "All", bundled into one
- *   summary per hub after BUNDLE_WINDOW_MS.
+ *   summary per chat (hub or event) after BUNDLE_WINDOW_MS.
  * - "Important only" (the default for school hubs) skips ordinary chat.
  * - Quiet hours (22–07 Oslo, on by default) deliver silently.
  */
@@ -111,11 +112,35 @@ async function totalUnread(ctx: QueryCtx, userId: Id<"users">): Promise<number> 
   return total;
 }
 
+/** Where a tap leads, and how notifications are grouped on the phone. */
+type Target = { url: string; threadId: string };
+
+const hubTarget = (hubId: Id<"hubs">): Target => ({ url: `/hub/${hubId}`, threadId: hubId });
+const eventTarget = (eventId: Id<"events">): Target => ({
+  url: `/event/${eventId}`,
+  threadId: eventId,
+});
+
+/**
+ * The hub a conversation belongs to, plus what to call it in a push and
+ * where a tap leads: the hub chat, or an event's chat.
+ */
+async function conversationContext(ctx: QueryCtx, conversation: Doc<"conversations">) {
+  if (conversation.kind === "event" && conversation.eventId !== undefined) {
+    const event = await ctx.db.get(conversation.eventId);
+    const hub = event?.hubId ? await ctx.db.get(event.hubId) : null;
+    if (event === null || hub === null) return null;
+    return { hub, label: event.title, target: eventTarget(event._id) };
+  }
+  const hub = conversation.hubId ? await ctx.db.get(conversation.hubId) : null;
+  return hub === null ? null : { hub, label: hub.name, target: hubTarget(hub._id) };
+}
+
 /** Builds one push for `user`, or null if they have no devices. */
 async function buildPush(
   ctx: QueryCtx,
   user: Doc<"users">,
-  hub: Doc<"hubs">,
+  target: Target,
   title: string,
   body: string,
   now: number,
@@ -130,12 +155,12 @@ async function buildPush(
     to: tokens.map((t) => t.token),
     title,
     body,
-    data: { url: `/hub/${hub._id}` },
+    data: { url: target.url },
     badge: await totalUnread(ctx, user._id),
     sound: quiet ? null : "default",
     priority: quiet ? "normal" : "high",
     ...(quiet && { interruptionLevel: "passive" as const }),
-    threadId: hub._id,
+    threadId: target.threadId,
   };
 }
 
@@ -145,19 +170,19 @@ function preview(message: Doc<"messages">, locale: "nb" | "en" | undefined): str
 }
 
 /**
- * Opens (or keeps) the bundle window for `user` in `hub`; the flush sends one
- * summary of what's unread since the first bundled message was sent.
+ * Opens (or keeps) the bundle window for `user` in a conversation; the flush
+ * sends one summary of what's unread since the first bundled message was sent.
  */
 async function addToBundle(
   ctx: MutationCtx,
   userId: Id<"users">,
-  hubId: Id<"hubs">,
+  conversationId: Id<"conversations">,
   sentAt: number,
 ) {
   const open = await ctx.db
     .query("notifications")
     .withIndex("by_user_kind_ref", (q) =>
-      q.eq("userId", userId).eq("kind", "chat_bundle").eq("refId", hubId),
+      q.eq("userId", userId).eq("kind", "chat_bundle").eq("refId", conversationId),
     )
     .filter((q) => q.eq(q.field("deliveredAt"), undefined))
     .first();
@@ -165,7 +190,7 @@ async function addToBundle(
   const bundleId = await ctx.db.insert("notifications", {
     userId,
     kind: "chat_bundle",
-    refId: hubId,
+    refId: conversationId,
     bundledAt: sentAt,
   });
   await ctx.scheduler.runAfter(BUNDLE_WINDOW_MS, internal.push.flushBundle, { bundleId });
@@ -181,9 +206,10 @@ export const onMessage = internalMutation({
     const message = await ctx.db.get(args.messageId);
     if (message === null || message.deletedAt !== undefined) return;
     const conversation = await ctx.db.get(message.conversationId);
-    const hub = conversation?.hubId ? await ctx.db.get(conversation.hubId) : null;
+    const where = conversation ? await conversationContext(ctx, conversation) : null;
     const author = await ctx.db.get(message.authorId);
-    if (hub === null || author === null) return;
+    if (conversation === null || where === null || author === null) return;
+    const { hub, label, target } = where;
     const quoted = message.replyToId ? await ctx.db.get(message.replyToId) : null;
     const now = Date.now();
 
@@ -202,11 +228,11 @@ export const onMessage = internalMutation({
       const mentioned = message.mentions.includes(user._id);
       const repliedTo = quoted?.authorId === user._id;
       if (mentioned || repliedTo) {
-        const title = `${mentioned ? t.mention(authorName) : t.reply(authorName)} · ${hub.name}`;
-        const push = await buildPush(ctx, user, hub, title, preview(message, user.locale), now);
+        const title = `${mentioned ? t.mention(authorName) : t.reply(authorName)} · ${label}`;
+        const push = await buildPush(ctx, user, target, title, preview(message, user.locale), now);
         if (push) pushes.push(push);
       } else if (member.notifyLevel === "all") {
-        await addToBundle(ctx, user._id, hub._id, message._creationTime);
+        await addToBundle(ctx, user._id, conversation._id, message._creationTime);
       }
     }
     if (pushes.length > 0) await ctx.scheduler.runAfter(0, internal.push.send, { pushes });
@@ -221,21 +247,18 @@ export const flushBundle = internalMutation({
     if (bundle === null || bundle.deliveredAt !== undefined) return;
     const now = Date.now();
     await ctx.db.patch(bundle._id, { deliveredAt: now });
-    const hubId = ctx.db.normalizeId("hubs", bundle.refId);
-    const hub = hubId ? await ctx.db.get(hubId) : null;
+    const conversationId = ctx.db.normalizeId("conversations", bundle.refId);
+    const conversation = conversationId ? await ctx.db.get(conversationId) : null;
+    const where = conversation ? await conversationContext(ctx, conversation) : null;
     const user = await ctx.db.get(bundle.userId);
-    if (hub === null || user === null || user.deletedAt !== undefined) return;
+    if (conversation === null || where === null || user === null || user.deletedAt !== undefined) {
+      return;
+    }
     const member = await ctx.db
       .query("hubMembers")
-      .withIndex("by_hub_user", (q) => q.eq("hubId", hub._id).eq("userId", user._id))
+      .withIndex("by_hub_user", (q) => q.eq("hubId", where.hub._id).eq("userId", user._id))
       .unique();
     if (member?.status !== "active" || member.notifyLevel !== "all") return;
-    const conversation = await ctx.db
-      .query("conversations")
-      .withIndex("by_hub", (q) => q.eq("hubId", hub._id))
-      .filter((q) => q.eq(q.field("kind"), "hub"))
-      .first();
-    if (conversation === null) return;
     // Only what arrived in this window and is still unread; read it already, no push.
     const since = Math.max(
       bundle.bundledAt ?? 0,
@@ -243,15 +266,65 @@ export const flushBundle = internalMutation({
     );
     const count = await unreadCount(ctx, conversation._id, user._id, since - 1);
     if (count === 0) return;
-    const push = await buildPush(
-      ctx,
-      user,
-      hub,
-      hub.name,
-      pushText(user.locale).bundle(count),
-      now,
-    );
+    const body = pushText(user.locale).bundle(count);
+    const push = await buildPush(ctx, user, where.target, where.label, body, now);
     if (push) await ctx.scheduler.runAfter(0, internal.push.send, { pushes: [push] });
+  },
+});
+
+/**
+ * Tells people about an event (HUB-23): a new event goes to every member
+ * who hasn't muted the hub; a change or cancellation goes to those who
+ * said yes or maybe. Never to the person who made the change.
+ */
+export const onEvent = internalMutation({
+  args: {
+    eventId: v.id("events"),
+    change: v.union(v.literal("new"), v.literal("changed"), v.literal("cancelled")),
+    actorId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.eventId);
+    const hub = event?.hubId ? await ctx.db.get(event.hubId) : null;
+    if (event === null || hub === null) return;
+    const members = await ctx.db
+      .query("hubMembers")
+      .withIndex("by_hub", (q) => q.eq("hubId", hub._id))
+      .collect();
+    let recipients = members.filter((m) => m.status === "active" && m.userId !== args.actorId);
+    if (args.change === "new") {
+      recipients = recipients.filter((m) => m.notifyLevel !== "muted");
+    } else {
+      const rsvps = await ctx.db
+        .query("rsvps")
+        .withIndex("by_event", (q) => q.eq("eventId", event._id))
+        .collect();
+      const interested = new Set(rsvps.filter((r) => r.status !== "no").map((r) => r.userId));
+      recipients = recipients.filter((m) => interested.has(m.userId));
+    }
+    const now = Date.now();
+    const pushes: PushMessage[] = [];
+    for (const member of recipients) {
+      const user = await ctx.db.get(member.userId);
+      if (user === null || user.deletedAt !== undefined) continue;
+      const t = pushText(user.locale);
+      const when = t.when(event.startsAt);
+      const title =
+        args.change === "new"
+          ? t.newEvent(hub.name)
+          : args.change === "changed"
+            ? t.changedEvent(event.title)
+            : t.cancelledEvent(event.title);
+      const body =
+        args.change === "new"
+          ? `${event.title} · ${when}`
+          : args.change === "changed"
+            ? [when, event.place?.text].filter(Boolean).join(" · ")
+            : `${when} · ${hub.name}`;
+      const push = await buildPush(ctx, user, eventTarget(event._id), title, body, now);
+      if (push) pushes.push(push);
+    }
+    if (pushes.length > 0) await ctx.scheduler.runAfter(0, internal.push.send, { pushes });
   },
 });
 

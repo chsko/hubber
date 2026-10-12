@@ -3,7 +3,10 @@ import {
   formatDate,
   formatDateTime,
   formatTime,
+  formatShortDate,
   osloDateParts,
+  osloTimeParts,
+  osloToEpoch,
   osloWeekdayIndex,
   weekdayNames,
 } from "./format";
@@ -61,5 +64,35 @@ describe("resolveLocale", () => {
   it("falls back to English", () => {
     expect(resolveLocale(["pl-PL"])).toBe("en");
     expect(resolveLocale([])).toBe("en");
+  });
+});
+
+describe("Oslo wall-clock time", () => {
+  it("turns an Oslo date and time into the right instant, summer and winter", () => {
+    expect(osloToEpoch({ year: 2026, month: 10, day: 12, hour: 18, minute: 5 })).toBe(summer);
+    expect(osloToEpoch({ year: 2026, month: 1, day: 5, hour: 0, minute: 30 })).toBe(winterMidnight);
+    expect(osloToEpoch({ year: 2026, month: 12, day: 13, hour: 17, minute: 0 })).toBe(
+      Date.UTC(2026, 11, 13, 16, 0),
+    );
+  });
+
+  it("handles the daylight saving switches", () => {
+    // 29 March 2026: 02:00 jumps to 03:00. 02:30 does not exist; read with the winter offset.
+    expect(osloToEpoch({ year: 2026, month: 3, day: 29, hour: 2, minute: 30 })).toBe(
+      Date.UTC(2026, 2, 29, 1, 30),
+    );
+    expect(osloToEpoch({ year: 2026, month: 3, day: 29, hour: 3, minute: 0 })).toBe(
+      Date.UTC(2026, 2, 29, 1, 0),
+    );
+    // 25 October 2026: 02:30 happens twice; the first (summer time) counts.
+    expect(osloToEpoch({ year: 2026, month: 10, day: 25, hour: 2, minute: 30 })).toBe(
+      Date.UTC(2026, 9, 25, 0, 30),
+    );
+  });
+
+  it("reads the Oslo clock back", () => {
+    expect(osloTimeParts(summer)).toEqual({ hour: 18, minute: 5 });
+    expect(osloTimeParts(winterMidnight)).toEqual({ hour: 0, minute: 30 });
+    expect(formatShortDate(Date.UTC(2026, 11, 13, 16), "en")).toBe("Sun 13 Dec");
   });
 });

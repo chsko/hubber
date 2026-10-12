@@ -10,6 +10,7 @@
 
 import type * as auth from "../auth.js";
 import type * as devSignIn from "../devSignIn.js";
+import type * as events from "../events.js";
 import type * as files from "../files.js";
 import type * as http from "../http.js";
 import type * as hubs from "../hubs.js";
@@ -39,6 +40,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   devSignIn: typeof devSignIn;
+  events: typeof events;
   files: typeof files;
   http: typeof http;
   hubs: typeof hubs;

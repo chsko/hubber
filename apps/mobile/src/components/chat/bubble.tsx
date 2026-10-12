@@ -2,6 +2,7 @@ import { formatTime, type Locale } from "@hubber/i18n";
 import { useTranslation } from "react-i18next";
 import { Image, Pressable, Text, View } from "react-native";
 import { Avatar } from "@/components/avatar";
+import { EventChatCard } from "@/components/events/event-ui";
 import { useChatImageSource } from "@/lib/chat-image";
 import type { Message } from "./types";
 
@@ -41,6 +42,19 @@ export function Bubble({
   const pending = message._id.startsWith("optimistic-");
   const mentionNames = message.mentions.flatMap((m) => (m.name ? [m.name] : []));
   const highlight = message.mentionsMe && !mine;
+
+  if (message.event) {
+    return (
+      <View className={`gap-0.5 ${showAuthor ? "mt-3" : "mt-0.5"} ${mine ? "items-end" : "pl-10"}`}>
+        {showAuthor && !mine ? (
+          <Text className="ml-1 font-sans-semibold text-[12px] text-textMuted">
+            {message.author.name ?? t("chat.deletedUser")}
+          </Text>
+        ) : null}
+        <EventChatCard event={message.event} onLongPress={onLongPress} />
+      </View>
+    );
+  }
 
   return (
     <View

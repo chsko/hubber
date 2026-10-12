@@ -16,7 +16,10 @@ type Props = {
 export function MessageActions({ message, onClose, onReact, onReply, onEdit, onDelete }: Props) {
   const { t } = useTranslation();
   const canEdit =
-    message !== null && message.isMine && Date.now() - message._creationTime < EDIT_WINDOW_MS;
+    message !== null &&
+    message.isMine &&
+    message.event === null &&
+    Date.now() - message._creationTime < EDIT_WINDOW_MS;
 
   function run(action: () => void) {
     onClose();

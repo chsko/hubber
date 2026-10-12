@@ -16,8 +16,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar } from "@/components/avatar";
 import { ChatView } from "@/components/chat/chat-view";
+import { HubEvents } from "@/components/events/hub-events";
 import { HubIcon } from "@/components/hub-icon";
-import { ComingSoon } from "@/components/screen";
 import { NotAMember } from "@/components/not-a-member";
 import { NotifyLevelButton } from "@/components/notify-level";
 import { StackHeader } from "@/components/stack-header";
@@ -106,7 +106,7 @@ export default function HubScreen() {
         </KeyboardAvoidingView>
       ) : (
         <ScrollView contentContainerClassName="gap-5 px-5 pb-10">
-          {segment === "events" ? <ComingSoon>{t("hub.eventsSoon")}</ComingSoon> : null}
+          {segment === "events" ? <HubEvents hubId={hub._id} /> : null}
           {segment === "members" ? (
             <>
               {hub.myRole !== "member" ? <PendingRequests hubId={hub._id} /> : null}

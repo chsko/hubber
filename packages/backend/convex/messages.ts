@@ -104,6 +104,17 @@ export const list = query({
       .order("desc")
       .paginate(args.paginationOpts);
     const author = authorLoader(ctx);
+    const eventCard = async (eventId: Id<"events"> | undefined) => {
+      const event = eventId ? await ctx.db.get(eventId) : null;
+      return event === null
+        ? null
+        : {
+            _id: event._id,
+            title: event.title,
+            startsAt: event.startsAt,
+            cancelled: event.cancelledAt !== undefined,
+          };
+    };
 
     async function view(m: Doc<"messages">) {
       const deleted = m.deletedAt !== undefined;
@@ -148,6 +159,7 @@ export const list = query({
               m.mentions.map(async (id) => ({ _id: id, name: (await author(id)).name })),
             ),
         mentionsMe: !deleted && m.mentions.includes(me),
+        event: deleted ? null : await eventCard(m.eventId),
       };
     }
 
@@ -212,7 +224,11 @@ export const edit = mutation({
   args: { messageId: v.id("messages"), body: v.string() },
   handler: async (ctx, args) => {
     const { message, user } = await requireMessage(ctx, args.messageId);
-    if (message.authorId !== user._id || message.deletedAt !== undefined) {
+    if (
+      message.authorId !== user._id ||
+      message.deletedAt !== undefined ||
+      message.eventId !== undefined
+    ) {
       throw new ConvexError({ code: "FORBIDDEN" });
     }
     if (Date.now() - message._creationTime > EDIT_WINDOW_MS) {

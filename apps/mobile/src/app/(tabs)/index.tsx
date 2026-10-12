@@ -5,7 +5,8 @@ import { Link } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { HubIcon } from "@/components/hub-icon";
-import { ComingSoon, Screen } from "@/components/screen";
+import { EventRow } from "@/components/events/event-ui";
+import { Screen } from "@/components/screen";
 import { UnreadBadge } from "@/components/unread-badge";
 
 const osloHour = new Intl.DateTimeFormat("en-GB", { timeZone, hour: "numeric", hourCycle: "h23" });
@@ -26,6 +27,7 @@ export default function HomeScreen() {
   const { t } = useTranslation();
   const me = useQuery(api.users.me);
   const hubs = useQuery(api.hubs.mine);
+  const next = useQuery(api.events.mine, { limit: 3 });
   const firstName = me?.name?.split(" ")[0] ?? "";
   const unread = hubs?.filter((h) => h.status === "active" && h.unread > 0) ?? [];
   const waiting = hubs?.filter((h) => h.status === "pending") ?? [];
@@ -33,7 +35,19 @@ export default function HomeScreen() {
   return (
     <Screen title={t(greetingKey(Date.now()), { name: firstName })} subtitle={t("common.appName")}>
       <Section title={t("home.nextUp")}>
-        <ComingSoon>{t("home.eventsSoon")}</ComingSoon>
+        {next === undefined ? (
+          <ActivityIndicator />
+        ) : next.length === 0 ? (
+          <Text className="font-sans text-[15px] leading-6 text-textMuted">
+            {t("home.noEvents")}
+          </Text>
+        ) : (
+          <View className="overflow-hidden rounded-2xl border border-border bg-surface">
+            {next.map((e, i) => (
+              <EventRow key={e._id} event={e} subtitle={e.hubName} first={i === 0} />
+            ))}
+          </View>
+        )}
       </Section>
 
       <Section title={t("home.unread")}>
