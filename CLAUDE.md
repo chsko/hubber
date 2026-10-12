@@ -19,4 +19,6 @@
 ## Stack notes
 
 - TypeScript is pinned to 6.0.x because typescript-eslint supports <6.1.
-- `AGENTS.md` is maintained automatically by Turborepo; leave it in place.
+- `AGENTS.md` is maintained automatically by Turborepo (root), Expo (`apps/mobile`) and Next.js (`apps/web`); leave them in place.
+- Convex CLI in cloud sessions: HTTP-based commands work (`convex dev --once`, `deploy`, `codegen`) with `CONVEX_DEPLOY_KEY`; WebSocket-based ones (`env list`, `data`, `logs`, `run`) hang because Node's WebSocket client bypasses the HTTP proxy. Never print `CONVEX_DEPLOY_KEY`.
+- Expo: `api.expo.dev` and `docs.expo.dev` are blocked here; use `EXPO_OFFLINE=1` for `expo export` and check versions against `expo/bundledNativeModules.json`.
