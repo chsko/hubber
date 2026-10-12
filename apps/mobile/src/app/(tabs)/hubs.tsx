@@ -27,6 +27,17 @@ export default function HubsScreen() {
           <Text className="font-sans-bold text-[16px] text-primaryStrong">{t("hubs.create")}</Text>
         </Pressable>
       </Link>
+      <Link href="/hub/join" asChild>
+        <Pressable
+          testID="join-with-code"
+          accessibilityRole="button"
+          className="-mt-3 items-center py-2"
+        >
+          <Text className="font-sans-semibold text-[15px] text-primary">
+            {t("hubs.joinWithCode")}
+          </Text>
+        </Pressable>
+      </Link>
 
       {hubs === undefined ? (
         <ActivityIndicator accessibilityLabel={t("common.loading")} />
@@ -39,30 +50,40 @@ export default function HubsScreen() {
         </View>
       ) : (
         <View className="overflow-hidden rounded-2xl border border-border bg-surface">
-          {hubs.map((hub, i) => (
-            <Link
-              key={hub._id}
-              href={{ pathname: "/hub/[hubId]", params: { hubId: hub._id } }}
-              asChild
-            >
+          {hubs.map((hub, i) => {
+            const row = (
               <Pressable
                 testID={`hub-${hub._id}`}
                 accessibilityRole="button"
+                disabled={hub.status === "pending"}
                 className={`flex-row items-center gap-3 px-4 py-3 active:opacity-70 ${i > 0 ? "border-t border-border" : ""}`}
               >
                 <HubIcon emoji={hub.emoji} iconUrl={hub.iconUrl} size={44} />
-                <View className="flex-1">
+                <View className={`flex-1 ${hub.status === "pending" ? "opacity-60" : ""}`}>
                   <Text numberOfLines={1} className="font-sans-semibold text-[16px] text-text">
                     {hub.name}
                   </Text>
                   <Text className="font-sans text-[13px] text-textMuted">
-                    {t("hubs.memberCount", { count: hub.memberCount })}
+                    {hub.status === "pending"
+                      ? t("hubs.waitingForApproval")
+                      : t("hubs.memberCount", { count: hub.memberCount })}
                   </Text>
                 </View>
-                <ChevronRight color={c.textMuted} size={20} />
+                {hub.status === "active" ? <ChevronRight color={c.textMuted} size={20} /> : null}
               </Pressable>
-            </Link>
-          ))}
+            );
+            return hub.status === "pending" ? (
+              <View key={hub._id}>{row}</View>
+            ) : (
+              <Link
+                key={hub._id}
+                href={{ pathname: "/hub/[hubId]", params: { hubId: hub._id } }}
+                asChild
+              >
+                {row}
+              </Link>
+            );
+          })}
         </View>
       )}
     </Screen>

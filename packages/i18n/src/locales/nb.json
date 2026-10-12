@@ -2,7 +2,8 @@
   "common": {
     "appName": "Hubber",
     "loading": "Laster",
-    "back": "Tilbake"
+    "back": "Tilbake",
+    "cancel": "Avbryt"
   },
   "tabs": {
     "home": "Hjem",
@@ -19,7 +20,9 @@
     "emptyTitle": "Ingen huber ennå",
     "emptyBody": "Opprett en for klassen til barnet ditt, familien eller vennene dine, og inviter de andre.",
     "memberCount_one": "{{count}} medlem",
-    "memberCount_other": "{{count}} medlemmer"
+    "memberCount_other": "{{count}} medlemmer",
+    "joinWithCode": "Bli med via kode eller lenke",
+    "waitingForApproval": "Venter på godkjenning"
   },
   "calendar": {
     "comingSoon": "Alle arrangementene dine på ett sted. Kommer i M4."
@@ -116,8 +119,6 @@
   },
   "hub": {
     "invite": "Inviter",
-    "inviteSoonTitle": "Kommer snart",
-    "inviteSoonBody": "Invitasjonslenker og QR-koder kommer som neste steg.",
     "chat": "Chat",
     "events": "Arrangementer",
     "members": "Medlemmer",
@@ -127,6 +128,52 @@
     "role": {
       "owner": "Eier",
       "admin": "Admin"
-    }
+    },
+    "pendingTitle_one": "{{count}} vil bli med",
+    "pendingTitle_other": "{{count}} vil bli med",
+    "approve": "Godkjenn",
+    "decline": "Avslå",
+    "approveLabel": "Godkjenn {{name}}",
+    "declineLabel": "Avslå {{name}}"
+  },
+  "join": {
+    "invitedTo": "Du er invitert til",
+    "join": "Bli med",
+    "ask": "Be om å bli med",
+    "approvalNote": "En admin godkjenner nye medlemmer i denne huben.",
+    "open": "Åpne huben",
+    "waitingTitle": "Venter på godkjenning",
+    "waitingBody": "En admin slipper deg inn. Du finner huben under Huber når det er gjort.",
+    "invalidTitle": "Lenken virker ikke",
+    "invalid": "Invitasjonen har utløpt eller er stoppet. Be om en ny lenke.",
+    "rateLimited": "For mange forsøk. Prøv igjen om en time.",
+    "withCodeTitle": "Bli med i en hub",
+    "withCodeBody": "Lim inn invitasjonslenken du fikk, eller skriv inn koden.",
+    "codeLabel": "Invitasjonslenke eller kode",
+    "continue": "Fortsett"
+  },
+  "invite": {
+    "title": "Inviter til {{name}}",
+    "message": "Bli med i {{name}} på Hubber: {{url}} (kode {{code}})",
+    "expires": "Utløper {{date}}",
+    "noExpiry": "Utløper aldri",
+    "approvalOn": "krever godkjenning",
+    "share": "Del lenke",
+    "sms": "Send som SMS",
+    "privacy": "Hubber leser eller laster aldri opp kontaktene dine.",
+    "none": "Det finnes ingen aktiv invitasjonslenke.",
+    "create": "Lag lenke",
+    "adminSettings": "Admin",
+    "requireApproval": "Krev godkjenning",
+    "requireApprovalHint": "Nye medlemmer venter til en admin slipper dem inn.",
+    "newLink": "Lag en ny lenke",
+    "newLinkTitle": "Ny lenke",
+    "newLinkBody": "Den nåværende lenken slutter å virke. Hvor lenge skal den nye gjelde?",
+    "never": "Utløper aldri",
+    "days_one": "{{count}} dag",
+    "days_other": "{{count}} dager",
+    "stopTitle": "Stopp alle lenker",
+    "stopBody": "Ingen kan bli med via de nåværende lenkene lenger.",
+    "stop": "Stopp lenker"
   }
 }

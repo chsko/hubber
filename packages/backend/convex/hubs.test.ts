@@ -92,7 +92,7 @@ describe("hubs.create", () => {
 });
 
 describe("hubs.mine", () => {
-  it("lists only my active hubs, most recently active first", async () => {
+  it("lists my hubs, most recently active first, with pending ones marked", async () => {
     const { t, ola, asKari, asOla } = await setup();
     const older = await asKari.mutation(api.hubs.create, { name: "Older", template: "friends" });
     const newer = await asKari.mutation(api.hubs.create, { name: "Newer", template: "friends" });
@@ -100,7 +100,7 @@ describe("hubs.mine", () => {
     await t.run(async (ctx) => {
       await ctx.db.patch(older, { lastActivityAt: 1 });
       await ctx.db.patch(newer, { lastActivityAt: 2 });
-      // A pending membership doesn't count yet.
+      // A pending membership is listed for Ola, but not counted as a member.
       await ctx.db.insert("hubMembers", {
         hubId: older,
         userId: ola,
@@ -113,7 +113,12 @@ describe("hubs.mine", () => {
     const mine = await asKari.query(api.hubs.mine, {});
     expect(mine.map((h) => h.name)).toEqual(["Newer", "Older"]);
     expect(mine[0]).toMatchObject({ role: "owner", memberCount: 1, emoji: "🎉", iconUrl: null });
-    expect((await asOla.query(api.hubs.mine, {})).map((h) => h.name)).toEqual(["Ola's"]);
+    expect(mine[1]).toMatchObject({ memberCount: 1 });
+    const olas = await asOla.query(api.hubs.mine, {});
+    expect(olas.map((h) => [h.name, h.status])).toEqual([
+      ["Ola's", "active"],
+      ["Older", "pending"],
+    ]);
   });
 });
 

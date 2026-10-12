@@ -1,6 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
-import { mutation, type QueryCtx, query } from "./_generated/server";
+import { type MutationCtx, mutation, type QueryCtx, query } from "./_generated/server";
 import { requireHubMember, requireUser } from "./lib/auth";
 import { HUB_TEMPLATES } from "./lib/hubTemplates";
 import { requireImage } from "./lib/images";
@@ -82,7 +82,10 @@ export const create = mutation({
   },
 });
 
-/** The signed-in user's hubs (active memberships only), most recently active first. */
+/**
+ * The signed-in user's hubs, most recently active first. Hubs still waiting
+ * for an admin's approval come along with `status: "pending"`.
+ */
 export const mine = query({
   args: {},
   handler: async (ctx) => {
@@ -92,17 +95,16 @@ export const mine = query({
       .withIndex("by_user", (q) => q.eq("userId", user._id))
       .collect();
     const hubs = await Promise.all(
-      memberships
-        .filter((m) => m.status === "active")
-        .map(async (m) => {
-          const hub = await ctx.db.get(m.hubId);
-          if (hub === null) return null;
-          return {
-            ...(await hubSummary(ctx, hub)),
-            role: m.role,
-            memberCount: await activeMemberCount(ctx, hub._id),
-          };
-        }),
+      memberships.map(async (m) => {
+        const hub = await ctx.db.get(m.hubId);
+        if (hub === null) return null;
+        return {
+          ...(await hubSummary(ctx, hub)),
+          role: m.role,
+          status: m.status,
+          memberCount: await activeMemberCount(ctx, hub._id),
+        };
+      }),
     );
     return hubs.filter((h) => h !== null).sort((a, b) => b.lastActivityAt - a.lastActivityAt);
   },
@@ -153,5 +155,83 @@ export const members = query({
       .sort(
         (a, b) => rank[a.role] - rank[b.role] || (a.name ?? "").localeCompare(b.name ?? "", "nb"),
       );
+  },
+});
+
+/** Admins: turn "new members need approval" on or off. */
+export const setJoinApproval = mutation({
+  args: { hubId: v.id("hubs"), joinApproval: v.boolean() },
+  handler: async (ctx, args) => {
+    await requireHubMember(ctx, args.hubId, "admin");
+    await ctx.db.patch(args.hubId, { joinApproval: args.joinApproval });
+  },
+});
+
+/** Admins: people waiting for approval to join (HUB-16), oldest request first. */
+export const pending = query({
+  args: { hubId: v.id("hubs") },
+  handler: async (ctx, args) => {
+    await requireHubMember(ctx, args.hubId, "admin");
+    const rows = await ctx.db
+      .query("hubMembers")
+      .withIndex("by_hub", (q) => q.eq("hubId", args.hubId))
+      .collect();
+    const people = await Promise.all(
+      rows
+        .filter((m) => m.status === "pending")
+        .map(async (m) => {
+          const user = await ctx.db.get(m.userId);
+          if (user === null || user.deletedAt !== undefined) return null;
+          return {
+            userId: user._id,
+            name: user.name ?? null,
+            photoUrl: user.photoId ? await ctx.storage.getUrl(user.photoId) : null,
+            requestedAt: m._creationTime,
+          };
+        }),
+    );
+    return people.filter((p) => p !== null);
+  },
+});
+
+async function pendingMembership(ctx: MutationCtx, hubId: Id<"hubs">, userId: Id<"users">) {
+  const membership = await ctx.db
+    .query("hubMembers")
+    .withIndex("by_hub_user", (q) => q.eq("hubId", hubId).eq("userId", userId))
+    .unique();
+  if (membership === null || membership.status !== "pending") {
+    throw new ConvexError({ code: "NOT_FOUND" });
+  }
+  return membership;
+}
+
+/** Admins: let a pending person in. */
+export const approve = mutation({
+  args: { hubId: v.id("hubs"), userId: v.id("users") },
+  handler: async (ctx, args) => {
+    await requireHubMember(ctx, args.hubId, "admin");
+    const membership = await pendingMembership(ctx, args.hubId, args.userId);
+    await ctx.db.patch(membership._id, { status: "active" });
+    await ctx.db.patch(args.hubId, { lastActivityAt: Date.now() });
+  },
+});
+
+/** Admins: turn down a pending request. The person can ask again with a valid link. */
+export const decline = mutation({
+  args: { hubId: v.id("hubs"), userId: v.id("users") },
+  handler: async (ctx, args) => {
+    await requireHubMember(ctx, args.hubId, "admin");
+    const membership = await pendingMembership(ctx, args.hubId, args.userId);
+    await ctx.db.delete(membership._id);
+  },
+});
+
+/** Withdraw your own pending request. */
+export const cancelRequest = mutation({
+  args: { hubId: v.id("hubs") },
+  handler: async (ctx, args) => {
+    const user = await requireUser(ctx);
+    const membership = await pendingMembership(ctx, args.hubId, user._id);
+    await ctx.db.delete(membership._id);
   },
 });

@@ -1,10 +1,10 @@
 import { api } from "@hubber/backend/api";
 import type { Id } from "@hubber/backend/dataModel";
-import { useQuery } from "convex/react";
-import { useLocalSearchParams } from "expo-router";
+import { useMutation, useQuery } from "convex/react";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar } from "@/components/avatar";
 import { HubIcon } from "@/components/hub-icon";
@@ -36,7 +36,9 @@ export default function HubScreen() {
           <Pressable
             testID="invite"
             accessibilityRole="button"
-            onPress={() => Alert.alert(t("hub.inviteSoonTitle"), t("hub.inviteSoonBody"))}
+            onPress={() =>
+              router.push({ pathname: "/hub/[hubId]/invite", params: { hubId: hub._id } })
+            }
             className="mr-2 rounded-full bg-primarySoft px-4 py-2 active:opacity-80"
           >
             <Text className="font-sans-bold text-[14px] text-primaryStrong">{t("hub.invite")}</Text>
@@ -93,7 +95,12 @@ export default function HubScreen() {
           </>
         ) : null}
         {segment === "events" ? <ComingSoon>{t("hub.eventsSoon")}</ComingSoon> : null}
-        {segment === "members" ? <Members hubId={hub._id} /> : null}
+        {segment === "members" ? (
+          <>
+            {hub.myRole !== "member" ? <PendingRequests hubId={hub._id} /> : null}
+            <Members hubId={hub._id} />
+          </>
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -121,6 +128,55 @@ function Members({ hubId }: { hubId: Id<"hubs"> }) {
           ) : null}
         </View>
       ))}
+    </View>
+  );
+}
+
+/** Admins: people who asked to join (HUB-16), with approve and decline. */
+function PendingRequests({ hubId }: { hubId: Id<"hubs"> }) {
+  const { t } = useTranslation();
+  const pending = useQuery(api.hubs.pending, { hubId });
+  const approve = useMutation(api.hubs.approve);
+  const decline = useMutation(api.hubs.decline);
+  if (pending === undefined || pending.length === 0) return null;
+  return (
+    <View className="gap-2">
+      <Text className="font-sans-semibold text-xs uppercase tracking-widest text-textMuted">
+        {t("hub.pendingTitle", { count: pending.length })}
+      </Text>
+      <View className="overflow-hidden rounded-2xl border border-accent bg-surface">
+        {pending.map((p, i) => (
+          <View
+            key={p.userId}
+            className={`flex-row items-center gap-3 px-4 py-3 ${i > 0 ? "border-t border-border" : ""}`}
+          >
+            <Avatar name={p.name} photoUrl={p.photoUrl} size={40} />
+            <Text numberOfLines={1} className="flex-1 font-sans-semibold text-[15px] text-text">
+              {p.name ?? t("profile.noName")}
+            </Text>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t("hub.declineLabel", { name: p.name ?? "" })}
+              onPress={() => void decline({ hubId, userId: p.userId })}
+              className="rounded-full px-3 py-2 active:opacity-60"
+            >
+              <Text className="font-sans-semibold text-[14px] text-textMuted">
+                {t("hub.decline")}
+              </Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t("hub.approveLabel", { name: p.name ?? "" })}
+              onPress={() => void approve({ hubId, userId: p.userId })}
+              className="rounded-full bg-primarySoft px-3 py-2 active:opacity-80"
+            >
+              <Text className="font-sans-bold text-[14px] text-primaryStrong">
+                {t("hub.approve")}
+              </Text>
+            </Pressable>
+          </View>
+        ))}
+      </View>
     </View>
   );
 }

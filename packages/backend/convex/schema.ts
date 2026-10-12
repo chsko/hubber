@@ -79,6 +79,13 @@ export default defineSchema({
     .index("by_code", ["code"])
     .index("by_hub", ["hubId"]),
 
+  /** Fixed-window counters for `lib/rateLimit.ts`, e.g. invite redemption per user. */
+  rateLimits: defineTable({
+    key: v.string(),
+    windowStart: v.number(),
+    count: v.number(),
+  }).index("by_key", ["key"]),
+
   conversations: defineTable({
     kind: v.union(v.literal("hub"), v.literal("event"), v.literal("dm")),
     hubId: v.optional(v.id("hubs")),
