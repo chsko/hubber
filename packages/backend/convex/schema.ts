@@ -1,11 +1,13 @@
+import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 /**
  * Data model — see docs/PLAN.md §3.
  *
- * `users` keeps the optional `name`/`email`/`phone`/`image` fields and the
- * `email`/`phone` indexes so it stays compatible with Convex Auth (HUB-9/10).
+ * `authTables` are Convex Auth's sessions/accounts/tokens. `users` overrides
+ * its default and keeps the optional `name`/`email`/`phone`/`image` fields and
+ * `email`/`phone` indexes Convex Auth relies on.
  */
 
 export const hubTemplate = v.union(
@@ -23,6 +25,8 @@ export const notifyLevel = v.union(v.literal("all"), v.literal("important"), v.l
 export const rsvpStatus = v.union(v.literal("yes"), v.literal("maybe"), v.literal("no"));
 
 export default defineSchema({
+  ...authTables,
+
   users: defineTable({
     name: v.optional(v.string()),
     email: v.optional(v.string()),

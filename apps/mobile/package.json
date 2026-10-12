@@ -13,6 +13,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@auth/core": "^0.41.3",
+    "@convex-dev/auth": "0.0.96",
     "@expo-google-fonts/figtree": "^0.4.1",
     "@hubber/backend": "workspace:*",
     "@hubber/i18n": "workspace:*",
@@ -25,6 +27,7 @@
     "expo-linking": "~57.0.12",
     "expo-localization": "~57.0.2",
     "expo-router": "~57.0.25",
+    "expo-secure-store": "~57.0.4",
     "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.4",

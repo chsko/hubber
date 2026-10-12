@@ -16,10 +16,13 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@auth/core": "^0.41.3",
+    "@convex-dev/auth": "0.0.96",
     "convex": "^1.46.0"
   },
   "devDependencies": {
     "@edge-runtime/vm": "^5.0.0",
+    "@types/node": "^22.20.5",
     "convex-test": "^0.0.61",
     "eslint": "^10.0.2",
     "typescript": "~6.0.3",

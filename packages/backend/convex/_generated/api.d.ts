@@ -8,7 +8,13 @@
  * @module
  */
 
+import type * as auth from "../auth.js";
+import type * as devSignIn from "../devSignIn.js";
+import type * as http from "../http.js";
 import type * as lib_auth from "../lib/auth.js";
+import type * as lib_devPersonas from "../lib/devPersonas.js";
+import type * as lib_devSignIn from "../lib/devSignIn.js";
+import type * as lib_vipps from "../lib/vipps.js";
 import type * as users from "../users.js";
 
 import type {
@@ -18,7 +24,13 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  auth: typeof auth;
+  devSignIn: typeof devSignIn;
+  http: typeof http;
   "lib/auth": typeof lib_auth;
+  "lib/devPersonas": typeof lib_devPersonas;
+  "lib/devSignIn": typeof lib_devSignIn;
+  "lib/vipps": typeof lib_vipps;
   users: typeof users;
 }>;
 

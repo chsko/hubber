@@ -31,10 +31,14 @@
     "language": "Språk",
     "languageSystem": "Som enheten",
     "languageNb": "Norsk (bokmål)",
-    "languageEn": "English"
+    "languageEn": "English",
+    "signOut": "Logg ut"
   },
   "notFound": {
     "title": "Fant ikke siden",
     "goHome": "Gå til Hjem"
+  },
+  "devSignIn": {
+    "title": "Testinnlogging (kun utvikling)"
   }
 }

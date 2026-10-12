@@ -31,10 +31,14 @@
     "language": "Language",
     "languageSystem": "Same as device",
     "languageNb": "Norsk (bokmål)",
-    "languageEn": "English"
+    "languageEn": "English",
+    "signOut": "Sign out"
   },
   "notFound": {
     "title": "Page not found",
     "goHome": "Go to Home"
+  },
+  "devSignIn": {
+    "title": "Test sign-in (development only)"
   }
 }

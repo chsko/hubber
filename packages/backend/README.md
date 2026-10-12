@@ -16,3 +16,16 @@ pnpm --filter @hubber/backend codegen   # regenerate types only
 ```
 
 `convex/_generated` is committed; `convex dev` regenerates it. Dev deployment: `tangible-ox-76` (EU, `eu-west-1`).
+
+## Sign-in (Convex Auth)
+
+`convex/auth.ts` configures Convex Auth. Until Vipps credentials exist, the only provider is the **dev-only sign-in** (`convex/lib/devSignIn.ts`): `signIn("dev", { persona })` signs in as one of the fake Vipps profiles in `convex/lib/devPersonas.ts` (Nora is under 18, for the age gate). Profiles go through `vippsProfile()` in `convex/lib/vipps.ts`, which the real Vipps provider will reuse.
+
+Deployment environment variables:
+
+| Variable                  | Dev                | Production                              |
+| ------------------------- | ------------------ | --------------------------------------- |
+| `JWT_PRIVATE_KEY`, `JWKS` | set (RSA key pair) | set (own key pair)                      |
+| `HUBBER_DEV_SIGN_IN`      | `enabled`          | **never set**: dev sign-in fails closed |
+
+Without `HUBBER_DEV_SIGN_IN=enabled` the provider throws `DEV_SIGN_IN_DISABLED` and `devSignIn.personas` returns `[]`, so the app hides the test sign-in.
