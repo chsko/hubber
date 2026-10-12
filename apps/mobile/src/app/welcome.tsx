@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Alert, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DevSignIn } from "@/components/dev-sign-in";
+import { LogoMark } from "@/components/logo";
 import { VippsButton } from "@/components/vipps-button";
 
 const points = ["welcome.point1", "welcome.point2", "welcome.point3"] as const;
@@ -26,6 +27,7 @@ export default function Welcome() {
       <ScrollView contentContainerClassName="flex-grow justify-between gap-8 px-6 pb-8 pt-16">
         <View className="gap-6">
           <View className="gap-2">
+            <LogoMark size={64} />
             <Text accessibilityRole="header" className="font-sans-extrabold text-[40px] text-text">
               {t("common.appName")}
             </Text>
