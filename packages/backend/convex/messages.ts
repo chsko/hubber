@@ -1,15 +1,25 @@
 import { paginationOptsValidator } from "convex/server";
 import { ConvexError, v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
-import { type MutationCtx, mutation, type QueryCtx, query } from "./_generated/server";
+import {
+  internalQuery,
+  type MutationCtx,
+  mutation,
+  type QueryCtx,
+  query,
+} from "./_generated/server";
 import { getHubMember } from "./lib/auth";
 import { getConversationAccess, requireConversationAccess } from "./lib/conversations";
+import { requireImage } from "./lib/images";
 
 /** Long enough for a proper message to the class, short enough to stay a chat. */
 export const MAX_MESSAGE_LENGTH = 4000;
 
 /** Your own messages can be edited for this long (docs/DESIGN.md §5.4). */
 export const EDIT_WINDOW_MS = 15 * 60 * 1000;
+
+/** Photos per message (HUB-20). */
+export const MAX_IMAGES = 6;
 
 /** Quoted text in a reply is cut to this many characters. */
 const QUOTE_LENGTH = 140;
@@ -114,6 +124,8 @@ export const list = query({
         _id: m._id,
         _creationTime: m._creationTime,
         body: deleted ? "" : m.body,
+        /** Fetch photo i from the `/chat-image` HTTP route, which checks membership. */
+        imageCount: deleted ? 0 : m.imageIds.length,
         deleted,
         editedAt: m.editedAt ?? null,
         author: await author(m.authorId),
@@ -125,6 +137,7 @@ export const list = query({
               _id: quoted._id,
               authorName: (await author(quoted.authorId)).name,
               body: quoted.deletedAt === undefined ? quoted.body.slice(0, QUOTE_LENGTH) : "",
+              hasImages: quoted.deletedAt === undefined && quoted.imageIds.length > 0,
               deleted: quoted.deletedAt !== undefined,
             }
           : null,
@@ -151,10 +164,15 @@ export const send = mutation({
     body: v.string(),
     replyToId: v.optional(v.id("messages")),
     mentions: v.optional(v.array(v.id("users"))),
+    imageIds: v.optional(v.array(v.id("_storage"))),
   },
   handler: async (ctx, args) => {
     const { user, conversation, hubId } = await requireConversationAccess(ctx, args.conversationId);
-    const body = cleanBody(args.body);
+    const imageIds = [...new Set(args.imageIds ?? [])];
+    if (imageIds.length > MAX_IMAGES) throw new ConvexError({ code: "TOO_MANY_IMAGES" });
+    for (const id of imageIds) await requireImage(ctx, id);
+    // A photo message may have no text.
+    const body = imageIds.length > 0 && args.body.trim() === "" ? "" : cleanBody(args.body);
 
     if (args.replyToId !== undefined) {
       const quoted = await ctx.db.get(args.replyToId);
@@ -177,7 +195,7 @@ export const send = mutation({
       conversationId: conversation._id,
       authorId: user._id,
       body,
-      imageIds: [],
+      imageIds,
       mentions,
       ...(args.replyToId !== undefined && { replyToId: args.replyToId }),
     });
@@ -215,7 +233,13 @@ export const remove = mutation({
       throw new ConvexError({ code: "FORBIDDEN" });
     }
     if (message.deletedAt !== undefined) return;
-    await ctx.db.patch(message._id, { body: "", mentions: [], deletedAt: Date.now() });
+    await ctx.db.patch(message._id, {
+      body: "",
+      mentions: [],
+      imageIds: [],
+      deletedAt: Date.now(),
+    });
+    for (const id of message.imageIds) await ctx.storage.delete(id);
     const reactions = await ctx.db
       .query("reactions")
       .withIndex("by_message", (q) => q.eq("messageId", message._id))
@@ -239,4 +263,25 @@ export const toggleReaction = mutation({
     if (existing) await ctx.db.delete(existing._id);
     else await ctx.db.insert("reactions", { messageId: message._id, userId: user._id, emoji });
   },
+});
+
+/**
+ * The storage id of photo `index` in a message, if the caller may see it
+ * (an active member of the conversation's hub). Used by the `/chat-image`
+ * HTTP route, so photo URLs never leave the access check (HUB-20).
+ */
+export const imageForViewer = internalQuery({
+  args: { messageId: v.id("messages"), index: v.number() },
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get(args.messageId);
+    if (message === null || message.deletedAt !== undefined) return null;
+    if ((await getConversationAccess(ctx, message.conversationId)) === null) return null;
+    return message.imageIds[args.index] ?? null;
+  },
+});
+
+/** Validates a message id from a URL. */
+export const normalizeMessageId = internalQuery({
+  args: { id: v.string() },
+  handler: (ctx, args) => ctx.db.normalizeId("messages", args.id),
 });

@@ -48,8 +48,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Hubber uses your photos so you can choose a profile picture.",
-          "cameraPermission": false,
+          "photosPermission": "Hubber uses your photos so you can share them in chats and choose a profile picture.",
+          "cameraPermission": "Hubber uses the camera so you can take photos to share in chats.",
           "microphonePermission": false
         }
       ]

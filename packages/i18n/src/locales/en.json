@@ -3,7 +3,8 @@
     "appName": "Hubber",
     "loading": "Loading",
     "back": "Back",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "close": "Close"
   },
   "tabs": {
     "home": "Home",
@@ -221,6 +222,14 @@
     "seenBy_one": "Seen by {{count}}",
     "seenBy_other": "Seen by {{count}}",
     "unread_one": "{{count}} unread message",
-    "unread_other": "{{count}} unread messages"
+    "unread_other": "{{count}} unread messages",
+    "addPhotos": "Add photos",
+    "fromLibrary": "Choose from library",
+    "takePhoto": "Take photo",
+    "removePhoto": "Remove photo",
+    "photo": "Photo {{n}} of {{count}}",
+    "photoQuote": "📷 Photo",
+    "photos_one": "📷 {{count}} photo",
+    "photos_other": "📷 {{count}} photos"
   }
 }

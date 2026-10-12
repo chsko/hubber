@@ -34,7 +34,7 @@ export function MessageActions({ message, onClose, onReact, onReply, onEdit, onD
           <SafeAreaView edges={["bottom"]} className="gap-2 rounded-t-3xl bg-surface px-4 pt-4">
             {message ? (
               <Text numberOfLines={2} className="px-1 pb-1 font-sans text-[14px] text-textMuted">
-                {message.body}
+                {message.body || t("chat.photoQuote")}
               </Text>
             ) : null}
             <View className="flex-row justify-between rounded-2xl bg-bg px-2 py-2">

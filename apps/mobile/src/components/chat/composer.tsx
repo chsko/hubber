@@ -1,8 +1,8 @@
 import type { Id } from "@hubber/backend/dataModel";
 import { colors } from "@hubber/shared";
-import { Check, SendHorizontal, X } from "lucide-react-native";
+import { Check, ImagePlus, SendHorizontal, X } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, Text, TextInput, View } from "react-native";
 import { Avatar } from "@/components/avatar";
 import { useScheme } from "@/lib/use-scheme";
 
@@ -21,13 +21,18 @@ type Props = {
   /** Members matching the "@…" being typed, if any. */
   suggestions: Person[];
   onPickSuggestion: (person: Person) => void;
+  /** Local photos waiting to be sent (HUB-20). */
+  images: string[];
+  onAddImages: () => void;
+  onRemoveImage: (uri: string) => void;
+  busy: boolean;
 };
 
 /** Message input with reply/edit context and @mention suggestions (HUB-19). */
 export function Composer(props: Props) {
   const { t } = useTranslation();
   const c = colors[useScheme()];
-  const canSend = props.draft.trim().length > 0;
+  const canSend = (props.draft.trim().length > 0 || props.images.length > 0) && !props.busy;
   return (
     <View className="border-t border-border bg-surface">
       {props.suggestions.length > 0 ? (
@@ -65,7 +70,36 @@ export function Composer(props: Props) {
           </Pressable>
         </View>
       ) : null}
+      {props.images.length > 0 ? (
+        <View className="flex-row flex-wrap gap-2 px-4 pt-2">
+          {props.images.map((uri) => (
+            <View key={uri}>
+              <Image source={{ uri }} style={{ width: 56, height: 56, borderRadius: 10 }} />
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t("chat.removePhoto")}
+                onPress={() => props.onRemoveImage(uri)}
+                className="absolute -right-1.5 -top-1.5 h-6 w-6 items-center justify-center rounded-full bg-text"
+              >
+                <X color={c.bg} size={14} strokeWidth={2.6} />
+              </Pressable>
+            </View>
+          ))}
+        </View>
+      ) : null}
       <View className="flex-row items-end gap-2 px-3 py-2">
+        {props.editing ? null : (
+          <Pressable
+            testID="chat-attach"
+            accessibilityRole="button"
+            accessibilityLabel={t("chat.addPhotos")}
+            disabled={props.busy}
+            onPress={props.onAddImages}
+            className="h-11 w-9 items-center justify-center active:opacity-60"
+          >
+            <ImagePlus color={c.primary} size={24} strokeWidth={2} />
+          </Pressable>
+        )}
         <TextInput
           testID="chat-input"
           value={props.draft}
@@ -85,7 +119,9 @@ export function Composer(props: Props) {
           onPress={props.onSubmit}
           className="h-11 w-11 items-center justify-center rounded-full bg-primary active:opacity-80 disabled:opacity-40"
         >
-          {props.editing ? (
+          {props.busy ? (
+            <ActivityIndicator color={c.surface} />
+          ) : props.editing ? (
             <Check color={c.surface} size={20} strokeWidth={2.6} />
           ) : (
             <SendHorizontal color={c.surface} size={20} strokeWidth={2.4} />

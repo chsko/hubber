@@ -3,7 +3,8 @@
     "appName": "Hubber",
     "loading": "Laster",
     "back": "Tilbake",
-    "cancel": "Avbryt"
+    "cancel": "Avbryt",
+    "close": "Lukk"
   },
   "tabs": {
     "home": "Hjem",
@@ -221,6 +222,14 @@
     "seenBy_one": "Sett av {{count}}",
     "seenBy_other": "Sett av {{count}}",
     "unread_one": "{{count}} ulest melding",
-    "unread_other": "{{count}} uleste meldinger"
+    "unread_other": "{{count}} uleste meldinger",
+    "addPhotos": "Legg til bilder",
+    "fromLibrary": "Velg fra biblioteket",
+    "takePhoto": "Ta bilde",
+    "removePhoto": "Fjern bilde",
+    "photo": "Bilde {{n}} av {{count}}",
+    "photoQuote": "📷 Bilde",
+    "photos_one": "📷 {{count}} bilde",
+    "photos_other": "📷 {{count}} bilder"
   }
 }

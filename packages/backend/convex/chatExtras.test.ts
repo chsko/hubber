@@ -79,6 +79,7 @@ describe("replies and mentions", () => {
       _id: question,
       authorName: "Kari",
       body: "Hvem tar med kake?",
+      hasImages: false,
       deleted: false,
     });
   });

@@ -5,9 +5,11 @@ import { type ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Alert, FlatList, Pressable, Text, View } from "react-native";
 import { useLocale } from "@/lib/i18n";
+import { pickChatImages, takeChatPhoto, useUploadImage } from "@/lib/image-upload";
 import { Bubble } from "./bubble";
 import { Composer, type Person } from "./composer";
 import { dayLabel, osloDayKey } from "./day-label";
+import { ImageViewer } from "./image-viewer";
 import { MessageActions } from "./message-actions";
 import type { Message } from "./types";
 
@@ -16,7 +18,8 @@ const PAGE_SIZE = 30;
 const GROUP_GAP = 5 * 60 * 1000;
 const MAX_SUGGESTIONS = 5;
 
-type Failed = { key: string; body: string };
+type Failed = { key: string; body: string; images: string[] };
+const MAX_IMAGES = 6;
 type Mode = { kind: "reply" | "edit"; message: Message } | null;
 
 /** The "@abc" being typed at the end of the draft, if any. */
@@ -50,7 +53,8 @@ export function ChatView({
     { initialNumItems: PAGE_SIZE },
   );
   const send = useMutation(api.messages.send).withOptimisticUpdate((store, args) => {
-    if (!me) return;
+    // Photo messages appear once uploaded; text shows up at once.
+    if (!me || (args.imageIds?.length ?? 0) > 0) return;
     const quoted = args.replyToId ? results.find((m) => m._id === args.replyToId) : undefined;
     insertAtTop({
       paginatedQuery: api.messages.list,
@@ -60,6 +64,7 @@ export function ChatView({
         _id: `optimistic-${Date.now()}` as Id<"messages">,
         _creationTime: Date.now(),
         body: args.body.trim(),
+        imageCount: 0,
         deleted: false,
         editedAt: null,
         author: { _id: me._id, name: me.name, photoUrl: me.photoUrl },
@@ -67,7 +72,13 @@ export function ChatView({
         canDelete: false,
         reactions: [],
         replyTo: quoted
-          ? { _id: quoted._id, authorName: quoted.author.name, body: quoted.body, deleted: false }
+          ? {
+              _id: quoted._id,
+              authorName: quoted.author.name,
+              body: quoted.body,
+              hasImages: quoted.imageCount > 0,
+              deleted: false,
+            }
           : null,
         mentions: [],
         mentionsMe: false,
@@ -93,6 +104,12 @@ export function ChatView({
   const [picked, setPicked] = useState<Person[]>([]);
   const [failed, setFailed] = useState<Failed[]>([]);
   const [actionsFor, setActionsFor] = useState<Message | null>(null);
+  const [images, setImages] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [viewer, setViewer] = useState<{ messageId: string; count: number; start: number } | null>(
+    null,
+  );
+  const upload = useUploadImage();
   const now = Date.now();
 
   const query = mentionQuery(draft);
@@ -118,11 +135,44 @@ export function ChatView({
     setDraft("");
     setMode(null);
     setPicked([]);
+    setImages([]);
+  }
+
+  function addImages() {
+    const room = MAX_IMAGES - images.length;
+    if (room <= 0) return;
+    const add = (uris: string[]) =>
+      setImages((current) => [...current, ...uris].slice(0, MAX_IMAGES));
+    Alert.alert(t("chat.addPhotos"), undefined, [
+      { text: t("chat.fromLibrary"), onPress: () => void pickChatImages(room).then(add) },
+      {
+        text: t("chat.takePhoto"),
+        onPress: () => void takeChatPhoto().then((uri) => uri && add([uri])),
+      },
+      { text: t("common.cancel"), style: "cancel" },
+    ]);
+  }
+
+  /** Uploads any photos, then sends. Failures land in the "tap to retry" list. */
+  async function deliver(
+    body: string,
+    imageUris: string[],
+    extra: { mentions?: Id<"users">[]; replyToId?: Id<"messages"> },
+  ) {
+    try {
+      if (imageUris.length > 0) setUploading(true);
+      const imageIds = await Promise.all(imageUris.map(upload));
+      await send({ conversationId, body, ...extra, ...(imageIds.length > 0 && { imageIds }) });
+    } catch {
+      setFailed((f) => [...f, { key: `${Date.now()}-${f.length}`, body, images: imageUris }]);
+    } finally {
+      setUploading(false);
+    }
   }
 
   function submit() {
     const body = draft;
-    if (body.trim().length === 0) return;
+    if (body.trim().length === 0 && images.length === 0) return;
     if (mode?.kind === "edit") {
       const messageId = mode.message._id;
       reset();
@@ -131,17 +181,14 @@ export function ChatView({
     }
     const mentions = picked.filter((p) => body.includes(`@${p.name}`)).map((p) => p.userId);
     const replyToId = mode?.kind === "reply" ? mode.message._id : undefined;
+    const imageUris = images;
     reset();
-    send({ conversationId, body, mentions, ...(replyToId && { replyToId }) }).catch(() =>
-      setFailed((f) => [...f, { key: `${Date.now()}-${f.length}`, body }]),
-    );
+    void deliver(body, imageUris, { mentions, ...(replyToId && { replyToId }) });
   }
 
   function retry(item: Failed) {
     setFailed((f) => f.filter((x) => x.key !== item.key));
-    send({ conversationId, body: item.body }).catch(() =>
-      setFailed((f) => [...f, { key: `${Date.now()}-${f.length}`, body: item.body }]),
-    );
+    void deliver(item.body, item.images, {});
   }
 
   function confirmDelete(message: Message) {
@@ -184,6 +231,7 @@ export function ChatView({
           locale={locale}
           onLongPress={() => setActionsFor(item)}
           onToggleReaction={(emoji) => void toggleReaction({ messageId: item._id, emoji })}
+          onOpenPhoto={(start) => setViewer({ messageId: item._id, count: item.imageCount, start })}
         />
         {index === 0 && seenBy?.messageId === item._id && seenBy.count > 0 ? (
           <Text
@@ -220,7 +268,9 @@ export function ChatView({
                   onPress={() => retry(f)}
                   className="max-w-[80%] self-end rounded-2xl border border-danger px-3.5 py-2 opacity-80"
                 >
-                  <Text className="font-sans text-[15px] text-text">{f.body}</Text>
+                  <Text className="font-sans text-[15px] text-text">
+                    {f.body || t("chat.photos", { count: f.images.length })}
+                  </Text>
                   <Text className="mt-0.5 font-sans-semibold text-[12px] text-danger">
                     {t("chat.notSent")}
                   </Text>
@@ -252,13 +302,18 @@ export function ChatView({
                     : t("chat.replyingTo", {
                         name: mode.message.author.name ?? t("chat.deletedUser"),
                       }),
-                preview: mode.message.body,
+                preview: mode.message.body || t("chat.photoQuote"),
               }
         }
         onCancelContext={reset}
         suggestions={suggestions}
         onPickSuggestion={pickSuggestion}
+        images={images}
+        onAddImages={addImages}
+        onRemoveImage={(uri) => setImages((current) => current.filter((u) => u !== uri))}
+        busy={uploading}
       />
+      <ImageViewer photos={viewer} onClose={() => setViewer(null)} />
       <MessageActions
         message={actionsFor}
         onClose={() => setActionsFor(null)}

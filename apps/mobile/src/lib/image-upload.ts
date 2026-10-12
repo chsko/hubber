@@ -27,6 +27,51 @@ export async function pickSquareImage(): Promise<string | null> {
   return uri;
 }
 
+/** Chat photos keep enough detail for a phone screen; the long edge is capped here. */
+const CHAT_IMAGE_EDGE = 1600;
+
+/**
+ * Re-encodes a photo for chat: long edge at most 1600px, JPEG. Re-encoding
+ * also drops EXIF metadata, including GPS location (HUB-20).
+ */
+async function prepareChatImage(asset: ImagePicker.ImagePickerAsset): Promise<string> {
+  const landscape = asset.width >= asset.height;
+  const tooBig = Math.max(asset.width, asset.height) > CHAT_IMAGE_EDGE;
+  let context = ImageManipulator.manipulate(asset.uri);
+  if (tooBig) {
+    context = context.resize(landscape ? { width: CHAT_IMAGE_EDGE } : { height: CHAT_IMAGE_EDGE });
+  }
+  const image = await context.renderAsync();
+  const { uri } = await image.saveAsync({ compress: 0.7, format: SaveFormat.JPEG });
+  return uri;
+}
+
+/** Picks up to `max` photos from the library, ready for upload. Empty if cancelled. */
+export async function pickChatImages(max: number): Promise<string[]> {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ["images"],
+    allowsMultipleSelection: true,
+    selectionLimit: max,
+    quality: 1,
+    exif: false,
+  });
+  if (result.canceled) return [];
+  return Promise.all(result.assets.slice(0, max).map(prepareChatImage));
+}
+
+/** Takes a photo with the camera, ready for upload. Null if cancelled or not allowed. */
+export async function takeChatPhoto(): Promise<string | null> {
+  const permission = await ImagePicker.requestCameraPermissionsAsync();
+  if (!permission.granted) return null;
+  const result = await ImagePicker.launchCameraAsync({
+    mediaTypes: ["images"],
+    quality: 1,
+    exif: false,
+  });
+  const asset = result.canceled ? undefined : result.assets[0];
+  return asset === undefined ? null : prepareChatImage(asset);
+}
+
 /** Uploads a local JPEG to Convex storage and returns its storage id. */
 export function useUploadImage() {
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);

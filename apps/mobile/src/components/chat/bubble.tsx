@@ -1,7 +1,8 @@
 import { formatTime, type Locale } from "@hubber/i18n";
 import { useTranslation } from "react-i18next";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { Avatar } from "@/components/avatar";
+import { useChatImageSource } from "@/lib/chat-image";
 import type { Message } from "./types";
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
   locale: Locale;
   onLongPress: () => void;
   onToggleReaction: (emoji: string) => void;
+  onOpenPhoto: (index: number) => void;
 };
 
 /** Splits text so "@Name" for each mentioned person can be highlighted. */
@@ -31,8 +33,10 @@ export function Bubble({
   locale,
   onLongPress,
   onToggleReaction,
+  onOpenPhoto,
 }: Props) {
   const { t } = useTranslation();
+  const photoSource = useChatImageSource();
   const mine = message.isMine;
   const pending = message._id.startsWith("optimistic-");
   const mentionNames = message.mentions.flatMap((m) => (m.name ? [m.name] : []));
@@ -75,26 +79,53 @@ export function Bubble({
                 numberOfLines={2}
                 className={`font-sans text-[13px] ${mine ? "text-bg opacity-90" : "text-textMuted"}`}
               >
-                {message.replyTo.deleted ? t("chat.deleted") : message.replyTo.body}
+                {message.replyTo.deleted
+                  ? t("chat.deleted")
+                  : message.replyTo.body || (message.replyTo.hasImages ? t("chat.photoQuote") : "")}
               </Text>
             </View>
           ) : null}
-          <Text
-            selectable
-            className={`font-sans text-[16px] leading-[22px] ${mine ? "text-bg" : "text-text"} ${message.deleted ? "italic opacity-70" : ""}`}
-          >
-            {message.deleted
-              ? t("chat.deleted")
-              : withMentions(message.body, mentionNames).map((part, i) =>
-                  part.mention ? (
-                    <Text key={i} className="font-sans-bold">
-                      {part.text}
-                    </Text>
-                  ) : (
-                    part.text
-                  ),
-                )}
-          </Text>
+          {message.imageCount > 0 ? (
+            <View className={`flex-row flex-wrap gap-1 ${message.body ? "mb-1" : ""}`}>
+              {Array.from({ length: message.imageCount }, (_, i) => {
+                const size = message.imageCount === 1 ? 220 : 108;
+                return (
+                  <Pressable
+                    key={i}
+                    accessibilityRole="imagebutton"
+                    accessibilityLabel={t("chat.photo", { n: i + 1, count: message.imageCount })}
+                    onPress={() => onOpenPhoto(i)}
+                    onLongPress={pending ? undefined : onLongPress}
+                  >
+                    <Image
+                      source={photoSource(message._id, i)}
+                      style={{ width: size, height: size, borderRadius: 12 }}
+                      className="bg-border"
+                      accessibilityIgnoresInvertColors
+                    />
+                  </Pressable>
+                );
+              })}
+            </View>
+          ) : null}
+          {message.body || message.deleted ? (
+            <Text
+              selectable
+              className={`font-sans text-[16px] leading-[22px] ${mine ? "text-bg" : "text-text"} ${message.deleted ? "italic opacity-70" : ""}`}
+            >
+              {message.deleted
+                ? t("chat.deleted")
+                : withMentions(message.body, mentionNames).map((part, i) =>
+                    part.mention ? (
+                      <Text key={i} className="font-sans-bold">
+                        {part.text}
+                      </Text>
+                    ) : (
+                      part.text
+                    ),
+                  )}
+            </Text>
+          ) : null}
           <Text
             className={`mt-0.5 self-end font-sans text-[11px] ${mine ? "text-bg opacity-80" : "text-textMuted"}`}
           >
