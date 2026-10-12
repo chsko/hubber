@@ -8,11 +8,11 @@ Convex backend (EU region, Dublin): schema, queries, mutations and actions in `c
 
 ## Running against Convex
 
-Set `CONVEX_DEPLOY_KEY` to a dev deploy key (scoped to the dev deployment), then:
+Set `CONVEX_DEPLOY_KEY` to a dev deploy key scoped to the dev deployment (format `dev:<deployment>|<token>`, with a literal `|`), then:
 
 ```sh
 pnpm --filter @hubber/backend dev       # push functions + regenerate convex/_generated
 pnpm --filter @hubber/backend codegen   # regenerate types only
 ```
 
-`convex/_generated` is committed. The current copy is a hand-written stand-in until the first `convex dev` run regenerates it.
+`convex/_generated` is committed; `convex dev` regenerates it. Dev deployment: `tangible-ox-76` (EU, `eu-west-1`).
