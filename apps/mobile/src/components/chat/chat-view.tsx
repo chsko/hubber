@@ -1,43 +1,49 @@
 import { api } from "@hubber/backend/api";
 import type { Id } from "@hubber/backend/dataModel";
-import { formatTime } from "@hubber/i18n";
-import { colors } from "@hubber/shared";
 import { insertAtTop, useMutation, usePaginatedQuery, useQuery } from "convex/react";
-import type { FunctionReturnType } from "convex/server";
-import { SendHorizontal } from "lucide-react-native";
 import { type ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, FlatList, Pressable, Text, TextInput, View } from "react-native";
-import { Avatar } from "@/components/avatar";
+import { ActivityIndicator, Alert, FlatList, Pressable, Text, View } from "react-native";
 import { useLocale } from "@/lib/i18n";
-import { useScheme } from "@/lib/use-scheme";
+import { Bubble } from "./bubble";
+import { Composer, type Person } from "./composer";
 import { dayLabel, osloDayKey } from "./day-label";
-
-type Message = FunctionReturnType<typeof api.messages.list>["page"][number];
+import { MessageActions } from "./message-actions";
+import type { Message } from "./types";
 
 const PAGE_SIZE = 30;
-const MAX_LENGTH = 4000;
 /** Consecutive messages from one person within this gap share one name and avatar. */
 const GROUP_GAP = 5 * 60 * 1000;
+const MAX_SUGGESTIONS = 5;
 
 type Failed = { key: string; body: string };
+type Mode = { kind: "reply" | "edit"; message: Message } | null;
+
+/** The "@abc" being typed at the end of the draft, if any. */
+function mentionQuery(draft: string): string | null {
+  const match = /(?:^|\s)@([\p{L}\p{M}-]*)$/u.exec(draft);
+  return match ? (match[1] ?? "") : null;
+}
 
 /**
- * A conversation (HUB-18): live, newest at the bottom, older pages load as
- * you scroll up. Sending shows the message at once; if it fails it stays
- * with a "tap to retry".
+ * A conversation (HUB-18, HUB-19): live, newest at the bottom, older pages
+ * load as you scroll up. Long-press a message to react, reply, edit or
+ * delete; type @ to mention someone. Sends show at once and stay with
+ * "tap to retry" if they fail.
  */
 export function ChatView({
   conversationId,
+  hubId,
   header,
 }: {
   conversationId: Id<"conversations">;
+  hubId: Id<"hubs">;
   header?: ReactElement;
 }) {
   const { t } = useTranslation();
   const locale = useLocale();
-  const c = colors[useScheme()];
   const me = useQuery(api.users.me);
+  const members = useQuery(api.hubs.members, { hubId });
   const { results, status, loadMore } = usePaginatedQuery(
     api.messages.list,
     { conversationId },
@@ -45,6 +51,7 @@ export function ChatView({
   );
   const send = useMutation(api.messages.send).withOptimisticUpdate((store, args) => {
     if (!me) return;
+    const quoted = args.replyToId ? results.find((m) => m._id === args.replyToId) : undefined;
     insertAtTop({
       paginatedQuery: api.messages.list,
       argsToMatch: { conversationId: args.conversationId },
@@ -57,26 +64,92 @@ export function ChatView({
         editedAt: null,
         author: { _id: me._id, name: me.name, photoUrl: me.photoUrl },
         isMine: true,
+        canDelete: false,
+        reactions: [],
+        replyTo: quoted
+          ? { _id: quoted._id, authorName: quoted.author.name, body: quoted.body, deleted: false }
+          : null,
+        mentions: [],
+        mentionsMe: false,
       },
     });
   });
+  const edit = useMutation(api.messages.edit);
+  const remove = useMutation(api.messages.remove);
+  const toggleReaction = useMutation(api.messages.toggleReaction);
+
   const [draft, setDraft] = useState("");
+  const [mode, setMode] = useState<Mode>(null);
+  const [picked, setPicked] = useState<Person[]>([]);
   const [failed, setFailed] = useState<Failed[]>([]);
+  const [actionsFor, setActionsFor] = useState<Message | null>(null);
   const now = Date.now();
 
-  function submit(body: string, retryKey?: string) {
+  const query = mentionQuery(draft);
+  const suggestions =
+    query === null || members === undefined
+      ? []
+      : members
+          .filter((m) => !m.isMe && m.name !== null)
+          .filter((m) =>
+            (m.name ?? "")
+              .toLocaleLowerCase("nb")
+              .split(/\s+/)
+              .some((word) => word.startsWith(query.toLocaleLowerCase("nb"))),
+          )
+          .slice(0, MAX_SUGGESTIONS);
+
+  function pickSuggestion(person: Person) {
+    setDraft((d) => d.replace(/@[\p{L}\p{M}-]*$/u, `@${person.name} `));
+    setPicked((p) => (p.some((x) => x.userId === person.userId) ? p : [...p, person]));
+  }
+
+  function reset() {
+    setDraft("");
+    setMode(null);
+    setPicked([]);
+  }
+
+  function submit() {
+    const body = draft;
     if (body.trim().length === 0) return;
-    if (retryKey) setFailed((f) => f.filter((x) => x.key !== retryKey));
-    send({ conversationId, body }).catch(() =>
+    if (mode?.kind === "edit") {
+      const messageId = mode.message._id;
+      reset();
+      edit({ messageId, body }).catch(() => Alert.alert(t("chat.editFailed")));
+      return;
+    }
+    const mentions = picked.filter((p) => body.includes(`@${p.name}`)).map((p) => p.userId);
+    const replyToId = mode?.kind === "reply" ? mode.message._id : undefined;
+    reset();
+    send({ conversationId, body, mentions, ...(replyToId && { replyToId }) }).catch(() =>
       setFailed((f) => [...f, { key: `${Date.now()}-${f.length}`, body }]),
     );
+  }
+
+  function retry(item: Failed) {
+    setFailed((f) => f.filter((x) => x.key !== item.key));
+    send({ conversationId, body: item.body }).catch(() =>
+      setFailed((f) => [...f, { key: `${Date.now()}-${f.length}`, body: item.body }]),
+    );
+  }
+
+  function confirmDelete(message: Message) {
+    Alert.alert(t("chat.deleteTitle"), undefined, [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("chat.delete"),
+        style: "destructive",
+        onPress: () => void remove({ messageId: message._id }),
+      },
+    ]);
   }
 
   function renderItem({ item, index }: { item: Message; index: number }) {
     const older = results[index + 1];
     const newer = results[index - 1];
-    const newDay =
-      older === undefined || osloDayKey(older._creationTime) !== osloDayKey(item._creationTime);
+    const day = osloDayKey(item._creationTime);
+    const newDay = older === undefined || osloDayKey(older._creationTime) !== day;
     const startsGroup =
       newDay ||
       older.author._id !== item.author._id ||
@@ -85,8 +158,8 @@ export function ChatView({
       newer === undefined ||
       newer.author._id !== item.author._id ||
       newer._creationTime - item._creationTime > GROUP_GAP ||
-      osloDayKey(newer._creationTime) !== osloDayKey(item._creationTime);
-    // The list is inverted, so what renders "after" an item appears above it.
+      osloDayKey(newer._creationTime) !== day;
+    // The list is inverted, so what renders before an item appears above it.
     return (
       <View>
         {newDay && (older !== undefined || status === "Exhausted") ? (
@@ -96,9 +169,11 @@ export function ChatView({
         ) : null}
         <Bubble
           message={item}
-          showAuthor={startsGroup && !item.isMine}
+          showAuthor={(startsGroup || item.replyTo !== null) && !item.isMine}
           showAvatar={endsGroup}
           locale={locale}
+          onLongPress={() => setActionsFor(item)}
+          onToggleReaction={(emoji) => void toggleReaction({ messageId: item._id, emoji })}
         />
       </View>
     );
@@ -125,7 +200,7 @@ export function ChatView({
                 <Pressable
                   key={f.key}
                   accessibilityRole="button"
-                  onPress={() => submit(f.body, f.key)}
+                  onPress={() => retry(f)}
                   className="max-w-[80%] self-end rounded-2xl border border-danger px-3.5 py-2 opacity-80"
                 >
                   <Text className="font-sans text-[15px] text-text">{f.body}</Text>
@@ -145,84 +220,42 @@ export function ChatView({
           ) : null
         }
       />
-      <View className="flex-row items-end gap-2 border-t border-border bg-surface px-3 py-2">
-        <TextInput
-          testID="chat-input"
-          value={draft}
-          onChangeText={setDraft}
-          placeholder={t("chat.placeholder")}
-          placeholderTextColor={c.textMuted}
-          multiline
-          maxLength={MAX_LENGTH}
-          accessibilityLabel={t("chat.placeholder")}
-          className="max-h-32 flex-1 rounded-2xl bg-bg px-4 py-2.5 font-sans text-[16px] text-text"
-        />
-        <Pressable
-          testID="chat-send"
-          accessibilityRole="button"
-          accessibilityLabel={t("chat.send")}
-          disabled={draft.trim().length === 0}
-          onPress={() => {
-            submit(draft);
-            setDraft("");
-          }}
-          className="h-11 w-11 items-center justify-center rounded-full bg-primary active:opacity-80 disabled:opacity-40"
-        >
-          <SendHorizontal color={c.surface} size={20} strokeWidth={2.4} />
-        </Pressable>
-      </View>
-    </View>
-  );
-}
-
-function Bubble({
-  message,
-  showAuthor,
-  showAvatar,
-  locale,
-}: {
-  message: Message;
-  showAuthor: boolean;
-  showAvatar: boolean;
-  locale: "nb" | "en";
-}) {
-  const { t } = useTranslation();
-  const mine = message.isMine;
-  const pending = message._id.startsWith("optimistic-");
-  return (
-    <View
-      className={`flex-row items-end gap-2 ${showAuthor ? "mt-3" : "mt-0.5"} ${mine ? "justify-end" : ""}`}
-    >
-      {!mine ? (
-        <View className="w-8">
-          {showAvatar ? (
-            <Avatar name={message.author.name} photoUrl={message.author.photoUrl} size={32} />
-          ) : null}
-        </View>
-      ) : null}
-      <View className={`max-w-[78%] gap-0.5 ${mine ? "items-end" : "items-start"}`}>
-        {showAuthor ? (
-          <Text className="ml-1 font-sans-semibold text-[12px] text-textMuted">
-            {message.author.name ?? t("chat.deletedUser")}
-          </Text>
-        ) : null}
-        <View
-          className={`rounded-2xl px-3.5 py-2 ${mine ? "bg-primary" : "border border-border bg-surface"} ${pending ? "opacity-60" : ""}`}
-        >
-          <Text
-            selectable
-            className={`font-sans text-[16px] leading-[22px] ${mine ? "text-bg" : "text-text"} ${message.deleted ? "italic" : ""}`}
-          >
-            {message.deleted ? t("chat.deleted") : message.body}
-          </Text>
-          <Text
-            className={`mt-0.5 self-end font-sans text-[11px] ${mine ? "text-bg opacity-80" : "text-textMuted"}`}
-          >
-            {formatTime(message._creationTime, locale)}
-            {message.editedAt ? ` · ${t("chat.edited")}` : ""}
-          </Text>
-        </View>
-      </View>
+      <Composer
+        draft={draft}
+        onChangeDraft={setDraft}
+        onSubmit={submit}
+        editing={mode?.kind === "edit"}
+        context={
+          mode === null
+            ? null
+            : {
+                label:
+                  mode.kind === "edit"
+                    ? t("chat.editing")
+                    : t("chat.replyingTo", {
+                        name: mode.message.author.name ?? t("chat.deletedUser"),
+                      }),
+                preview: mode.message.body,
+              }
+        }
+        onCancelContext={reset}
+        suggestions={suggestions}
+        onPickSuggestion={pickSuggestion}
+      />
+      <MessageActions
+        message={actionsFor}
+        onClose={() => setActionsFor(null)}
+        onReact={(emoji) => {
+          if (actionsFor) void toggleReaction({ messageId: actionsFor._id, emoji });
+        }}
+        onReply={() => actionsFor && setMode({ kind: "reply", message: actionsFor })}
+        onEdit={() => {
+          if (!actionsFor) return;
+          setMode({ kind: "edit", message: actionsFor });
+          setDraft(actionsFor.body);
+        }}
+        onDelete={() => actionsFor && confirmDelete(actionsFor)}
+      />
     </View>
   );
 }

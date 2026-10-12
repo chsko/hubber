@@ -199,6 +199,16 @@
     "notSent": "Not sent. Tap to try again.",
     "deleted": "Message deleted",
     "deletedUser": "Deleted user",
-    "edited": "edited"
+    "edited": "edited",
+    "reply": "Reply",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "deleteTitle": "Delete this message?",
+    "editing": "Editing message",
+    "replyingTo": "Replying to {{name}}",
+    "editFailed": "Couldn't save the change. Edits are possible for 15 minutes.",
+    "longPressHint": "Long-press to react, reply, edit or delete",
+    "reactionLabel": "{{emoji}} {{count}}"
   }
 }

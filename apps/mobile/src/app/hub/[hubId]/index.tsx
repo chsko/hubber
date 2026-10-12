@@ -305,6 +305,7 @@ function HubChat({
   return (
     <ChatView
       conversationId={conversationId}
+      hubId={hubId}
       header={
         <View className="mb-2 gap-2 rounded-2xl border border-border bg-surface p-4">
           <Text className="font-sans-bold text-[16px] text-text">

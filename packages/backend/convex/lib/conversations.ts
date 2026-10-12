@@ -3,7 +3,12 @@ import type { Doc, Id } from "../_generated/dataModel";
 import type { QueryCtx } from "../_generated/server";
 import { getHubMember } from "./auth";
 
-type Access = { user: Doc<"users">; conversation: Doc<"conversations">; hubId: Id<"hubs"> };
+type Access = {
+  user: Doc<"users">;
+  role: Doc<"hubMembers">["role"];
+  conversation: Doc<"conversations">;
+  hubId: Id<"hubs">;
+};
 
 /**
  * Who may read and write a conversation: active members of its hub. Event
@@ -22,7 +27,9 @@ export async function getConversationAccess(
   }
   if (hubId === undefined) return null;
   const member = await getHubMember(ctx, hubId);
-  return member === null ? null : { user: member.user, conversation, hubId };
+  return member === null
+    ? null
+    : { user: member.user, role: member.membership.role, conversation, hubId };
 }
 
 /** Like `getConversationAccess`, but throws `FORBIDDEN`. For mutations. */

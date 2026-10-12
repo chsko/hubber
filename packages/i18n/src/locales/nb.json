@@ -199,6 +199,16 @@
     "notSent": "Ikke sendt. Trykk for å prøve igjen.",
     "deleted": "Meldingen er slettet",
     "deletedUser": "Slettet bruker",
-    "edited": "redigert"
+    "edited": "redigert",
+    "reply": "Svar",
+    "edit": "Rediger",
+    "delete": "Slett",
+    "save": "Lagre",
+    "deleteTitle": "Slette meldingen?",
+    "editing": "Redigerer melding",
+    "replyingTo": "Svarer {{name}}",
+    "editFailed": "Kunne ikke lagre endringen. Du kan redigere i 15 minutter.",
+    "longPressHint": "Trykk og hold for å reagere, svare, redigere eller slette",
+    "reactionLabel": "{{emoji}} {{count}}"
   }
 }
