@@ -14,7 +14,7 @@ Bundle ID: `no.hubbr.app`.
 
    ```sh
    cd apps/mobile
-   pnpm dlx eas-cli@latest build --platform ios --profile beta
+   npx eas-cli@latest build --platform ios --profile beta
    ```
 
    Sign in with your Apple ID when asked and let EAS create everything: bundle ID,
@@ -27,7 +27,7 @@ Bundle ID: `no.hubbr.app`.
 4. **First upload**:
 
    ```sh
-   pnpm dlx eas-cli@latest submit --platform ios --profile beta --latest
+   npx eas-cli@latest submit --platform ios --profile beta --latest
    ```
 
    Let EAS create an App Store Connect API key, so later uploads need no Apple sign-in.
