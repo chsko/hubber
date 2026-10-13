@@ -4,6 +4,7 @@ import type { Doc, Id } from "./_generated/dataModel";
 import {
   internalAction,
   internalMutation,
+  internalQuery,
   type MutationCtx,
   mutation,
   type QueryCtx,
@@ -424,5 +425,57 @@ export const send = internalAction({
         }
       }
     }
+  },
+});
+
+/** Registered devices per user name, for checking push setup (no tokens in the result). */
+export const devices = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const rows = await ctx.db.query("pushTokens").collect();
+    return Promise.all(
+      rows.map(async (row) => ({
+        user: (await ctx.db.get(row.userId))?.name ?? null,
+        platform: row.platform,
+      })),
+    );
+  },
+});
+
+export const testTokens = internalQuery({
+  args: { name: v.string() },
+  handler: async (ctx, args) => {
+    const tokens: string[] = [];
+    for (const row of await ctx.db.query("pushTokens").collect()) {
+      if ((await ctx.db.get(row.userId))?.name === args.name) tokens.push(row.token);
+    }
+    return tokens;
+  },
+});
+
+/** Sends a test push to every device of the users with this name; returns Expo's ticket statuses. */
+export const sendTest = internalAction({
+  args: { name: v.string() },
+  handler: async (ctx, args): Promise<unknown> => {
+    const to = await ctx.runQuery(internal.push.testTokens, { name: args.name });
+    if (to.length === 0) return { sent: 0 };
+    const response = await fetch(EXPO_PUSH_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(
+        to.map((token) => ({
+          to: token,
+          title: "Hubbr",
+          body: "Test notification",
+          sound: "default",
+        })),
+      ),
+    });
+    const { data } = (await response.json()) as { data?: Ticket[] };
+    return {
+      sent: to.length,
+      status: response.status,
+      tickets: data?.map((t) => ({ status: t.status, error: t.details?.error })),
+    };
   },
 });
