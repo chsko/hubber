@@ -21,8 +21,8 @@ Add native libraries with `npx expo install <pkg>` so versions match the SDK. Se
 
 ## Updates without a rebuild (EAS Update)
 
-Every push to `main` that passes CI publishes the JavaScript to EAS Update on the `main` channel (the `update`
-job in `.github/workflows/ci.yml`). The runtime version follows the SDK (`exposdk:57.0.0`), so Expo Go can open
-it: `exp://u.expo.dev/<projectId>?runtime-version=exposdk:57.0.0&channel-name=main` (the job summary prints
-the full link). Native changes (new native modules, plugins, permissions) still need a new build or an SDK
-Expo Go supports. Requires the `EXPO_TOKEN` repository secret and `extra.eas.projectId` from `eas init`.
+Every push to `main` publishes the JavaScript to EAS Update on the `main` channel. This runs on Expo's servers
+(`.eas/workflows/publish-update.yml`, through the GitHub connection on expo.dev with base directory
+`apps/mobile`). The runtime version follows the SDK (`exposdk:57.0.0`), so Expo Go can open it:
+`exp://u.expo.dev/<projectId>?runtime-version=exposdk:57.0.0&channel-name=main`. Native changes (new native
+modules, plugins, permissions) still need a new build or an SDK Expo Go supports.

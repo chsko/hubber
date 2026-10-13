@@ -1,0 +1,18 @@
+# Runs on Expo's servers via the GitHub connection on expo.dev (base directory: apps/mobile).
+# Publishes the app's JavaScript to the "main" channel on every push to main, so Expo Go and
+# builds on that channel pick up the change without a rebuild.
+name: Publish update
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  publish_update:
+    name: Publish update
+    type: update
+    env:
+      # Public URL, not a secret (same value as apps/mobile/.env.example). Inlined into the bundle.
+      EXPO_PUBLIC_CONVEX_URL: https://tangible-ox-76.eu-west-1.convex.cloud
+    params:
+      channel: main
