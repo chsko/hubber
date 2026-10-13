@@ -4,6 +4,7 @@ import { router, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { useLocale } from "@/lib/i18n";
+import { takeFirstStop } from "@/lib/first-stop";
 import { takePendingInvite } from "@/lib/invite-link";
 import { usePush } from "@/lib/push";
 
@@ -74,11 +75,17 @@ function LocaleSync({ stored }: { stored: "nb" | "en" | null }) {
   return null;
 }
 
-/** After sign-in and onboarding, opens the invite that brought the person here, if any. */
+/**
+ * After sign-in and onboarding, opens the invite that brought the person
+ * here, or else what they picked on onboarding's last step, if anything.
+ */
 function ResumeInvite() {
   useEffect(() => {
     void takePendingInvite().then((code) => {
+      const stop = takeFirstStop();
       if (code !== null) router.push({ pathname: "/i/[code]", params: { code } });
+      else if (stop === "/discover") router.navigate(stop);
+      else if (stop !== null) router.push(stop);
     });
   }, []);
   return null;

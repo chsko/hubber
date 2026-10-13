@@ -2,14 +2,24 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "@hubber/backend/api";
 import { useMutation, useQuery } from "convex/react";
 import { router } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Alert, Pressable, Switch, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  AppState,
+  Linking,
+  Pressable,
+  Switch,
+  Text,
+  View,
+} from "react-native";
 import { Avatar } from "@/components/avatar";
 import { LanguagePicker } from "@/components/language-picker";
 import { Screen } from "@/components/screen";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { useProfilePhoto } from "@/lib/profile-photo";
-import { useForgetDevice } from "@/lib/push";
+import { pushPermission, useEnablePush, useForgetDevice } from "@/lib/push";
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
@@ -80,6 +90,7 @@ export default function ProfileScreen() {
         <Text className="font-sans-semibold text-xs uppercase tracking-widest text-textMuted">
           {t("profile.notifications")}
         </Text>
+        <PushOff />
         <View className="flex-row items-center gap-3 pt-2">
           <View className="flex-1 gap-0.5">
             <Text className="font-sans-medium text-[15px] text-text">
@@ -203,5 +214,47 @@ function DeleteAccount({ onDeleted }: { onDeleted: () => void }) {
         {t("deleteAccount.button")}
       </Text>
     </Pressable>
+  );
+}
+
+/** Shown while this phone won't get notifications, with a way to turn them on. */
+function PushOff() {
+  const { t } = useTranslation();
+  const enablePush = useEnablePush();
+  const [permission, setPermission] = useState<Awaited<ReturnType<typeof pushPermission>>>();
+  const refresh = useCallback(() => void pushPermission().then(setPermission), []);
+
+  // Coming back from the phone's settings may have changed it.
+  useEffect(() => {
+    refresh();
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") refresh();
+    });
+    return () => subscription.remove();
+  }, [refresh]);
+
+  if (permission !== "ask" && permission !== "settings") return null;
+
+  function turnOn() {
+    if (permission === "settings") void Linking.openSettings();
+    else void enablePush().finally(refresh);
+  }
+
+  return (
+    <View className="flex-row items-center gap-3 border-b border-border pb-3 pt-2">
+      <Text className="flex-1 font-sans text-[14px] leading-5 text-textMuted">
+        {t("profile.pushOff")}
+      </Text>
+      <Pressable
+        testID="push-turn-on"
+        accessibilityRole="button"
+        onPress={turnOn}
+        className="rounded-full bg-primarySoft px-4 py-2 active:opacity-80"
+      >
+        <Text className="font-sans-bold text-[14px] text-primaryStrong">
+          {t("profile.pushTurnOn")}
+        </Text>
+      </Pressable>
+    </View>
   );
 }

@@ -90,7 +90,9 @@
     "photoFailed": "Couldn't save the photo. Please try again.",
     "notifications": "Notifications",
     "quietHours": "Quiet hours (22–07)",
-    "quietHoursBody": "Notifications at night arrive without sound."
+    "quietHoursBody": "Notifications at night arrive without sound.",
+    "pushOff": "Notifications are off on this phone, so you won't hear about new messages or events.",
+    "pushTurnOn": "Turn on"
   },
   "notFound": {
     "title": "Page not found",
@@ -118,7 +120,28 @@
     "title": "Welcome, {{name}}!",
     "subtitle": "Check that this looks right. You can change it later under Profile.",
     "nameFromVipps": "Your name comes from Vipps, so everyone knows who you are. It can't be changed here.",
-    "continue": "Continue"
+    "continue": "Continue",
+    "notificationsTitle": "Stay in the loop",
+    "notificationsBody": "We'll let you know about new messages in your hubs and events you're going to. Nothing else, and quietly at night.",
+    "notificationsOn": "Turn on notifications",
+    "notificationsLater": "Not now",
+    "startTitle": "What would you like to do first?",
+    "startSubtitle": "You can do all of it later too.",
+    "start": {
+      "create": {
+        "title": "Create a hub",
+        "body": "For your child's class, your family or your friends. Then invite the others."
+      },
+      "join": {
+        "title": "I have an invite",
+        "body": "Join a hub with a code or a link someone sent you."
+      },
+      "discover": {
+        "title": "Find events nearby",
+        "body": "See open events in your municipality."
+      }
+    },
+    "startSkip": "I'll look around first"
   },
   "hubTemplates": {
     "class": {
@@ -190,7 +213,10 @@
       "importantBody": "When someone mentions you or replies to you.",
       "muted": "Off",
       "mutedBody": "No notifications from this hub. Unread still shows in the app."
-    }
+    },
+    "aloneTitle": "It's just you so far",
+    "aloneBody": "Invite the others with a link or a code. They'll see everything that's written here.",
+    "aloneInvite": "Invite people"
   },
   "join": {
     "invitedTo": "You're invited to",

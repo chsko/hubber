@@ -41,3 +41,8 @@ export async function takePendingInvite(): Promise<string | null> {
     return null;
   }
 }
+
+/** Whether an invite is waiting to be resumed after onboarding. */
+export async function hasPendingInvite(): Promise<boolean> {
+  return (await AsyncStorage.getItem(STORAGE_KEY).catch(() => null)) !== null;
+}

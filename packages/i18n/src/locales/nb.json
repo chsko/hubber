@@ -90,7 +90,9 @@
     "photoFailed": "Kunne ikke lagre bildet. Prøv igjen.",
     "notifications": "Varsler",
     "quietHours": "Stille timer (22–07)",
-    "quietHoursBody": "Varsler om natten kommer uten lyd."
+    "quietHoursBody": "Varsler om natten kommer uten lyd.",
+    "pushOff": "Varsler er slått av på denne telefonen, så du får ikke beskjed om nye meldinger eller arrangementer.",
+    "pushTurnOn": "Slå på"
   },
   "notFound": {
     "title": "Fant ikke siden",
@@ -118,7 +120,28 @@
     "title": "Velkommen, {{name}}!",
     "subtitle": "Sjekk at dette ser riktig ut. Du kan endre det senere under Profil.",
     "nameFromVipps": "Navnet ditt kommer fra Vipps, så alle vet hvem du er. Det kan ikke endres her.",
-    "continue": "Fortsett"
+    "continue": "Fortsett",
+    "notificationsTitle": "Få beskjed når noe skjer",
+    "notificationsBody": "Vi sier fra om nye meldinger i hubene dine og arrangementer du skal på. Ikke noe annet, og lydløst om natten.",
+    "notificationsOn": "Slå på varsler",
+    "notificationsLater": "Ikke nå",
+    "startTitle": "Hva vil du gjøre først?",
+    "startSubtitle": "Du kan gjøre alt dette senere også.",
+    "start": {
+      "create": {
+        "title": "Lag en hub",
+        "body": "For klassen til barnet ditt, familien eller vennene dine. Så inviterer du de andre."
+      },
+      "join": {
+        "title": "Jeg har en invitasjon",
+        "body": "Bli med i en hub med en kode eller lenke noen har sendt deg."
+      },
+      "discover": {
+        "title": "Finn arrangementer i nærheten",
+        "body": "Se åpne arrangementer i kommunen din."
+      }
+    },
+    "startSkip": "Jeg ser meg rundt først"
   },
   "hubTemplates": {
     "class": {
@@ -190,7 +213,10 @@
       "importantBody": "Når noen nevner deg eller svarer deg.",
       "muted": "Av",
       "mutedBody": "Ingen varsler fra denne huben. Uleste vises fortsatt i appen."
-    }
+    },
+    "aloneTitle": "Foreløpig er det bare deg her",
+    "aloneBody": "Inviter de andre med en lenke eller kode. De ser alt som skrives her.",
+    "aloneInvite": "Inviter folk"
   },
   "join": {
     "invitedTo": "Du er invitert til",

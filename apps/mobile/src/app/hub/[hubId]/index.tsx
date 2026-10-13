@@ -103,7 +103,12 @@ export default function HubScreen() {
 
       {segment === "chat" ? (
         <KeyboardAvoidingView behavior="padding" className="flex-1">
-          <HubChat hubId={hub._id} hubName={hub.name} template={hub.template} />
+          <HubChat
+            hubId={hub._id}
+            hubName={hub.name}
+            template={hub.template}
+            alone={hub.memberCount === 1}
+          />
         </KeyboardAvoidingView>
       ) : (
         <ScrollView contentContainerClassName="gap-5 px-5 pb-10">
@@ -325,15 +330,20 @@ function PendingRequests({ hubId }: { hubId: Id<"hubs"> }) {
   );
 }
 
-/** The hub's chat, opening with the template's welcome text (HUB-18). */
+/**
+ * The hub's chat, opening with the template's welcome text (HUB-18), and a
+ * nudge to invite people while you're the only one here.
+ */
 function HubChat({
   hubId,
   hubName,
   template,
+  alone,
 }: {
   hubId: Id<"hubs">;
   hubName: string;
   template: Template;
+  alone: boolean;
 }) {
   const { t } = useTranslation();
   const conversationId = useQuery(api.messages.hubConversation, { hubId });
@@ -342,13 +352,35 @@ function HubChat({
     <ChatView
       conversationId={conversationId}
       header={
-        <View className="mb-2 gap-2 rounded-2xl border border-border bg-surface p-4">
-          <Text className="font-sans-bold text-[16px] text-text">
-            {t("hub.welcomeTitle", { name: hubName })}
-          </Text>
-          <Text className="font-sans text-[15px] leading-6 text-textMuted">
-            {t(`hubTemplates.${template}.welcome`)}
-          </Text>
+        <View className="mb-2 gap-3">
+          <View className="gap-2 rounded-2xl border border-border bg-surface p-4">
+            <Text className="font-sans-bold text-[16px] text-text">
+              {t("hub.welcomeTitle", { name: hubName })}
+            </Text>
+            <Text className="font-sans text-[15px] leading-6 text-textMuted">
+              {t(`hubTemplates.${template}.welcome`)}
+            </Text>
+          </View>
+          {alone ? (
+            <View className="gap-3 rounded-2xl border border-accent bg-surface p-4">
+              <View className="gap-1">
+                <Text className="font-sans-bold text-[16px] text-text">{t("hub.aloneTitle")}</Text>
+                <Text className="font-sans text-[15px] leading-6 text-textMuted">
+                  {t("hub.aloneBody")}
+                </Text>
+              </View>
+              <Pressable
+                testID="invite-alone"
+                accessibilityRole="button"
+                onPress={() => router.push({ pathname: "/hub/[hubId]/invite", params: { hubId } })}
+                className="items-center rounded-xl bg-primarySoft px-4 py-3 active:opacity-80"
+              >
+                <Text className="font-sans-bold text-[15px] text-primaryStrong">
+                  {t("hub.aloneInvite")}
+                </Text>
+              </Pressable>
+            </View>
+          ) : null}
         </View>
       }
     />
