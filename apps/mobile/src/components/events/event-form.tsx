@@ -1,7 +1,7 @@
 import type { Id } from "@hubber/backend/dataModel";
 import {
   formatCompactDate,
-  formatLongDate,
+  formatCompactDateWithWeekday,
   osloDateParts,
   osloTimeParts,
   osloToEpoch,
@@ -269,7 +269,7 @@ export function EventForm({
             >
               <Text className={`font-sans text-[16px] ${day ? "text-text" : "text-textMuted"}`}>
                 {day
-                  ? formatLongDate(at(day, { hour: 12, minute: 0 }), locale)
+                  ? formatCompactDateWithWeekday(at(day, { hour: 12, minute: 0 }), locale)
                   : t("events.pickDate")}
               </Text>
             </Pressable>

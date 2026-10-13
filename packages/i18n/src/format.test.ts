@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   formatCompactDate,
+  formatCompactDateWithWeekday,
   formatDate,
   formatDateTime,
   formatTime,
@@ -100,5 +101,7 @@ describe("Oslo wall-clock time", () => {
   it("formats compact dates with the year", () => {
     expect(formatCompactDate(Date.UTC(2026, 11, 11, 11), "nb")).toBe("11. des. 26");
     expect(formatCompactDate(Date.UTC(2026, 11, 11, 11), "en")).toBe("11 Dec 26");
+    expect(formatCompactDateWithWeekday(Date.UTC(2026, 11, 11, 11), "nb")).toBe("fre. 11. des. 26");
+    expect(formatCompactDateWithWeekday(Date.UTC(2026, 11, 11, 11), "en")).toBe("Fri 11 Dec 26");
   });
 });

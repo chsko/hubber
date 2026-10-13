@@ -116,3 +116,9 @@ export function formatShortDate(date: DateInput, locale: Locale): string {
 export function formatCompactDate(date: DateInput, locale: Locale): string {
   return formatter(locale, { day: "numeric", month: "short", year: "2-digit" }).format(date);
 }
+
+/** "fre. 11. des. 26" (nb) · "Fri 11 Dec 26" (en) */
+export function formatCompactDateWithWeekday(date: DateInput, locale: Locale): string {
+  const weekday = formatter(locale, { weekday: "short" }).format(date);
+  return `${weekday} ${formatCompactDate(date, locale)}`;
+}

@@ -32,6 +32,7 @@ export function resolveLocale(preferred: readonly string[]): Locale {
 export { findMissingKeys, flattenKeys, type Catalog } from "./keys";
 export {
   formatCompactDate,
+  formatCompactDateWithWeekday,
   formatDate,
   formatDateTime,
   formatLongDate,
