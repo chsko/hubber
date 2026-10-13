@@ -8,8 +8,22 @@
       "distribution": "internal",
       "channel": "main"
     },
+    "beta": {
+      "distribution": "store",
+      "channel": "beta",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_CONVEX_URL": "https://tangible-ox-76.eu-west-1.convex.cloud"
+      }
+    },
     "production": {
-      "channel": "production"
+      "channel": "production",
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "beta": {
+      "ios": {}
     }
   }
 }

@@ -1,0 +1,25 @@
+# Runs on Expo's servers via the GitHub connection on expo.dev (base directory: apps/mobile).
+# Started by hand from expo.dev (Workflows > TestFlight beta > Run) or `eas workflow:run testflight.yml`.
+# Builds the iOS app with the "beta" profile (dev Convex deployment, so the dev sign-in works)
+# and uploads it to TestFlight. Needs the iOS credentials and App Store Connect API key that the
+# first interactive `eas build` / `eas submit` stores on EAS (docs/TESTFLIGHT.md).
+name: TestFlight beta
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build_ios:
+    name: Build iOS
+    type: build
+    params:
+      platform: ios
+      profile: beta
+
+  submit_ios:
+    name: Submit to TestFlight
+    needs: [build_ios]
+    type: submit
+    params:
+      build_id: ${{ needs.build_ios.outputs.build_id }}
+      profile: beta

@@ -155,9 +155,11 @@ Decisions are scored with **Jev** (TypeSafe System One) by calling the API direc
 | 2026-10-12 | Name and domain      | Not asked (owner's choice)                                                                                                            | **Hubbr**, domain **hubbr.no** (bought). Invite and universal links use hubbr.no; app and repo keep the name Hubber until renamed           |
 | 2026-10-12 | Styling              | Not asked: NativeWind 4.2.7 officially supports Expo SDK 57; v5 is still a release candidate                                          | **NativeWind 4.2.7 + Tailwind 3.4**, colours as CSS variables from `@hubber/shared`                                                         |
 | 2026-10-12 | Platform focus       | Not asked (founder's call)                                                                                                            | **Mobile app only (iOS, Android).** Next.js site (`apps/web`) and Expo web paused; code kept. HUB-4/31/32 to Backlog, HUB-16 is in-app only |
+| 2026-10-13 | Bundle ID            | Not asked (follows the owned domain)                                                                                                  | **`no.hubbr.app`** on iOS and Android, set before Apple registration; see [TESTFLIGHT.md](./TESTFLIGHT.md)                                  |
 
 ## 7. Open items for you
 
 1. Register an ENK and apply to Vipps — **postponed**. Development continues with the dev-only sign-in; real Vipps sign-in (HUB issue in M1) stays blocked until then.
 2. Domain registered: **hubbr.no** (2026-10-12). Trademark search for "Hubbr" still to do.
 3. Delete the old `master` branch on GitHub (`main` is now default and contains all of `master`).
+4. TestFlight: join the Apple Developer Program and do the one-time setup in [TESTFLIGHT.md](./TESTFLIGHT.md).

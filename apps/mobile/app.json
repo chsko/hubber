@@ -11,12 +11,15 @@
       "policy": "sdkVersion"
     },
     "ios": {
-      "bundleIdentifier": "io.hubberapp.app",
+      "bundleIdentifier": "no.hubbr.app",
       "supportsTablet": false,
-      "associatedDomains": ["applinks:hubbr.no"]
+      "associatedDomains": ["applinks:hubbr.no"],
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
-      "package": "io.hubberapp.app",
+      "package": "no.hubbr.app",
       "adaptiveIcon": {
         "backgroundColor": "#2F5D50",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

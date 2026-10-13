@@ -8,7 +8,7 @@
  * - ANDROID_CERT_SHA256: SHA-256 fingerprints of the app signing certificates
  *   (`eas credentials`, later also Play Console's app signing key), comma separated
  */
-export const appId = "io.hubberapp.app";
+export const appId = "no.hubbr.app";
 
 /** Paths the app handles (Expo Router routes in apps/mobile/src/app). */
 export const appPaths = ["/i/*"];
