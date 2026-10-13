@@ -1,5 +1,11 @@
 import type { Id } from "@hubber/backend/dataModel";
-import { formatLongDate, osloDateParts, osloTimeParts, osloToEpoch } from "@hubber/i18n";
+import {
+  formatCompactDate,
+  formatLongDate,
+  osloDateParts,
+  osloTimeParts,
+  osloToEpoch,
+} from "@hubber/i18n";
 import { colors } from "@hubber/shared";
 import { type ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -314,7 +320,7 @@ export function EventForm({
                     className={`font-sans text-[16px] ${deadline ? "text-text" : "text-textMuted"}`}
                   >
                     {deadline
-                      ? `${pad(deadline.day)}.${pad(deadline.month)}.`
+                      ? formatCompactDate(at(deadline, { hour: 12, minute: 0 }), locale)
                       : t("events.optional")}
                   </Text>
                 </Pressable>

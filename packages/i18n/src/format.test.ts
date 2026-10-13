@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  formatCompactDate,
   formatDate,
   formatDateTime,
   formatTime,
@@ -94,5 +95,10 @@ describe("Oslo wall-clock time", () => {
     expect(osloTimeParts(summer)).toEqual({ hour: 18, minute: 5 });
     expect(osloTimeParts(winterMidnight)).toEqual({ hour: 0, minute: 30 });
     expect(formatShortDate(Date.UTC(2026, 11, 13, 16), "en")).toBe("Sun 13 Dec");
+  });
+
+  it("formats compact dates with the year", () => {
+    expect(formatCompactDate(Date.UTC(2026, 11, 11, 11), "nb")).toBe("11. des. 26");
+    expect(formatCompactDate(Date.UTC(2026, 11, 11, 11), "en")).toBe("11 Dec 26");
   });
 });

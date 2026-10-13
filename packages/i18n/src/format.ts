@@ -111,3 +111,8 @@ export function osloToEpoch({ year, month, day, hour, minute }: OsloDateTime): n
 export function formatShortDate(date: DateInput, locale: Locale): string {
   return formatter(locale, { weekday: "short", day: "numeric", month: "short" }).format(date);
 }
+
+/** "11. des. 26" (nb) · "11 Dec 26" (en) */
+export function formatCompactDate(date: DateInput, locale: Locale): string {
+  return formatter(locale, { day: "numeric", month: "short", year: "2-digit" }).format(date);
+}

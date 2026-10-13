@@ -1,6 +1,6 @@
 import { api } from "@hubber/backend/api";
 import type { Id } from "@hubber/backend/dataModel";
-import { formatShortDate } from "@hubber/i18n";
+import { formatCompactDate } from "@hubber/i18n";
 import { colors } from "@hubber/shared";
 import { useMutation, useQuery } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
@@ -273,7 +273,7 @@ function RsvpPanel({ event }: { event: EventView }) {
           t("events.maybeCount", { count: event.counts.maybe }),
           event.capacity !== null ? t("events.capacityOf", { count: event.capacity }) : null,
           event.rsvpDeadline !== null && !event.rsvpClosed
-            ? t("events.answerBy", { date: formatShortDate(event.rsvpDeadline, locale) })
+            ? t("events.answerBy", { date: formatCompactDate(event.rsvpDeadline, locale) })
             : null,
         ]
           .filter(Boolean)
