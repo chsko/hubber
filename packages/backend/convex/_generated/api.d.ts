@@ -11,6 +11,7 @@
 import type * as account from "../account.js";
 import type * as auth from "../auth.js";
 import type * as calendar from "../calendar.js";
+import type * as crons from "../crons.js";
 import type * as devSignIn from "../devSignIn.js";
 import type * as events from "../events.js";
 import type * as files from "../files.js";
@@ -35,6 +36,7 @@ import type * as messages from "../messages.js";
 import type * as moderation from "../moderation.js";
 import type * as push from "../push.js";
 import type * as readStates from "../readStates.js";
+import type * as retention from "../retention.js";
 import type * as users from "../users.js";
 
 import type {
@@ -47,6 +49,7 @@ declare const fullApi: ApiFromModules<{
   account: typeof account;
   auth: typeof auth;
   calendar: typeof calendar;
+  crons: typeof crons;
   devSignIn: typeof devSignIn;
   events: typeof events;
   files: typeof files;
@@ -71,6 +74,7 @@ declare const fullApi: ApiFromModules<{
   moderation: typeof moderation;
   push: typeof push;
   readStates: typeof readStates;
+  retention: typeof retention;
   users: typeof users;
 }>;
 
