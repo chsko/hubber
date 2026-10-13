@@ -14,7 +14,6 @@ import {
   Alert,
   Image,
   KeyboardAvoidingView,
-  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -31,6 +30,7 @@ import { pickCoverImage, useUploadImage } from "@/lib/image-upload";
 import { useScheme } from "@/lib/use-scheme";
 import { type Day, MonthCalendar } from "./month-calendar";
 import { PlaceField } from "./place-field";
+import { BottomSheet } from "@/components/bottom-sheet";
 
 /** Kept in step with packages/backend/convex/events.ts. */
 const MAX_TITLE_LENGTH = 120;
@@ -441,41 +441,29 @@ function DayPicker({
     month: (selected ?? today).month,
   });
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable
-        accessibilityLabel={t("common.cancel")}
-        onPress={onClose}
-        className="flex-1 justify-end bg-black/40"
-      >
-        <Pressable onPress={() => undefined}>
-          <SafeAreaView edges={["bottom"]} className="gap-3 rounded-t-3xl bg-surface px-4 pt-5">
-            <View className="flex-row items-center justify-between px-1">
-              <Text className="font-sans-bold text-[17px] text-text">{title}</Text>
-              {onClear ? (
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={() => {
-                    onClear();
-                    onClose();
-                  }}
-                >
-                  <Text className="font-sans-semibold text-[15px] text-primary">
-                    {t("events.clear")}
-                  </Text>
-                </Pressable>
-              ) : null}
-            </View>
-            <MonthCalendar
-              month={month}
-              onMonthChange={setMonth}
-              selected={selected}
-              today={today}
-              {...(minDay !== undefined && { minDay })}
-              onSelect={onSelect}
-            />
-          </SafeAreaView>
-        </Pressable>
-      </Pressable>
-    </Modal>
+    <BottomSheet visible={visible} onClose={onClose} className="gap-3">
+      <View className="flex-row items-center justify-between px-1">
+        <Text className="font-sans-bold text-[17px] text-text">{title}</Text>
+        {onClear ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => {
+              onClear();
+              onClose();
+            }}
+          >
+            <Text className="font-sans-semibold text-[15px] text-primary">{t("events.clear")}</Text>
+          </Pressable>
+        ) : null}
+      </View>
+      <MonthCalendar
+        month={month}
+        onMonthChange={setMonth}
+        selected={selected}
+        today={today}
+        {...(minDay !== undefined && { minDay })}
+        onSelect={onSelect}
+      />
+    </BottomSheet>
   );
 }
