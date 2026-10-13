@@ -20,6 +20,7 @@ import { HubEvents } from "@/components/events/hub-events";
 import { HubIcon } from "@/components/hub-icon";
 import { NotAMember } from "@/components/not-a-member";
 import { NotifyLevelButton } from "@/components/notify-level";
+import { type ReportTarget, ReportSheet, useConfirmBlock } from "@/components/report-sheet";
 import { StackHeader } from "@/components/stack-header";
 
 const segments = ["chat", "events", "members"] as const;
@@ -132,6 +133,9 @@ function Members({ hubId, myRole }: { hubId: Id<"hubs">; myRole: Role }) {
   const removeMember = useMutation(api.hubs.removeMember);
   const transferOwnership = useMutation(api.hubs.transferOwnership);
   const leave = useMutation(api.hubs.leave);
+  const unblock = useMutation(api.moderation.unblock);
+  const confirmBlock = useConfirmBlock();
+  const [reportTarget, setReportTarget] = useState<ReportTarget | null>(null);
   if (members === undefined) return <ActivityIndicator />;
 
   type Member = (typeof members)[number];
@@ -139,7 +143,21 @@ function Members({ hubId, myRole }: { hubId: Id<"hubs">; myRole: Role }) {
   function actionsFor(m: Member) {
     const name = m.name ?? t("profile.noName");
     const actions: { text: string; style?: "destructive"; onPress: () => void }[] = [];
-    if (m.isMe || m.role === "owner" || myRole === "member") return actions;
+    if (m.isMe) return actions;
+    actions.push({
+      text: t("report.person"),
+      onPress: () => setReportTarget({ type: "user", id: m.userId }),
+    });
+    actions.push(
+      m.blocked
+        ? { text: t("block.unblock"), onPress: () => void unblock({ userId: m.userId }) }
+        : {
+            text: t("block.block"),
+            style: "destructive",
+            onPress: () => confirmBlock(m.userId, m.name),
+          },
+    );
+    if (m.role === "owner" || myRole === "member") return actions;
     if (m.role === "member") {
       actions.push({
         text: t("members.makeAdmin"),
@@ -218,6 +236,9 @@ function Members({ hubId, myRole }: { hubId: Id<"hubs">; myRole: Role }) {
                 {m.isMe ? (
                   <Text className="font-sans text-textMuted"> ({t("members.you")})</Text>
                 ) : null}
+                {m.blocked ? (
+                  <Text className="font-sans text-textMuted"> · {t("block.blocked")}</Text>
+                ) : null}
               </Text>
               {m.role !== "member" ? (
                 <Text className="font-sans-semibold text-[13px] text-textMuted">
@@ -242,6 +263,15 @@ function Members({ hubId, myRole }: { hubId: Id<"hubs">; myRole: Role }) {
           <Text className="font-sans-semibold text-[15px] text-danger">{t("members.leave")}</Text>
         </Pressable>
       )}
+      <Pressable
+        testID="report-hub"
+        accessibilityRole="button"
+        onPress={() => setReportTarget({ type: "hub", id: hubId })}
+        className="items-center py-2 active:opacity-60"
+      >
+        <Text className="font-sans-semibold text-[14px] text-textMuted">{t("report.hub")}</Text>
+      </Pressable>
+      <ReportSheet target={reportTarget} onClose={() => setReportTarget(null)} />
     </View>
   );
 }

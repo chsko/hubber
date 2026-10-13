@@ -73,6 +73,8 @@ export default function ProfileScreen() {
 
       <LanguagePicker />
 
+      <BlockedPeople />
+
       <View className="gap-1 rounded-2xl border border-border bg-surface p-4">
         <Text className="font-sans-semibold text-xs uppercase tracking-widest text-textMuted">
           {t("profile.notifications")}
@@ -105,5 +107,36 @@ export default function ProfileScreen() {
         <Text className="font-sans-semibold text-[15px] text-danger">{t("profile.signOut")}</Text>
       </Pressable>
     </Screen>
+  );
+}
+
+/** People you've blocked (HUB-33), with unblock. Hidden when there are none. */
+function BlockedPeople() {
+  const { t } = useTranslation();
+  const blocked = useQuery(api.moderation.blocked);
+  const unblock = useMutation(api.moderation.unblock);
+  if (!blocked || blocked.length === 0) return null;
+  return (
+    <View className="rounded-2xl border border-border bg-surface">
+      <Text className="px-4 pt-4 font-sans-semibold text-xs uppercase tracking-widest text-textMuted">
+        {t("block.listTitle")}
+      </Text>
+      {blocked.map((b) => (
+        <View key={b.userId} className="flex-row items-center justify-between px-4 py-3">
+          <Text numberOfLines={1} className="flex-1 font-sans-medium text-[15px] text-text">
+            {b.name ?? t("chat.deletedUser")}
+          </Text>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => void unblock({ userId: b.userId })}
+            className="active:opacity-60"
+          >
+            <Text className="font-sans-semibold text-[14px] text-primary">
+              {t("block.unblock")}
+            </Text>
+          </Pressable>
+        </View>
+      ))}
+    </View>
   );
 }

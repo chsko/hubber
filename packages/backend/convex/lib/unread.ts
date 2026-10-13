@@ -1,5 +1,6 @@
 import type { Doc, Id } from "../_generated/dataModel";
 import type { QueryCtx } from "../_generated/server";
+import { blockedWith } from "./blocks";
 
 /** Unread counts are shown as "99+" beyond this, so counting stops there. */
 export const UNREAD_CAP = 100;
@@ -23,7 +24,7 @@ export async function lastReadAt(
   return state?.lastReadAt ?? joinedAt;
 }
 
-/** Messages from others since `since`, not deleted, up to UNREAD_CAP. */
+/** Messages from others since `since`, not deleted or from blocked people, up to UNREAD_CAP. */
 export async function unreadCount(
   ctx: QueryCtx,
   conversationId: Id<"conversations">,
@@ -36,6 +37,10 @@ export async function unreadCount(
       q.eq("conversationId", conversationId).gt("_creationTime", since),
     )
     .take(UNREAD_CAP);
-  return recent.filter((m: Doc<"messages">) => m.authorId !== userId && m.deletedAt === undefined)
-    .length;
+  if (recent.length === 0) return 0;
+  const blocked = await blockedWith(ctx, userId);
+  return recent.filter(
+    (m: Doc<"messages">) =>
+      m.authorId !== userId && m.deletedAt === undefined && !blocked.has(m.authorId),
+  ).length;
 }

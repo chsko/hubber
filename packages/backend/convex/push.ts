@@ -10,6 +10,7 @@ import {
   type QueryCtx,
 } from "./_generated/server";
 import { requireUser } from "./lib/auth";
+import { blockedWith } from "./lib/blocks";
 import { pushText } from "./lib/pushText";
 import { lastReadAt, unreadCount } from "./lib/unread";
 
@@ -219,8 +220,10 @@ export const onMessage = internalMutation({
       .withIndex("by_hub", (q) => q.eq("hubId", hub._id))
       .collect();
     const pushes: PushMessage[] = [];
+    const blocked = await blockedWith(ctx, author._id);
     for (const member of members) {
       if (member.status !== "active" || member.userId === author._id) continue;
+      if (blocked.has(member.userId)) continue;
       if (member.notifyLevel === "muted") continue;
       const user = await ctx.db.get(member.userId);
       if (user === null || user.deletedAt !== undefined) continue;

@@ -11,6 +11,7 @@ import {
 } from "./_generated/server";
 import { getHubMember } from "./lib/auth";
 import { getConversationAccess, requireConversationAccess } from "./lib/conversations";
+import { blockedWith } from "./lib/blocks";
 import { requireImage } from "./lib/images";
 
 /** Long enough for a proper message to the class, short enough to stay a chat. */
@@ -98,6 +99,7 @@ export const list = query({
     if (access === null) return { page: [], isDone: true, continueCursor: "" };
     const me = access.user._id;
     const isAdmin = access.role !== "member";
+    const blocked = await blockedWith(ctx, me);
     const result = await ctx.db
       .query("messages")
       .withIndex("by_conversation", (q) => q.eq("conversationId", args.conversationId))
@@ -131,7 +133,10 @@ export const list = query({
         entry.mine ||= r.userId === me;
         reactions.set(r.emoji, entry);
       }
-      const quoted = m.replyToId && !deleted ? await ctx.db.get(m.replyToId) : null;
+      const found = m.replyToId && !deleted ? await ctx.db.get(m.replyToId) : null;
+      // A quote from someone blocked shows as deleted.
+      const quoted =
+        found && blocked.has(found.authorId) ? { ...found, deletedAt: found._creationTime } : found;
       return {
         _id: m._id,
         _creationTime: m._creationTime,
@@ -163,7 +168,8 @@ export const list = query({
       };
     }
 
-    return { ...result, page: await Promise.all(result.page.map(view)) };
+    const visible = result.page.filter((m) => !blocked.has(m.authorId));
+    return { ...result, page: await Promise.all(visible.map(view)) };
   },
 });
 
@@ -193,9 +199,11 @@ export const send = mutation({
         throw new ConvexError({ code: "INVALID_REPLY" });
       }
     }
-    // Only active members of this hub can be mentioned; others are dropped.
+    // Only active members of this hub can be mentioned, and not across a block.
+    const blocked = await blockedWith(ctx, user._id);
     const mentions: Id<"users">[] = [];
     for (const userId of new Set(args.mentions ?? [])) {
+      if (blocked.has(userId)) continue;
       const member = await ctx.db
         .query("hubMembers")
         .withIndex("by_hub_user", (q) => q.eq("hubId", hubId).eq("userId", userId))

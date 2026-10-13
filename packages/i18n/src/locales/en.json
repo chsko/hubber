@@ -334,5 +334,40 @@
     "addToCalendar": "Add to my calendar",
     "placeOnMap": "The address opens on the map",
     "addressSource": "Addresses from Kartverket"
+  },
+  "report": {
+    "message": "Report message",
+    "person": "Report person",
+    "event": "Report event",
+    "hub": "Report hub",
+    "title": {
+      "message": "Report message",
+      "event": "Report event",
+      "user": "Report person",
+      "hub": "Report hub"
+    },
+    "body": "The report goes to Hubbr, not to the person. We'll look at it as soon as we can.",
+    "reason": {
+      "spam": "Spam or advertising",
+      "harassment": "Harassment or bullying",
+      "inappropriate": "Inappropriate content",
+      "child_safety": "A child may be at risk",
+      "other": "Something else"
+    },
+    "detailsPlaceholder": "Tell us more (optional)",
+    "send": "Send report",
+    "thanksTitle": "Thanks for telling us",
+    "thanksBody": "We'll look into it. You can also block the person.",
+    "limited": "You've sent a lot of reports today. Try again tomorrow.",
+    "failed": "Couldn't send. Try again."
+  },
+  "block": {
+    "block": "Block",
+    "blockName": "Block {{name}}",
+    "unblock": "Unblock",
+    "blocked": "blocked",
+    "title": "Block {{name}}?",
+    "body": "You won't see each other's messages, can't mention each other and get no notifications from each other. They aren't told.",
+    "listTitle": "Blocked"
   }
 }

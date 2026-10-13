@@ -159,6 +159,14 @@ export const members = query({
       .withIndex("by_hub", (q) => q.eq("hubId", args.hubId))
       .collect();
     const rank = { owner: 0, admin: 1, member: 2 } as const;
+    const myBlocks = new Set(
+      (
+        await ctx.db
+          .query("blocks")
+          .withIndex("by_blocker", (q) => q.eq("blockerId", me._id))
+          .collect()
+      ).map((b) => b.blockedId),
+    );
     const people = await Promise.all(
       rows
         .filter((m) => m.status === "active")
@@ -171,6 +179,8 @@ export const members = query({
             photoUrl: user.photoId ? await ctx.storage.getUrl(user.photoId) : null,
             role: m.role,
             isMe: user._id === me._id,
+            /** Blocked by me, so the members list can offer to unblock. */
+            blocked: myBlocks.has(user._id),
           };
         }),
     );

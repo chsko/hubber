@@ -205,8 +205,19 @@ export default defineSchema({
       v.literal("hub"),
     ),
     targetId: v.string(),
-    reason: v.string(),
+    /** The hub the reported content lives in, so its admins can be shown it later. */
+    hubId: v.optional(v.id("hubs")),
+    reason: v.union(
+      v.literal("spam"),
+      v.literal("harassment"),
+      v.literal("inappropriate"),
+      v.literal("child_safety"),
+      v.literal("other"),
+    ),
+    details: v.optional(v.string()),
     status: v.union(v.literal("open"), v.literal("resolved"), v.literal("dismissed")),
+    handledAt: v.optional(v.number()),
+    note: v.optional(v.string()),
   }).index("by_status", ["status"]),
 
   blocks: defineTable({
@@ -214,5 +225,6 @@ export default defineSchema({
     blockedId: v.id("users"),
   })
     .index("by_blocker", ["blockerId"])
+    .index("by_blocked", ["blockedId"])
     .index("by_pair", ["blockerId", "blockedId"]),
 });

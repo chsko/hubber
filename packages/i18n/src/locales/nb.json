@@ -334,5 +334,40 @@
     "addToCalendar": "Legg til i kalenderen",
     "placeOnMap": "Adressen vises i kartet",
     "addressSource": "Adresser fra Kartverket"
+  },
+  "report": {
+    "message": "Rapporter meldingen",
+    "person": "Rapporter personen",
+    "event": "Rapporter arrangementet",
+    "hub": "Rapporter huben",
+    "title": {
+      "message": "Rapporter meldingen",
+      "event": "Rapporter arrangementet",
+      "user": "Rapporter personen",
+      "hub": "Rapporter huben"
+    },
+    "body": "Rapporten går til Hubbr, ikke til personen. Vi ser på den så snart vi kan.",
+    "reason": {
+      "spam": "Spam eller reklame",
+      "harassment": "Trakassering eller mobbing",
+      "inappropriate": "Upassende innhold",
+      "child_safety": "Fare for et barn",
+      "other": "Noe annet"
+    },
+    "detailsPlaceholder": "Fortell gjerne mer (valgfritt)",
+    "send": "Send rapport",
+    "thanksTitle": "Takk for at du sa fra",
+    "thanksBody": "Vi ser på saken. Du kan også blokkere personen.",
+    "limited": "Du har sendt mange rapporter i dag. Prøv igjen i morgen.",
+    "failed": "Kunne ikke sende. Prøv igjen."
+  },
+  "block": {
+    "block": "Blokker",
+    "blockName": "Blokker {{name}}",
+    "unblock": "Fjern blokkering",
+    "blocked": "blokkert",
+    "title": "Blokkere {{name}}?",
+    "body": "Dere ser ikke hverandres meldinger, kan ikke nevne hverandre og får ikke varsler fra hverandre. Personen får ikke beskjed.",
+    "listTitle": "Blokkerte"
   }
 }

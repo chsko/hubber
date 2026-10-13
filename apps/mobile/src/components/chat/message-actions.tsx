@@ -10,10 +10,21 @@ type Props = {
   onReply: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onReport: () => void;
+  onBlock: () => void;
 };
 
-/** Long-press sheet: quick reactions, then reply / edit / delete. */
-export function MessageActions({ message, onClose, onReact, onReply, onEdit, onDelete }: Props) {
+/** Long-press sheet: quick reactions, then reply / edit / delete, or report / block. */
+export function MessageActions({
+  message,
+  onClose,
+  onReact,
+  onReply,
+  onEdit,
+  onDelete,
+  onReport,
+  onBlock,
+}: Props) {
   const { t } = useTranslation();
   const canEdit =
     message !== null &&
@@ -54,6 +65,16 @@ export function MessageActions({ message, onClose, onReact, onReply, onEdit, onD
       {canEdit ? <Action label={t("chat.edit")} onPress={() => run(onEdit)} /> : null}
       {message?.canDelete ? (
         <Action label={t("chat.delete")} danger onPress={() => run(onDelete)} />
+      ) : null}
+      {message && !message.isMine && !message.deleted ? (
+        <>
+          <Action label={t("report.message")} onPress={() => run(onReport)} />
+          <Action
+            label={t("block.blockName", { name: message.author.name ?? t("profile.noName") })}
+            danger
+            onPress={() => run(onBlock)}
+          />
+        </>
       ) : null}
       <Action label={t("common.cancel")} muted onPress={onClose} />
     </BottomSheet>

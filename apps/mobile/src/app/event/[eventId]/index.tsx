@@ -24,6 +24,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar } from "@/components/avatar";
 import { formatWhen, type Rsvp } from "@/components/events/event-ui";
 import { NotAMember } from "@/components/not-a-member";
+import { ReportSheet } from "@/components/report-sheet";
 import { StackHeader } from "@/components/stack-header";
 import { UnreadBadge } from "@/components/unread-badge";
 import { useAddToCalendar } from "@/lib/calendar-feed";
@@ -58,6 +59,8 @@ export default function EventScreen() {
   const event = useQuery(api.events.get, { eventId });
   const cancel = useMutation(api.events.cancel);
   const addToCalendar = useAddToCalendar();
+  const me = useQuery(api.users.me);
+  const [reporting, setReporting] = useState(false);
 
   if (event === undefined) {
     return (
@@ -202,7 +205,24 @@ export default function EventScreen() {
         ) : null}
 
         <Attendees eventId={eventId} />
+
+        {event.host._id !== me?._id ? (
+          <Pressable
+            testID="report-event"
+            accessibilityRole="button"
+            onPress={() => setReporting(true)}
+            className="items-center py-2 active:opacity-60"
+          >
+            <Text className="font-sans-semibold text-[14px] text-textMuted">
+              {t("report.event")}
+            </Text>
+          </Pressable>
+        ) : null}
       </ScrollView>
+      <ReportSheet
+        target={reporting ? { type: "event", id: eventId } : null}
+        onClose={() => setReporting(false)}
+      />
     </SafeAreaView>
   );
 }

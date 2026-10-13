@@ -48,7 +48,14 @@ describe("members list", () => {
     expect(members.map((m) => m.name)).toEqual(["Kari", "Ola", "Anna", "Per"]);
     expect(members.find((m) => m.isMe)?.name).toBe("Anna");
     for (const m of members) {
-      expect(Object.keys(m).sort()).toEqual(["isMe", "name", "photoUrl", "role", "userId"]);
+      expect(Object.keys(m).sort()).toEqual([
+        "blocked",
+        "isMe",
+        "name",
+        "photoUrl",
+        "role",
+        "userId",
+      ]);
     }
   });
 });

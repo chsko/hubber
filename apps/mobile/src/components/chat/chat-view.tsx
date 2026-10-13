@@ -11,6 +11,7 @@ import { Composer, type Person } from "./composer";
 import { dayLabel, osloDayKey } from "./day-label";
 import { ImageViewer } from "./image-viewer";
 import { MessageActions } from "./message-actions";
+import { type ReportTarget, ReportSheet, useConfirmBlock } from "@/components/report-sheet";
 import type { Message } from "./types";
 
 const PAGE_SIZE = 30;
@@ -105,6 +106,8 @@ export function ChatView({
   const [picked, setPicked] = useState<Person[]>([]);
   const [failed, setFailed] = useState<Failed[]>([]);
   const [actionsFor, setActionsFor] = useState<Message | null>(null);
+  const [reportTarget, setReportTarget] = useState<ReportTarget | null>(null);
+  const confirmBlock = useConfirmBlock();
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [viewer, setViewer] = useState<{ messageId: string; count: number; start: number } | null>(
@@ -328,7 +331,10 @@ export function ChatView({
           setDraft(actionsFor.body);
         }}
         onDelete={() => actionsFor && confirmDelete(actionsFor)}
+        onReport={() => actionsFor && setReportTarget({ type: "message", id: actionsFor._id })}
+        onBlock={() => actionsFor && confirmBlock(actionsFor.author._id, actionsFor.author.name)}
       />
+      <ReportSheet target={reportTarget} onClose={() => setReportTarget(null)} />
     </View>
   );
 }
