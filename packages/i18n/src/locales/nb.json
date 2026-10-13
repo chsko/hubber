@@ -369,5 +369,16 @@
     "title": "Blokkere {{name}}?",
     "body": "Dere ser ikke hverandres meldinger, kan ikke nevne hverandre og får ikke varsler fra hverandre. Personen får ikke beskjed.",
     "listTitle": "Blokkerte"
+  },
+  "deleteAccount": {
+    "button": "Slett kontoen",
+    "needOwnerTitle": "Velg en ny eier først",
+    "needOwnerBody": "Du eier huber med andre medlemmer: {{hubs}}. Gjør noen andre til eier under Medlemmer, så kan du slette kontoen.",
+    "openHub": "Åpne {{name}}",
+    "confirmTitle": "Slette kontoen?",
+    "confirmBody": "Navnet, bildet, svarene dine og innstillingene slettes. Meldingene du har sendt blir stående som fra «Slettet bruker». Dette kan ikke angres.",
+    "willClose": "Disse hubene har bare deg og slettes med alt innhold: {{hubs}}.",
+    "confirm": "Slett kontoen",
+    "failed": "Kunne ikke slette kontoen. Prøv igjen."
   }
 }

@@ -116,7 +116,8 @@ export default defineSchema({
     emoji: v.string(),
   })
     .index("by_message", ["messageId"])
-    .index("by_message_user", ["messageId", "userId"]),
+    .index("by_message_user", ["messageId", "userId"])
+    .index("by_user", ["userId"]),
 
   readStates: defineTable({
     conversationId: v.id("conversations"),

@@ -369,5 +369,16 @@
     "title": "Block {{name}}?",
     "body": "You won't see each other's messages, can't mention each other and get no notifications from each other. They aren't told.",
     "listTitle": "Blocked"
+  },
+  "deleteAccount": {
+    "button": "Delete account",
+    "needOwnerTitle": "Choose a new owner first",
+    "needOwnerBody": "You own hubs with other members: {{hubs}}. Make someone else the owner under Members, then you can delete your account.",
+    "openHub": "Open {{name}}",
+    "confirmTitle": "Delete your account?",
+    "confirmBody": "Your name, photo, replies and settings are deleted. Messages you've sent stay, shown as from “Deleted user”. This can't be undone.",
+    "willClose": "These hubs only have you and are deleted with everything in them: {{hubs}}.",
+    "confirm": "Delete account",
+    "failed": "Couldn't delete the account. Try again."
   }
 }

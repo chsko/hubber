@@ -1,6 +1,7 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "@hubber/backend/api";
 import { useMutation, useQuery } from "convex/react";
+import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Alert, Pressable, Switch, Text, View } from "react-native";
 import { Avatar } from "@/components/avatar";
@@ -106,6 +107,8 @@ export default function ProfileScreen() {
       >
         <Text className="font-sans-semibold text-[15px] text-danger">{t("profile.signOut")}</Text>
       </Pressable>
+
+      <DeleteAccount onDeleted={() => void signOut()} />
     </Screen>
   );
 }
@@ -138,5 +141,67 @@ function BlockedPeople() {
         </View>
       ))}
     </View>
+  );
+}
+
+/**
+ * Delete account (HUB-13). Hubs with other members need a new owner first;
+ * hubs with only you are closed. Asks once more before deleting.
+ */
+function DeleteAccount({ onDeleted }: { onDeleted: () => void }) {
+  const { t } = useTranslation();
+  const check = useQuery(api.account.deletionCheck);
+  const deleteAccount = useMutation(api.account.deleteAccount);
+  const forgetDevice = useForgetDevice();
+
+  function start() {
+    if (!check) return;
+    const first = check.needOwner[0];
+    if (first) {
+      Alert.alert(
+        t("deleteAccount.needOwnerTitle"),
+        t("deleteAccount.needOwnerBody", {
+          hubs: check.needOwner.map((h) => h.name).join(", "),
+        }),
+        [
+          { text: t("common.close"), style: "cancel" },
+          {
+            text: t("deleteAccount.openHub", { name: first.name }),
+            onPress: () => router.push({ pathname: "/hub/[hubId]", params: { hubId: first._id } }),
+          },
+        ],
+      );
+      return;
+    }
+    const closing =
+      check.willClose.length > 0
+        ? `\n\n${t("deleteAccount.willClose", { hubs: check.willClose.map((h) => h.name).join(", ") })}`
+        : "";
+    Alert.alert(t("deleteAccount.confirmTitle"), `${t("deleteAccount.confirmBody")}${closing}`, [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("deleteAccount.confirm"),
+        style: "destructive",
+        onPress: () =>
+          void forgetDevice()
+            .then(() => deleteAccount({}))
+            .then(onDeleted)
+            .catch(() => Alert.alert(t("deleteAccount.failed"))),
+      },
+    ]);
+  }
+
+  return (
+    <Pressable
+      testID="delete-account"
+      accessibilityRole="button"
+      disabled={!check}
+      onPress={start}
+      className="items-center py-2 active:opacity-60"
+    >
+      <Text className="font-sans-semibold text-[14px] text-textMuted">
+        {t("deleteAccount.button")}
+      </Text>
+    </Pressable>
   );
 }
