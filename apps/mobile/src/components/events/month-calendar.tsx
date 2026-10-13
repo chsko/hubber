@@ -17,7 +17,10 @@ const monthTitle = {
   en: new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", month: "long", year: "numeric" }),
 };
 
-/** The weeks of a month, Monday first, with null for days outside it. */
+/**
+ * The weeks of a month, Monday first, with null for days outside it. Always
+ * six weeks, so the grid keeps its height when switching months.
+ */
 function weeks(year: number, month: number): (Day | null)[][] {
   const first = new Date(Date.UTC(year, month - 1, 1));
   const lead = (first.getUTCDay() + 6) % 7;
@@ -26,8 +29,8 @@ function weeks(year: number, month: number): (Day | null)[][] {
     ...Array.from({ length: lead }, () => null),
     ...Array.from({ length: days }, (_, i) => ({ year, month, day: i + 1 })),
   ];
-  while (cells.length % 7 !== 0) cells.push(null);
-  return Array.from({ length: cells.length / 7 }, (_, w) => cells.slice(w * 7, w * 7 + 7));
+  while (cells.length < 6 * 7) cells.push(null);
+  return Array.from({ length: 6 }, (_, w) => cells.slice(w * 7, w * 7 + 7));
 }
 
 /**
