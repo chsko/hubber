@@ -5,3 +5,10 @@ packages:
 # Packages allowed to run install scripts (esbuild: Convex CLI bundler).
 allowBuilds:
   esbuild: true
+
+# react-native-css-interop's babel preset (via nativewind/babel) loads this plugin by name without
+# declaring it, which only works when pnpm happens to hoist it (it isn't hoisted on EAS).
+packageExtensions:
+  react-native-css-interop:
+    dependencies:
+      "@babel/plugin-transform-react-jsx": "^7.28.6"
