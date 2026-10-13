@@ -1,11 +1,19 @@
 import { api } from "@hubber/backend/api";
 import type { Id } from "@hubber/backend/dataModel";
 import { formatCompactDate } from "@hubber/i18n";
-import { colors } from "@hubber/shared";
+import { colors, kommuneName } from "@hubber/shared";
 import { useMutation, useQuery } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import { router, useLocalSearchParams } from "expo-router";
-import { BadgeCheck, CalendarPlus, MapPin, MessageCircle, Minus, Plus } from "lucide-react-native";
+import {
+  BadgeCheck,
+  CalendarPlus,
+  Globe,
+  MapPin,
+  MessageCircle,
+  Minus,
+  Plus,
+} from "lucide-react-native";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -97,7 +105,7 @@ export default function EventScreen() {
   return (
     <SafeAreaView className="flex-1 bg-bg">
       <StackHeader
-        title={event.hub?.name}
+        title={event.hub?.name ?? t("events.public")}
         action={
           event.canManage && !event.cancelled && !event.past ? (
             <Pressable
@@ -123,6 +131,21 @@ export default function EventScreen() {
         ) : null}
 
         <View className="gap-1.5">
+          {event.visibility === "public" ? (
+            <View className="flex-row items-center gap-1.5">
+              <Globe color={c.textMuted} size={14} strokeWidth={2.2} />
+              <Text className="font-sans-semibold text-[13px] text-textMuted">
+                {[
+                  t("events.public"),
+                  event.category ? t(`events.categories.${event.category}`) : null,
+                  kommuneName(event.kommuneNr),
+                  event.hub && !event.inHub ? t("events.onBehalf", { name: event.hub.name }) : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </Text>
+            </View>
+          ) : null}
           {event.cancelled ? (
             <View className="self-start rounded-full bg-accentSoft px-3 py-1">
               <Text className="font-sans-bold text-[13px] text-onAccentSoft">
@@ -186,6 +209,12 @@ export default function EventScreen() {
             </Text>
             <UnreadBadge count={event.chatUnread} />
           </Pressable>
+        ) : null}
+
+        {event.conversationId === null && !event.cancelled && !event.past ? (
+          <Text className="font-sans text-[14px] leading-5 text-textMuted">
+            {t("events.joinToChat")}
+          </Text>
         ) : null}
 
         {!event.cancelled && !event.past ? (

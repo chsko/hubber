@@ -9,6 +9,7 @@ import {
 } from "./_generated/server";
 import { getUserId, requireHubMember, requireUser } from "./lib/auth";
 import { requireConversationAccess } from "./lib/conversations";
+import { eventAccess } from "./lib/events";
 import { hitRateLimit } from "./lib/rateLimit";
 
 /**
@@ -60,8 +61,7 @@ async function resolveTarget(
     case "event": {
       const id = ctx.db.normalizeId("events", rawId);
       const event = id ? await ctx.db.get(id) : null;
-      if (event?.hubId === undefined) throw forbidden;
-      await requireHubMember(ctx, event.hubId);
+      if (event === null || (await eventAccess(ctx, event, user)) === null) throw forbidden;
       return { id: event._id, hubId: event.hubId };
     }
     case "hub": {

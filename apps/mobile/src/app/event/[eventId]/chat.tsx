@@ -22,7 +22,7 @@ export default function EventChat() {
       </View>
     );
   }
-  if (event === null || event.conversationId === null || event.hubId === null) {
+  if (event === null || event.conversationId === null) {
     return <NotAMember />;
   }
 
@@ -30,7 +30,7 @@ export default function EventChat() {
     <SafeAreaView className="flex-1 bg-bg">
       <StackHeader title={event.title} />
       <KeyboardAvoidingView behavior="padding" className="flex-1">
-        <ChatView conversationId={event.conversationId} hubId={event.hubId} />
+        <ChatView conversationId={event.conversationId} />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

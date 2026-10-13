@@ -28,6 +28,7 @@ export default function EditEvent() {
       title={t("events.edit")}
       submitLabel={t("events.save")}
       initial={event}
+      visibility={event.visibility}
       onSubmit={async (input) => {
         await update({ eventId, ...input });
         router.back();

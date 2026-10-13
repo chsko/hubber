@@ -25,6 +25,7 @@ describe("users.me", () => {
       verified: false,
       onboarded: false,
       quietHours: true,
+      kommuneNr: null,
     });
   });
 

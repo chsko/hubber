@@ -57,7 +57,22 @@
   },
   "discover": {
     "subtitle": "Åpne arrangementer i nærheten. Ingen algoritme.",
-    "comingSoon": "Offentlige arrangementer etter kommune og dato. Kommer i M5."
+    "allNorway": "Hele Norge",
+    "pickKommune": "Velg kommune",
+    "searchKommune": "Søk etter kommune",
+    "noKommune": "Fant ingen kommune med det navnet.",
+    "search": "Søk i arrangementer",
+    "when": {
+      "today": "I dag",
+      "weekend": "Denne helgen",
+      "month": "Neste 30 dager"
+    },
+    "allCategories": "Alle",
+    "empty": "Ingen offentlige arrangementer her ennå",
+    "emptyBody": "Lag et selv, så kan alle i nærheten finne det.",
+    "create": "Lag et offentlig arrangement",
+    "new": "Nytt offentlig arrangement",
+    "inKommune": "i {{kommune}}"
   },
   "profile": {
     "account": "Konto",
@@ -339,7 +354,30 @@
     "remindersBody": "Varsle dem som kommer dagen før, og dem som ikke har svart to dager før svarfristen.",
     "addToCalendar": "Legg til i kalenderen",
     "placeOnMap": "Adressen vises i kartet",
-    "addressSource": "Adresser fra Kartverket"
+    "addressSource": "Adresser fra Kartverket",
+    "visibility": "Hvem kan se det?",
+    "visibilityHub": "Bare huben",
+    "visibilityPublic": "Alle",
+    "publicBody": "Vises i Oppdag for alle på Hubbr, og alle kan svare. Navnet ditt vises som arrangør.",
+    "hubBody": "Bare medlemmene i huben ser arrangementet.",
+    "category": "Kategori",
+    "kommune": "Kommune",
+    "pickKommune": "Velg kommune",
+    "public": "Offentlig",
+    "onBehalf": "Fra {{name}}",
+    "tooMany": "Du har laget mange offentlige arrangementer i dag. Prøv igjen i morgen.",
+    "joinToChat": "Svar Kommer eller Kanskje for å bli med i chatten og se hvem som kommer.",
+    "categories": {
+      "social": "Sosialt",
+      "outdoors": "Tur og friluft",
+      "sports": "Sport",
+      "culture": "Kultur",
+      "food": "Mat og drikke",
+      "kids": "For barn",
+      "learning": "Kurs og læring",
+      "volunteering": "Dugnad og frivillig",
+      "other": "Annet"
+    }
   },
   "report": {
     "message": "Rapporter meldingen",

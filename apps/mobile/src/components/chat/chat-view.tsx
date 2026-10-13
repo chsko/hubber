@@ -37,17 +37,15 @@ function mentionQuery(draft: string): string | null {
  */
 export function ChatView({
   conversationId,
-  hubId,
   header,
 }: {
   conversationId: Id<"conversations">;
-  hubId: Id<"hubs">;
   header?: ReactElement;
 }) {
   const { t } = useTranslation();
   const locale = useLocale();
   const me = useQuery(api.users.me);
-  const members = useQuery(api.hubs.members, { hubId });
+  const members = useQuery(api.messages.people, { conversationId });
   const { results, status, loadMore } = usePaginatedQuery(
     api.messages.list,
     { conversationId },

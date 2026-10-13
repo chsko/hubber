@@ -6,7 +6,7 @@ import {
   osloTimeParts,
   osloToEpoch,
 } from "@hubber/i18n";
-import { colors } from "@hubber/shared";
+import { colors, kommuneName } from "@hubber/shared";
 import { type ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -23,11 +23,14 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { KommuneSheet } from "@/components/kommune-sheet";
 import { StackHeader } from "@/components/stack-header";
+import { convexErrorCode } from "@/lib/errors";
 import { useLocale } from "@/lib/i18n";
 import type { PickedPlace } from "@/lib/geonorge";
 import { pickCoverImage, useUploadImage } from "@/lib/image-upload";
 import { useScheme } from "@/lib/use-scheme";
+import { type Category, categories } from "./categories";
 import { type Day, MonthCalendar } from "./month-calendar";
 import { PlaceField } from "./place-field";
 import { BottomSheet } from "@/components/bottom-sheet";
@@ -46,10 +49,16 @@ export type EventInput = {
   capacity: number | null;
   rsvpDeadline: number | null;
   reminders: boolean;
+  /** Public events (HUB-29): a category, and the kommune when the place has none. */
+  category: Category | null;
+  kommuneNr: string | null;
 };
+
+export type Visibility = "hub" | "public";
 
 /** What an existing event starts the form with. */
 export type EventInitial = Omit<EventInput, "place"> & {
+  visibility: Visibility;
   place: string | null;
   placeGeo: { lat: number; lon: number; kommuneNr: string } | null;
   coverUrl: string | null;
@@ -71,17 +80,24 @@ const timeText = (time: Time) => `${pad(time.hour)}:${pad(time.minute)}`;
 const at = (day: Day, time: Time) => osloToEpoch({ ...day, ...time });
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** Create or edit an event (HUB-23). Dates and times are Norwegian time, 24-hour clock. */
+/**
+ * Create or edit an event (HUB-23). Dates and times are Norwegian time,
+ * 24-hour clock. In a hub, a new event can be made public (HUB-29); from
+ * Discover it's always public. Visibility can't change afterwards.
+ */
 export function EventForm({
   title: screenTitle,
   submitLabel,
   initial,
+  visibility: fixedVisibility,
   onSubmit,
 }: {
   title: string;
   submitLabel: string;
   initial: EventInitial | null;
-  onSubmit: (input: EventInput) => Promise<void>;
+  /** Set when there's no choice: editing, or a new event without a hub. */
+  visibility?: Visibility;
+  onSubmit: (input: EventInput, visibility: Visibility) => Promise<void>;
 }) {
   const { t } = useTranslation();
   const locale = useLocale();
@@ -107,6 +123,14 @@ export function EventForm({
     initial?.coverUrl ? { uri: initial.coverUrl, local: false } : null,
   );
   const [reminders, setReminders] = useState(initial?.reminders ?? true);
+  const [visibility, setVisibility] = useState<Visibility>(
+    fixedVisibility ?? initial?.visibility ?? "hub",
+  );
+  const [category, setCategory] = useState<Category | null>(initial?.category ?? null);
+  const [kommuneNr, setKommuneNr] = useState<string | null>(
+    initial && initial.placeGeo === null ? initial.kommuneNr : null,
+  );
+  const [pickingKommune, setPickingKommune] = useState(false);
   const [picking, setPicking] = useState<"date" | "deadline" | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -130,8 +154,11 @@ export function EventForm({
       (!Number.isInteger(capacityNumber) || capacityNumber < 1 || capacityNumber > 1000),
     deadline: deadlineAt !== null && startsAt !== null && deadlineAt > startsAt,
   };
+  const isPublic = visibility === "public";
+  const placeKommune = pickedPlace?.kommuneNr ?? null;
   const valid =
     title.trim().length > 0 &&
+    (!isPublic || (category !== null && (placeKommune ?? kommuneNr) !== null)) &&
     startsAt !== null &&
     !Object.values(problems).some(Boolean) &&
     (initial !== null || startsAt > now - 60 * 60 * 1000);
@@ -152,19 +179,26 @@ export function EventForm({
       let coverId: Id<"_storage"> | null = initial?.coverId ?? null;
       if (cover === null) coverId = null;
       else if (cover.local) coverId = await upload(cover.uri);
-      await onSubmit({
-        title: title.trim(),
-        startsAt,
-        endsAt,
-        place: pickedPlace ?? (place.trim() || null),
-        description: description.trim() || null,
-        coverId,
-        capacity: capacityNumber,
-        rsvpDeadline: deadlineAt !== null && deadline ? Math.min(deadlineAt, startsAt) : null,
-        reminders,
-      });
-    } catch {
-      Alert.alert(t("events.saveFailed"));
+      await onSubmit(
+        {
+          title: title.trim(),
+          startsAt,
+          endsAt,
+          place: pickedPlace ?? (place.trim() || null),
+          description: description.trim() || null,
+          coverId,
+          capacity: capacityNumber,
+          rsvpDeadline: deadlineAt !== null && deadline ? Math.min(deadlineAt, startsAt) : null,
+          reminders,
+          category: isPublic ? category : null,
+          kommuneNr: isPublic && placeKommune === null ? kommuneNr : null,
+        },
+        visibility,
+      );
+    } catch (error) {
+      Alert.alert(
+        convexErrorCode(error) === "RATE_LIMITED" ? t("events.tooMany") : t("events.saveFailed"),
+      );
       setSaving(false);
     }
   }
@@ -286,6 +320,77 @@ export function EventForm({
             />
           </Field>
 
+          {fixedVisibility === undefined ? (
+            <Field label={t("events.visibility")}>
+              <View accessibilityRole="radiogroup" className="flex-row gap-2">
+                {(["hub", "public"] as const).map((v) => (
+                  <Pressable
+                    key={v}
+                    testID={`visibility-${v}`}
+                    accessibilityRole="radio"
+                    accessibilityState={{ checked: visibility === v }}
+                    onPress={() => setVisibility(v)}
+                    className={`flex-1 items-center rounded-full py-3 ${visibility === v ? "bg-primary" : "border border-border bg-surface"} active:opacity-70`}
+                  >
+                    <Text
+                      className={`font-sans-bold text-[15px] ${visibility === v ? "text-bg" : "text-text"}`}
+                    >
+                      {v === "hub" ? t("events.visibilityHub") : t("events.visibilityPublic")}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+              <Text className="font-sans text-[13px] leading-5 text-textMuted">
+                {isPublic ? t("events.publicBody") : t("events.hubBody")}
+              </Text>
+            </Field>
+          ) : null}
+
+          {isPublic ? (
+            <>
+              <Field label={t("events.category")}>
+                <View accessibilityRole="radiogroup" className="flex-row flex-wrap gap-2">
+                  {categories.map((k) => (
+                    <Pressable
+                      key={k}
+                      testID={`category-${k}`}
+                      accessibilityRole="radio"
+                      accessibilityState={{ checked: category === k }}
+                      onPress={() => setCategory(k)}
+                      className={`rounded-full px-3.5 py-2 ${category === k ? "bg-primary" : "border border-border bg-surface"} active:opacity-70`}
+                    >
+                      <Text
+                        className={`font-sans-semibold text-[14px] ${category === k ? "text-bg" : "text-text"}`}
+                      >
+                        {t(`events.categories.${k}`)}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </Field>
+              <Field label={t("events.kommune")}>
+                {placeKommune !== null ? (
+                  <Text className="font-sans text-[16px] text-text">
+                    {kommuneName(placeKommune) ?? placeKommune}
+                  </Text>
+                ) : (
+                  <Pressable
+                    testID="event-kommune"
+                    accessibilityRole="button"
+                    onPress={() => setPickingKommune(true)}
+                    className={input}
+                  >
+                    <Text
+                      className={`font-sans text-[16px] ${kommuneNr ? "text-text" : "text-textMuted"}`}
+                    >
+                      {kommuneName(kommuneNr) ?? t("events.pickKommune")}
+                    </Text>
+                  </Pressable>
+                )}
+              </Field>
+            </>
+          ) : null}
+
           <Field label={t("events.description")}>
             <TextInput
               testID="event-description"
@@ -378,6 +483,15 @@ export function EventForm({
         </ScrollView>
       </KeyboardAvoidingView>
 
+      <KommuneSheet
+        visible={pickingKommune}
+        selected={kommuneNr}
+        onClose={() => setPickingKommune(false)}
+        onSelect={(nr) => {
+          setKommuneNr(nr);
+          setPickingKommune(false);
+        }}
+      />
       <DayPicker
         key={picking ?? "closed"}
         visible={picking !== null}

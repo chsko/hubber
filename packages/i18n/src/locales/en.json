@@ -57,7 +57,22 @@
   },
   "discover": {
     "subtitle": "Open events nearby. No algorithm.",
-    "comingSoon": "Public events by municipality and date. Coming in M5."
+    "allNorway": "All of Norway",
+    "pickKommune": "Choose municipality",
+    "searchKommune": "Search for a municipality",
+    "noKommune": "No municipality by that name.",
+    "search": "Search events",
+    "when": {
+      "today": "Today",
+      "weekend": "This weekend",
+      "month": "Next 30 days"
+    },
+    "allCategories": "All",
+    "empty": "No public events here yet",
+    "emptyBody": "Make one yourself, so people nearby can find it.",
+    "create": "Create a public event",
+    "new": "New public event",
+    "inKommune": "in {{kommune}}"
   },
   "profile": {
     "account": "Account",
@@ -339,7 +354,30 @@
     "remindersBody": "Remind those coming the day before, and those who haven't replied two days before the deadline.",
     "addToCalendar": "Add to my calendar",
     "placeOnMap": "The address opens on the map",
-    "addressSource": "Addresses from Kartverket"
+    "addressSource": "Addresses from Kartverket",
+    "visibility": "Who can see it?",
+    "visibilityHub": "Only the hub",
+    "visibilityPublic": "Everyone",
+    "publicBody": "Shown in Discover to everyone on Hubbr, and anyone can reply. Your name is shown as the host.",
+    "hubBody": "Only the hub's members see the event.",
+    "category": "Category",
+    "kommune": "Municipality",
+    "pickKommune": "Choose municipality",
+    "public": "Public",
+    "onBehalf": "From {{name}}",
+    "tooMany": "You've created many public events today. Try again tomorrow.",
+    "joinToChat": "Answer Going or Maybe to join the chat and see who's coming.",
+    "categories": {
+      "social": "Social",
+      "outdoors": "Outdoors",
+      "sports": "Sports",
+      "culture": "Culture",
+      "food": "Food and drink",
+      "kids": "For kids",
+      "learning": "Learning",
+      "volunteering": "Volunteering",
+      "other": "Other"
+    }
   },
   "report": {
     "message": "Report message",

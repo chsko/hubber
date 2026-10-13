@@ -20,6 +20,19 @@ export const hubTemplate = v.union(
 
 export const hubRole = v.union(v.literal("owner"), v.literal("admin"), v.literal("member"));
 
+/** Categories for public events in Discover (HUB-29). */
+export const eventCategory = v.union(
+  v.literal("social"),
+  v.literal("outdoors"),
+  v.literal("sports"),
+  v.literal("culture"),
+  v.literal("food"),
+  v.literal("kids"),
+  v.literal("learning"),
+  v.literal("volunteering"),
+  v.literal("other"),
+);
+
 export const notifyLevel = v.union(v.literal("all"), v.literal("important"), v.literal("muted"));
 
 export const rsvpStatus = v.union(v.literal("yes"), v.literal("maybe"), v.literal("no"));
@@ -143,6 +156,8 @@ export default defineSchema({
     ),
     // Top-level so Discover can index on it (M5).
     kommuneNr: v.optional(v.string()),
+    /** Public events only. */
+    category: v.optional(eventCategory),
     coverId: v.optional(v.id("_storage")),
     capacity: v.optional(v.number()),
     rsvpDeadline: v.optional(v.number()),
@@ -154,10 +169,12 @@ export default defineSchema({
     reminderJobs: v.optional(v.array(v.id("_scheduled_functions"))),
   })
     .index("by_hub_start", ["hubId", "startsAt"])
+    .index("by_creator", ["createdBy"])
     .index("by_visibility_kommune_start", ["visibility", "kommuneNr", "startsAt"])
+    .index("by_visibility_start", ["visibility", "startsAt"])
     .searchIndex("search_title", {
       searchField: "title",
-      filterFields: ["visibility", "kommuneNr"],
+      filterFields: ["visibility", "kommuneNr", "category"],
     }),
 
   rsvps: defineTable({

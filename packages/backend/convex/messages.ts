@@ -10,7 +10,11 @@ import {
   query,
 } from "./_generated/server";
 import { getHubMember } from "./lib/auth";
-import { getConversationAccess, requireConversationAccess } from "./lib/conversations";
+import {
+  conversationParticipants,
+  getConversationAccess,
+  requireConversationAccess,
+} from "./lib/conversations";
 import { blockedWith } from "./lib/blocks";
 import { requireImage } from "./lib/images";
 
@@ -84,6 +88,37 @@ export const hubConversation = query({
       .filter((q) => q.eq(q.field("kind"), "hub"))
       .first();
     return conversation?._id ?? null;
+  },
+});
+
+/**
+ * The people in a conversation, for @mention suggestions: a hub's members,
+ * or those in an event's chat (HUB-29). Not across a block.
+ */
+export const people = query({
+  args: { conversationId: v.id("conversations") },
+  handler: async (ctx, args) => {
+    const access = await getConversationAccess(ctx, args.conversationId);
+    if (access === null) return [];
+    const blocked = await blockedWith(ctx, access.user._id);
+    const rows = await conversationParticipants(ctx, access.conversation);
+    const people = await Promise.all(
+      rows
+        .filter((p) => !blocked.has(p.userId))
+        .map(async (p) => {
+          const user = await ctx.db.get(p.userId);
+          if (user === null || user.deletedAt !== undefined) return null;
+          return {
+            userId: user._id,
+            name: user.name ?? null,
+            photoUrl: user.photoId ? await ctx.storage.getUrl(user.photoId) : null,
+            isMe: user._id === access.user._id,
+          };
+        }),
+    );
+    return people
+      .filter((p) => p !== null)
+      .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "", "nb"));
   },
 });
 
@@ -199,17 +234,14 @@ export const send = mutation({
         throw new ConvexError({ code: "INVALID_REPLY" });
       }
     }
-    // Only active members of this hub can be mentioned, and not across a block.
+    // Only people in this chat can be mentioned, and not across a block.
     const blocked = await blockedWith(ctx, user._id);
-    const mentions: Id<"users">[] = [];
-    for (const userId of new Set(args.mentions ?? [])) {
-      if (blocked.has(userId)) continue;
-      const member = await ctx.db
-        .query("hubMembers")
-        .withIndex("by_hub_user", (q) => q.eq("hubId", hubId).eq("userId", userId))
-        .unique();
-      if (member?.status === "active" && userId !== user._id) mentions.push(userId);
-    }
+    const inChat = new Set(
+      (await conversationParticipants(ctx, conversation)).map((p) => p.userId),
+    );
+    const mentions = [...new Set(args.mentions ?? [])].filter(
+      (userId) => inChat.has(userId) && !blocked.has(userId) && userId !== user._id,
+    );
 
     const now = Date.now();
     const messageId = await ctx.db.insert("messages", {
@@ -221,7 +253,7 @@ export const send = mutation({
       ...(args.replyToId !== undefined && { replyToId: args.replyToId }),
     });
     await ctx.db.patch(conversation._id, { lastMessageAt: now });
-    await ctx.db.patch(hubId, { lastActivityAt: now });
+    if (hubId !== undefined) await ctx.db.patch(hubId, { lastActivityAt: now });
     await ctx.scheduler.runAfter(0, internal.push.onMessage, { messageId });
     return messageId;
   },

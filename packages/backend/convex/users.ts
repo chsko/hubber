@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getUserId, requireUser } from "./lib/auth";
 import { requireImage } from "./lib/images";
@@ -23,6 +23,8 @@ export const me = query({
       verified: user.vippsSub !== undefined,
       onboarded: user.onboardedAt !== undefined,
       quietHours: user.quietHours !== false,
+      /** Discover's kommune (HUB-30); null means all of Norway. */
+      kommuneNr: user.kommuneNr ?? null,
     };
   },
 });
@@ -48,6 +50,18 @@ export const setLocale = mutation({
   handler: async (ctx, args) => {
     const user = await requireUser(ctx);
     if (user.locale !== args.locale) await ctx.db.patch(user._id, { locale: args.locale });
+  },
+});
+
+/** Remembers Discover's kommune (HUB-30); null for all of Norway. */
+export const setKommune = mutation({
+  args: { kommuneNr: v.union(v.string(), v.null()) },
+  handler: async (ctx, args) => {
+    const user = await requireUser(ctx);
+    if (args.kommuneNr !== null && !/^\d{4}$/.test(args.kommuneNr)) {
+      throw new ConvexError({ code: "INVALID_KOMMUNE" });
+    }
+    await ctx.db.patch(user._id, { kommuneNr: args.kommuneNr ?? undefined });
   },
 });
 

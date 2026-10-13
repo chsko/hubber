@@ -11,6 +11,8 @@ import {
 } from "./_generated/server";
 import { requireUser } from "./lib/auth";
 import { blockedWith } from "./lib/blocks";
+import { conversationParticipants } from "./lib/conversations";
+import { eventParticipants } from "./lib/events";
 import { pushText } from "./lib/pushText";
 import { lastReadAt, unreadCount } from "./lib/unread";
 
@@ -124,18 +126,16 @@ const eventTarget = (eventId: Id<"events">): Target => ({
 });
 
 /**
- * The hub a conversation belongs to, plus what to call it in a push and
- * where a tap leads: the hub chat, or an event's chat.
+ * What to call a conversation in a push and where a tap leads: the hub
+ * chat, or an event's chat.
  */
 async function conversationContext(ctx: QueryCtx, conversation: Doc<"conversations">) {
   if (conversation.kind === "event" && conversation.eventId !== undefined) {
     const event = await ctx.db.get(conversation.eventId);
-    const hub = event?.hubId ? await ctx.db.get(event.hubId) : null;
-    if (event === null || hub === null) return null;
-    return { hub, label: event.title, target: eventTarget(event._id) };
+    return event === null ? null : { label: event.title, target: eventTarget(event._id) };
   }
   const hub = conversation.hubId ? await ctx.db.get(conversation.hubId) : null;
-  return hub === null ? null : { hub, label: hub.name, target: hubTarget(hub._id) };
+  return hub === null ? null : { label: hub.name, target: hubTarget(hub._id) };
 }
 
 /** Builds one push for `user`, or null if they have no devices. */
@@ -211,18 +211,15 @@ export const onMessage = internalMutation({
     const where = conversation ? await conversationContext(ctx, conversation) : null;
     const author = await ctx.db.get(message.authorId);
     if (conversation === null || where === null || author === null) return;
-    const { hub, label, target } = where;
+    const { label, target } = where;
     const quoted = message.replyToId ? await ctx.db.get(message.replyToId) : null;
     const now = Date.now();
 
-    const members = await ctx.db
-      .query("hubMembers")
-      .withIndex("by_hub", (q) => q.eq("hubId", hub._id))
-      .collect();
+    const members = await conversationParticipants(ctx, conversation);
     const pushes: PushMessage[] = [];
     const blocked = await blockedWith(ctx, author._id);
     for (const member of members) {
-      if (member.status !== "active" || member.userId === author._id) continue;
+      if (member.userId === author._id) continue;
       if (blocked.has(member.userId)) continue;
       if (member.notifyLevel === "muted") continue;
       const user = await ctx.db.get(member.userId);
@@ -258,15 +255,14 @@ export const flushBundle = internalMutation({
     if (conversation === null || where === null || user === null || user.deletedAt !== undefined) {
       return;
     }
-    const member = await ctx.db
-      .query("hubMembers")
-      .withIndex("by_hub_user", (q) => q.eq("hubId", where.hub._id).eq("userId", user._id))
-      .unique();
-    if (member?.status !== "active" || member.notifyLevel !== "all") return;
+    const member = (await conversationParticipants(ctx, conversation)).find(
+      (p) => p.userId === user._id,
+    );
+    if (member?.notifyLevel !== "all") return;
     // Only what arrived in this window and is still unread; read it already, no push.
     const since = Math.max(
       bundle.bundledAt ?? 0,
-      await lastReadAt(ctx, conversation._id, user._id, member._creationTime),
+      await lastReadAt(ctx, conversation._id, user._id, member.since),
     );
     const count = await unreadCount(ctx, conversation._id, user._id, since - 1);
     if (count === 0) return;
@@ -289,22 +285,28 @@ export const onEvent = internalMutation({
   },
   handler: async (ctx, args) => {
     const event = await ctx.db.get(args.eventId);
-    const hub = event?.hubId ? await ctx.db.get(event.hubId) : null;
-    if (event === null || hub === null) return;
-    const members = await ctx.db
-      .query("hubMembers")
-      .withIndex("by_hub", (q) => q.eq("hubId", hub._id))
-      .collect();
-    let recipients = members.filter((m) => m.status === "active" && m.userId !== args.actorId);
+    if (event === null) return;
+    const hub = event.hubId ? await ctx.db.get(event.hubId) : null;
+    let recipients: { userId: Id<"users"> }[];
     if (args.change === "new") {
-      recipients = recipients.filter((m) => m.notifyLevel !== "muted");
+      // A new event is news for its hub; a public one without a hub has no one to tell yet.
+      if (hub === null) return;
+      const members = await ctx.db
+        .query("hubMembers")
+        .withIndex("by_hub", (q) => q.eq("hubId", hub._id))
+        .collect();
+      recipients = members.filter(
+        (m) => m.status === "active" && m.userId !== args.actorId && m.notifyLevel !== "muted",
+      );
     } else {
       const rsvps = await ctx.db
         .query("rsvps")
         .withIndex("by_event", (q) => q.eq("eventId", event._id))
         .collect();
       const interested = new Set(rsvps.filter((r) => r.status !== "no").map((r) => r.userId));
-      recipients = recipients.filter((m) => interested.has(m.userId));
+      recipients = (await eventParticipants(ctx, event)).filter(
+        (p) => p.userId !== args.actorId && interested.has(p.userId),
+      );
     }
     const now = Date.now();
     const pushes: PushMessage[] = [];
@@ -315,7 +317,7 @@ export const onEvent = internalMutation({
       const when = t.when(event.startsAt);
       const title =
         args.change === "new"
-          ? t.newEvent(hub.name)
+          ? t.newEvent(hub?.name ?? "Hubbr")
           : args.change === "changed"
             ? t.changedEvent(event.title)
             : t.cancelledEvent(event.title);
@@ -324,7 +326,7 @@ export const onEvent = internalMutation({
           ? `${event.title} · ${when}`
           : args.change === "changed"
             ? [when, event.place?.text].filter(Boolean).join(" · ")
-            : `${when} · ${hub.name}`;
+            : [when, hub?.name].filter(Boolean).join(" · ");
       const push = await buildPush(ctx, user, eventTarget(event._id), title, body, now);
       if (push) pushes.push(push);
     }
@@ -341,13 +343,9 @@ export const remind = internalMutation({
   args: { eventId: v.id("events"), kind: v.union(v.literal("start"), v.literal("deadline")) },
   handler: async (ctx, args) => {
     const event = await ctx.db.get(args.eventId);
-    const hub = event?.hubId ? await ctx.db.get(event.hubId) : null;
-    if (event === null || hub === null) return;
+    if (event === null) return;
     if (event.cancelledAt !== undefined || event.remindersOff === true) return;
-    const members = await ctx.db
-      .query("hubMembers")
-      .withIndex("by_hub", (q) => q.eq("hubId", hub._id))
-      .collect();
+    const members = await eventParticipants(ctx, event);
     const rsvps = await ctx.db
       .query("rsvps")
       .withIndex("by_event", (q) => q.eq("eventId", event._id))
@@ -356,7 +354,7 @@ export const remind = internalMutation({
     const now = Date.now();
     const pushes: PushMessage[] = [];
     for (const member of members) {
-      if (member.status !== "active" || member.notifyLevel === "muted") continue;
+      if (member.notifyLevel === "muted") continue;
       const status = answer.get(member.userId);
       const wanted = args.kind === "start" ? status === "yes" || status === "maybe" : !status;
       if (!wanted) continue;

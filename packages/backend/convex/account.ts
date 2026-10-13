@@ -2,7 +2,9 @@ import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { internalMutation, mutation, type MutationCtx, query } from "./_generated/server";
+import { scheduleReminders } from "./events";
 import { getUserId, requireUser } from "./lib/auth";
+import { endOf } from "./lib/events";
 
 /**
  * Self-service account deletion (HUB-13), for GDPR and the app stores.
@@ -67,6 +69,24 @@ export const deleteAccount = mutation({
         throw new ConvexError({ code: "OWNS_HUBS" });
       }
     }
+    // Public events of your own that are still ahead are called off; those
+    // hosted on behalf of a hub stay with the hub's admins.
+    const hosted = await ctx.db
+      .query("events")
+      .withIndex("by_creator", (q) => q.eq("createdBy", userId))
+      .collect();
+    for (const event of hosted) {
+      if (event.hubId !== undefined || event.cancelledAt !== undefined) continue;
+      if (endOf(event) < Date.now()) continue;
+      await ctx.db.patch(event._id, { cancelledAt: Date.now() });
+      await scheduleReminders(ctx, event._id);
+      await ctx.scheduler.runAfter(0, internal.push.onEvent, {
+        eventId: event._id,
+        change: "cancelled",
+        actorId: userId,
+      });
+    }
+
     for (const m of memberships) {
       await ctx.db.delete(m._id);
       if (m.role === "owner") {

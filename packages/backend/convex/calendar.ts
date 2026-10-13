@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import { internalQuery, mutation, type QueryCtx, query } from "./_generated/server";
 import { getUserId, requireUser } from "./lib/auth";
-import { endOf, eventSummary } from "./lib/events";
+import { endOf, eventAccess, eventSummary } from "./lib/events";
 import type { IcsEvent } from "./lib/ics";
 
 /**
@@ -25,13 +25,16 @@ function newToken(): string {
   return Array.from(bytes, (b) => TOKEN_ALPHABET[b % TOKEN_ALPHABET.length]).join("");
 }
 
-/** Events in the user's active hubs that overlap [from, to), soonest first. */
+/**
+ * Events that overlap [from, to), soonest first: those in the user's active
+ * hubs, plus public events elsewhere they said yes or maybe to (HUB-29).
+ */
 async function eventsFor(ctx: QueryCtx, userId: Id<"users">, from: number, to: number) {
   const memberships = await ctx.db
     .query("hubMembers")
     .withIndex("by_user", (q) => q.eq("userId", userId))
     .collect();
-  const events: { event: Doc<"events">; hub: Doc<"hubs"> }[] = [];
+  const events: { event: Doc<"events">; hub: Doc<"hubs"> | null }[] = [];
   for (const m of memberships) {
     if (m.status !== "active") continue;
     const hub = await ctx.db.get(m.hubId);
@@ -50,6 +53,19 @@ async function eventsFor(ctx: QueryCtx, userId: Id<"users">, from: number, to: n
       if (endOf(event) >= from) events.push({ event, hub });
     }
   }
+  const seen = new Set(events.map((e) => e.event._id));
+  const user = await ctx.db.get(userId);
+  const rsvps = await ctx.db
+    .query("rsvps")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .collect();
+  for (const r of rsvps) {
+    if (r.status === "no" || seen.has(r.eventId) || user === null) continue;
+    const event = await ctx.db.get(r.eventId);
+    if (event?.visibility !== "public" || event.startsAt >= to || endOf(event) < from) continue;
+    if ((await eventAccess(ctx, event, user)) === null) continue;
+    events.push({ event, hub: event.hubId ? await ctx.db.get(event.hubId) : null });
+  }
   return events.sort((a, b) => a.event.startsAt - b.event.startsAt);
 }
 
@@ -64,8 +80,8 @@ export const range = query({
     const views = await Promise.all(
       rows.map(async ({ event, hub }) => ({
         ...(await eventSummary(ctx, event, userId)),
-        hubName: hub.name,
-        hubEmoji: hub.emoji ?? null,
+        hubName: hub?.name ?? null,
+        hubEmoji: hub?.emoji ?? null,
       })),
     );
     return views.filter((e) => e.myRsvp !== "no");
@@ -119,14 +135,14 @@ export const deleteFeed = mutation({
   },
 });
 
-function toIcsEvent(event: Doc<"events">, hub: Doc<"hubs">, now: number): IcsEvent {
+function toIcsEvent(event: Doc<"events">, hub: Doc<"hubs"> | null, now: number): IcsEvent {
   return {
     id: event._id,
     title: event.title,
     startsAt: event.startsAt,
     endsAt: endOf(event),
     place: event.place?.text ?? null,
-    description: [event.description, hub.name].filter(Boolean).join("\n\n"),
+    description: [event.description, hub?.name].filter(Boolean).join("\n\n"),
     url: `hubber://event/${event._id}`,
     cancelled: event.cancelledAt !== undefined,
     updatedAt: now,
@@ -136,7 +152,7 @@ function toIcsEvent(event: Doc<"events">, hub: Doc<"hubs">, now: number): IcsEve
 /**
  * The events behind a feed token, for the `/calendar/` HTTP route: the whole
  * feed, or with `eventId` just that one ("Add to my calendar"). Null for an
- * unknown token or an event outside the user's hubs.
+ * unknown token or an event the user can't see.
  */
 export const feedEvents = internalQuery({
   args: { token: v.string(), eventId: v.optional(v.string()) },
@@ -153,14 +169,8 @@ export const feedEvents = internalQuery({
     if (args.eventId !== undefined) {
       const eventId = ctx.db.normalizeId("events", args.eventId);
       const event = eventId ? await ctx.db.get(eventId) : null;
-      const hubId = event?.hubId;
-      if (event === null || event === undefined || hubId === undefined) return null;
-      const member = await ctx.db
-        .query("hubMembers")
-        .withIndex("by_hub_user", (q) => q.eq("hubId", hubId).eq("userId", user._id))
-        .unique();
-      const hub = await ctx.db.get(hubId);
-      if (member?.status !== "active" || hub === null) return null;
+      if (event === null || (await eventAccess(ctx, event, user)) === null) return null;
+      const hub = event.hubId ? await ctx.db.get(event.hubId) : null;
       return { name, events: [toIcsEvent(event, hub, now)] };
     }
 
