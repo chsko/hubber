@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Hubber",
+    "appName": "Hubbr",
     "loading": "Loading",
     "back": "Back",
     "cancel": "Cancel",
@@ -22,7 +22,13 @@
     "unread": "Unread",
     "allRead": "You're all caught up.",
     "waiting": "Waiting for approval",
-    "noEvents": "No upcoming events. Events you're going to or might go to show up here."
+    "noEvents": "No upcoming events. Events you're going to or might go to show up here.",
+    "later": "Later",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "emptyTitle": "Gather your people",
+    "emptyBody": "Create a hub for your child's class, your family or your friends, and invite the others.",
+    "profile": "Profile"
   },
   "hubs": {
     "create": "Create hub",
@@ -79,8 +85,8 @@
     "title": "Test sign-in (development only)"
   },
   "under18": {
-    "title": "Hubber is for adults",
-    "body": "You need to be 18 or older to use Hubber. We haven't saved anything about you. Welcome back when you turn 18!",
+    "title": "Hubbr is for adults",
+    "body": "You need to be 18 or older to use Hubbr. We haven't saved anything about you. Welcome back when you turn 18!",
     "ok": "OK"
   },
   "welcome": {
@@ -89,7 +95,7 @@
     "point2": "No feed, no algorithm, no ads.",
     "point3": "Calm notifications, only for what matters.",
     "continueWithVipps": "Continue with Vipps",
-    "adultsOnly": "Hubber is for adults (18+).",
+    "adultsOnly": "Hubbr is for adults (18+).",
     "vippsSoonTitle": "Coming soon",
     "vippsSoonBody": "Sign-in with Vipps isn't available yet."
   },
@@ -189,13 +195,13 @@
   },
   "invite": {
     "title": "Invite to {{name}}",
-    "message": "Join {{name}} on Hubber: {{url}} (code {{code}})",
+    "message": "Join {{name}} on Hubbr: {{url}} (code {{code}})",
     "expires": "Expires {{date}}",
     "noExpiry": "Never expires",
     "approvalOn": "approval required",
     "share": "Share link",
     "sms": "Send as SMS",
-    "privacy": "Hubber never reads or uploads your contacts.",
+    "privacy": "Hubbr never reads or uploads your contacts.",
     "none": "There's no active invite link.",
     "create": "Create link",
     "adminSettings": "Admin",

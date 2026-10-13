@@ -2,14 +2,15 @@ import type { ReactNode } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-type Props = { title: string; subtitle?: string; children?: ReactNode };
+type Props = { title: string; subtitle?: string; header?: ReactNode; children?: ReactNode };
 
-/** Standard tab screen: safe area, scrollable body and a large title. */
-export function Screen({ title, subtitle, children }: Props) {
+/** Standard tab screen: safe area, scrollable body and a large title, with an optional row above it. */
+export function Screen({ title, subtitle, header, children }: Props) {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-bg">
       <ScrollView contentContainerClassName="gap-6 px-5 pb-10 pt-4">
         <View className="gap-1">
+          {header}
           {subtitle ? <Text className="font-sans text-sm text-textMuted">{subtitle}</Text> : null}
           <Text accessibilityRole="header" className="font-sans-extrabold text-[28px] text-text">
             {title}

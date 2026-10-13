@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Hubber",
+    "appName": "Hubbr",
     "loading": "Laster",
     "back": "Tilbake",
     "cancel": "Avbryt",
@@ -22,7 +22,13 @@
     "unread": "Uleste",
     "allRead": "Du har lest alt.",
     "waiting": "Venter på godkjenning",
-    "noEvents": "Ingen kommende arrangementer. Det du svarer kommer eller kanskje på, vises her."
+    "noEvents": "Ingen kommende arrangementer. Det du svarer kommer eller kanskje på, vises her.",
+    "later": "Senere",
+    "today": "I dag",
+    "tomorrow": "I morgen",
+    "emptyTitle": "Samle folkene dine",
+    "emptyBody": "Opprett en hub for klassen til barnet ditt, familien eller vennene dine, og inviter de andre.",
+    "profile": "Profil"
   },
   "hubs": {
     "create": "Opprett hub",
@@ -79,8 +85,8 @@
     "title": "Testinnlogging (kun utvikling)"
   },
   "under18": {
-    "title": "Hubber er for voksne",
-    "body": "Du må være 18 år eller eldre for å bruke Hubber. Vi har ikke lagret noe om deg. Velkommen tilbake når du fyller 18!",
+    "title": "Hubbr er for voksne",
+    "body": "Du må være 18 år eller eldre for å bruke Hubbr. Vi har ikke lagret noe om deg. Velkommen tilbake når du fyller 18!",
     "ok": "OK"
   },
   "welcome": {
@@ -89,7 +95,7 @@
     "point2": "Ingen feed, ingen algoritme, ingen reklame.",
     "point3": "Rolige varsler, bare for det som betyr noe.",
     "continueWithVipps": "Fortsett med Vipps",
-    "adultsOnly": "Hubber er for voksne (18+).",
+    "adultsOnly": "Hubbr er for voksne (18+).",
     "vippsSoonTitle": "Kommer snart",
     "vippsSoonBody": "Innlogging med Vipps er ikke tilgjengelig ennå."
   },
@@ -189,13 +195,13 @@
   },
   "invite": {
     "title": "Inviter til {{name}}",
-    "message": "Bli med i {{name}} på Hubber: {{url}} (kode {{code}})",
+    "message": "Bli med i {{name}} på Hubbr: {{url}} (kode {{code}})",
     "expires": "Utløper {{date}}",
     "noExpiry": "Utløper aldri",
     "approvalOn": "krever godkjenning",
     "share": "Del lenke",
     "sms": "Send som SMS",
-    "privacy": "Hubber leser eller laster aldri opp kontaktene dine.",
+    "privacy": "Hubbr leser eller laster aldri opp kontaktene dine.",
     "none": "Det finnes ingen aktiv invitasjonslenke.",
     "create": "Lag lenke",
     "adminSettings": "Admin",
