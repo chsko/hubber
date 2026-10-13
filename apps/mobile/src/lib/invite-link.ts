@@ -1,9 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /**
- * Public invite links (HUB-15). They open the app once universal links are
- * set up (HUB-32); until then people can paste the link or code under
- * "Join with code", and `hubber://i/<code>` opens the app directly.
+ * Public invite links (HUB-15). In a native build with universal links
+ * (HUB-32) they open the app; otherwise hubbr.no/i/<code> shows the code and
+ * an "open in app" button (`hubber://i/<code>`), and the link or code can be
+ * pasted under "Join with code".
  */
 export function inviteUrl(code: string): string {
   return `https://hubbr.no/i/${code}`;

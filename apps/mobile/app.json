@@ -12,7 +12,8 @@
     },
     "ios": {
       "bundleIdentifier": "io.hubberapp.app",
-      "supportsTablet": false
+      "supportsTablet": false,
+      "associatedDomains": ["applinks:hubbr.no"]
     },
     "android": {
       "package": "io.hubberapp.app",
@@ -21,7 +22,21 @@
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
-      }
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "hubbr.no",
+              "pathPrefix": "/i/"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "output": "single",

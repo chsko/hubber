@@ -126,7 +126,7 @@ No fixed dates; milestones are ordered by dependency. Sizes: S ≈ ≤1 day, M �
 - Public visibility, rate limits — S
 - Discover: filter by kommune, date and category — M
 - Public event page `/e/[id]` (server-rendered, Open Graph image) with "Join with Vipps" — M
-- Universal links / app links (hubbr.no opens the app) — S
+- Universal links / app links (hubbr.no opens the app) — S. Site and app config done 2026-10-13 (HUB-32); goes live with hosting on Vercel and the first native build
 
 ### M6 — Safety and beta launch
 
