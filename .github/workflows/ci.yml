@@ -46,3 +46,33 @@ jobs:
       # Runs each package's `i18n:check` script (defined by packages/i18n).
       - name: i18n key check
         run: pnpm i18n:check
+
+  # Merges Dependabot's grouped dev-tooling and GitHub Actions PRs once the
+  # check above passes. Everything else, including security updates and
+  # anything that ships to phones, waits for a person. See docs/DEPENDENCIES.md.
+  dependabot-automerge:
+    name: Dependabot auto-merge
+    needs: check
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - id: meta
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge
+        if: >-
+          (steps.meta.outputs.dependency-group == 'dev-tooling' ||
+           steps.meta.outputs.dependency-group == 'github-actions') &&
+          steps.meta.outputs.update-type != 'version-update:semver-major'
+        # --match-head-commit: only merge the commit CI just checked.
+        run: gh pr merge "$PR" --squash --match-head-commit "$SHA"
+        env:
+          PR: ${{ github.event.pull_request.html_url }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

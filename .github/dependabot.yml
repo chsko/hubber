@@ -1,0 +1,69 @@
+# Dependency updates. See docs/DEPENDENCIES.md for the policy.
+version: 2
+updates:
+  - package-ecosystem: npm # also covers pnpm workspaces
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Oslo
+    # Matches pnpm's minimumReleaseAge: never propose a release younger than this.
+    cooldown:
+      default-days: 3
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    groups:
+      # Auto-merged by .github/workflows/ci.yml once CI is green.
+      dev-tooling:
+        dependency-type: development
+        update-types: [minor, patch]
+        exclude-patterns:
+          - "@babel/*" # part of the app's bundle
+      # Ships to phones through EAS Update, so a person reviews it.
+      app-runtime:
+        dependency-type: production
+        update-types: [minor, patch]
+    ignore:
+      # Versions pinned by the Expo SDK. Upgrade with `pnpm expo install --fix`
+      # or a full SDK upgrade, never one by one.
+      - dependency-name: "expo"
+      - dependency-name: "expo-*"
+      - dependency-name: "@expo/*"
+      - dependency-name: "babel-preset-expo"
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
+      - dependency-name: "react-native"
+      - dependency-name: "react-native-*"
+      - dependency-name: "@react-native/*"
+      - dependency-name: "@react-native-async-storage/*"
+      # NativeWind 4 needs Tailwind 3 in apps/mobile.
+      - dependency-name: "tailwindcss"
+        update-types: [version-update:semver-major]
+      - dependency-name: "nativewind"
+        update-types: [version-update:semver-major]
+      # typescript-eslint supports TypeScript <6.1.
+      - dependency-name: "typescript"
+        update-types: [version-update:semver-major, version-update:semver-minor]
+      # Must match the Node version CI and EAS run.
+      - dependency-name: "@types/node"
+        update-types: [version-update:semver-major]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Oslo
+    cooldown:
+      default-days: 3
+    commit-message:
+      prefix: "ci"
+    groups:
+      # Auto-merged like dev-tooling.
+      github-actions:
+        patterns: ["*"]

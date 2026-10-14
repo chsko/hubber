@@ -4,6 +4,7 @@ Groups, chat and events for Norway, with Vipps-verified people only. No feed, no
 
 - Product and design: [`docs/DESIGN.md`](docs/DESIGN.md) · [design canvas](https://claude.ai/artifact/NLcpvB8gnKQVaqcbxRjQg2)
 - Technical plan: [`docs/PLAN.md`](docs/PLAN.md)
+- Dependency updates (Dependabot): [`docs/DEPENDENCIES.md`](docs/DEPENDENCIES.md)
 - Project management: [Linear project](https://linear.app/elug/project/hubbr-d87743f1ed72)
 
 ## Repository layout
