@@ -1,4 +1,4 @@
-import type { api } from "@hubber/backend/api";
+import type { api } from "@hubbr/backend/api";
 import type { FunctionReturnType } from "convex/server";
 
 export type Message = FunctionReturnType<typeof api.messages.list>["page"][number];

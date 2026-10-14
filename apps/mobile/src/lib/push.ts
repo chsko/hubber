@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { api } from "@hubber/backend/api";
+import { api } from "@hubbr/backend/api";
 import { useMutation, useQuery } from "convex/react";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
@@ -42,7 +42,7 @@ async function ensureChannel() {
   // Android 13+ only shows the permission prompt once a channel exists.
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
-      name: "Hubber",
+      name: "Hubbr",
       importance: Notifications.AndroidImportance.DEFAULT,
     });
   }

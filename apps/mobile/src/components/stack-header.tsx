@@ -1,4 +1,4 @@
-import { colors } from "@hubber/shared";
+import { colors } from "@hubbr/shared";
 import { router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import type { ReactNode } from "react";

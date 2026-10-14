@@ -1,5 +1,5 @@
-import { api } from "@hubber/backend/api";
-import { colors } from "@hubber/shared";
+import { api } from "@hubbr/backend/api";
+import { colors } from "@hubbr/shared";
 import { useQuery } from "convex/react";
 import { Tabs } from "expo-router";
 import { useTranslation } from "react-i18next";

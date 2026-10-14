@@ -205,13 +205,13 @@ importers:
       '@expo-google-fonts/figtree':
         specifier: ^0.4.1
         version: 0.4.1
-      '@hubber/backend':
+      '@hubbr/backend':
         specifier: workspace:*
         version: link:../../packages/backend
-      '@hubber/i18n':
+      '@hubbr/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@hubber/shared':
+      '@hubbr/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       '@react-native-async-storage/async-storage':
@@ -338,7 +338,7 @@ importers:
 
   apps/web:
     dependencies:
-      '@hubber/shared':
+      '@hubbr/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       next:

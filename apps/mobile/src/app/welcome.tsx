@@ -1,4 +1,4 @@
-import { api } from "@hubber/backend/api";
+import { api } from "@hubbr/backend/api";
 import { useQuery } from "convex/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";

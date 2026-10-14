@@ -1,10 +1,10 @@
-# Hubber
+# Hubbr
 
 Groups, chat and events for Norway, with Vipps-verified people only. No feed, no algorithm, no ads.
 
 - Product and design: [`docs/DESIGN.md`](docs/DESIGN.md) · [design canvas](https://claude.ai/artifact/NLcpvB8gnKQVaqcbxRjQg2)
 - Technical plan: [`docs/PLAN.md`](docs/PLAN.md)
-- Project management: [Linear — Hubber](https://linear.app/elug/project/hubber-d87743f1ed72)
+- Project management: [Linear project](https://linear.app/elug/project/hubbr-d87743f1ed72)
 
 ## Repository layout
 
@@ -28,7 +28,7 @@ pnpm test        # Vitest, all packages
 pnpm format      # Prettier
 ```
 
-Tasks run through [Turborepo](https://turbo.build); add `--filter @hubber/<package>` to run one package.
+Tasks run through [Turborepo](https://turbo.build); add `--filter @hubbr/<package>` to run one package.
 
 ## Conventions
 

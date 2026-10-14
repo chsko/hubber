@@ -1,4 +1,4 @@
-/** Hubber mark: a hub with three members. */
+/** Hubbr mark: a hub with three members. */
 export function Logo() {
   return (
     <span className="flex items-center gap-2.5">
@@ -9,7 +9,7 @@ export function Logo() {
         <circle cx="27.5" cy="23.5" r="3" className="fill-accent" />
         <circle cx="8.5" cy="23.5" r="3" className="fill-accent" />
       </svg>
-      <span className="text-2xl font-extrabold tracking-tight text-primary">hubber</span>
+      <span className="text-2xl font-extrabold tracking-tight text-primary">hubbr</span>
     </span>
   );
 }

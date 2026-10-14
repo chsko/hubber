@@ -1,5 +1,5 @@
-import { api } from "@hubber/backend/api";
-import { formatLongDate, osloDateParts, osloToEpoch } from "@hubber/i18n";
+import { api } from "@hubbr/backend/api";
+import { formatLongDate, osloDateParts, osloToEpoch } from "@hubbr/i18n";
 import { useMutation, useQuery } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import { useState } from "react";

@@ -1,4 +1,4 @@
-import type { Doc } from "@hubber/backend/dataModel";
+import type { Doc } from "@hubbr/backend/dataModel";
 
 export type Category = NonNullable<Doc<"events">["category"]>;
 

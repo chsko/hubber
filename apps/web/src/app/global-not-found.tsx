@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { Document } from "@/lib/document";
 
-export const metadata: Metadata = { title: "Fant ikke siden – Hubber" };
+export const metadata: Metadata = { title: "Fant ikke siden – Hubbr" };
 
 export default function GlobalNotFound() {
   return (

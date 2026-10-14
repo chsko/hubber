@@ -1,5 +1,5 @@
-import { weekdayNames } from "@hubber/i18n";
-import { colors } from "@hubber/shared";
+import { weekdayNames } from "@hubbr/i18n";
+import { colors } from "@hubbr/shared";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";

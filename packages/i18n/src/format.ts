@@ -1,6 +1,6 @@
 import type { Locale } from "./index";
 
-/** All dates and times in Hubber are shown in Norwegian time. */
+/** All dates and times in Hubbr are shown in Norwegian time. */
 export const timeZone = "Europe/Oslo";
 
 /** Weeks start on Monday (ISO 8601), as Norwegian calendars do. */

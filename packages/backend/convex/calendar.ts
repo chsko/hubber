@@ -143,7 +143,7 @@ function toIcsEvent(event: Doc<"events">, hub: Doc<"hubs"> | null, now: number):
     endsAt: endOf(event),
     place: event.place?.text ?? null,
     description: [event.description, hub?.name].filter(Boolean).join("\n\n"),
-    url: `hubber://event/${event._id}`,
+    url: `hubbr://event/${event._id}`,
     cancelled: event.cancelledAt !== undefined,
     updatedAt: now,
   };

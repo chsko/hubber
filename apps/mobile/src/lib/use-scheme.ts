@@ -1,4 +1,4 @@
-import type { ColorScheme } from "@hubber/shared";
+import type { ColorScheme } from "@hubbr/shared";
 import { useColorScheme } from "react-native";
 
 /** The system colour scheme, collapsed to "light" | "dark". */

@@ -1,5 +1,5 @@
-import type { Id } from "@hubber/backend/dataModel";
-import { colors } from "@hubber/shared";
+import type { Id } from "@hubbr/backend/dataModel";
+import { colors } from "@hubbr/shared";
 import { Check, ImagePlus, SendHorizontal, X } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Image, Pressable, Text, TextInput, View } from "react-native";

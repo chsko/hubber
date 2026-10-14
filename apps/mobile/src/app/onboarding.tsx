@@ -1,5 +1,5 @@
-import { api } from "@hubber/backend/api";
-import { colors } from "@hubber/shared";
+import { api } from "@hubbr/backend/api";
+import { colors } from "@hubbr/shared";
 import { useMutation, useQuery } from "convex/react";
 import { BellRing, Compass, type LucideIcon, Plus, Ticket } from "lucide-react-native";
 import { useState } from "react";

@@ -1,4 +1,4 @@
-import { defaultLocale, isLocale, type Locale, messages, resolveLocale } from "@hubber/i18n";
+import { defaultLocale, isLocale, type Locale, messages, resolveLocale } from "@hubbr/i18n";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLocales } from "expo-localization";
 import i18n from "i18next";
@@ -66,7 +66,7 @@ export function useLanguagePreference(): LanguagePreference {
   );
 }
 
-/** The active app language, for the date/time helpers in `@hubber/i18n`. */
+/** The active app language, for the date/time helpers in `@hubbr/i18n`. */
 export function useLocale(): Locale {
   const { i18n: instance } = useTranslation();
   return isLocale(instance.language) ? instance.language : defaultLocale;

@@ -1,7 +1,7 @@
-import { api } from "@hubber/backend/api";
-import type { Id } from "@hubber/backend/dataModel";
-import { formatCompactDate } from "@hubber/i18n";
-import { colors, kommuneName } from "@hubber/shared";
+import { api } from "@hubbr/backend/api";
+import type { Id } from "@hubbr/backend/dataModel";
+import { formatCompactDate } from "@hubbr/i18n";
+import { colors, kommuneName } from "@hubbr/shared";
 import { useMutation, useQuery } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import { router, useLocalSearchParams } from "expo-router";

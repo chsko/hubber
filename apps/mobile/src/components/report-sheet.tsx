@@ -1,6 +1,6 @@
-import { api } from "@hubber/backend/api";
-import type { Id } from "@hubber/backend/dataModel";
-import { colors } from "@hubber/shared";
+import { api } from "@hubbr/backend/api";
+import type { Id } from "@hubbr/backend/dataModel";
+import { colors } from "@hubbr/shared";
 import { useMutation } from "convex/react";
 import { Check } from "lucide-react-native";
 import { useState } from "react";

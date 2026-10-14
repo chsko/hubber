@@ -1,16 +1,16 @@
-# @hubber/web
+# @hubbr/web
 
 Next.js 16 (App Router, Turbopack, Cache Components) site for **public pages only**: the landing page and shared event and invite links. The logged-in app is `apps/mobile` (also on web).
 
 - Routes: `/` (nb) and `/en` are separate root layouts (`src/app/(nb)`, `src/app/(en)`) so `<html lang>` is right and both pages stay fully static
-- `/i/[code]` is the fallback for invite links when the app doesn't open: it shows the code and an "open in app" button (`hubber://i/<code>`). `/e/[id]` is a stub (HUB-31)
+- `/i/[code]` is the fallback for invite links when the app doesn't open: it shows the code and an "open in app" button (`hubbr://i/<code>`). `/e/[id]` is a stub (HUB-31)
 - `/.well-known/apple-app-site-association` and `/.well-known/assetlinks.json` let hubbr.no/i/* open the installed app (HUB-32). They read `APPLE_TEAM_ID` and `ANDROID_CERT_SHA256` (comma-separated fingerprints) from the environment and list no app until those are set
-- Styling: Tailwind 4. Colour values come from `@hubber/shared` (`src/lib/theme-css.ts`) and switch with `prefers-color-scheme` in CSS only, so there's no flash on load
+- Styling: Tailwind 4. Colour values come from `@hubbr/shared` (`src/lib/theme-css.ts`) and switch with `prefers-color-scheme` in CSS only, so there's no flash on load
 - Font: Figtree via `next/font` (self-hosted at build time)
 
 ```sh
-pnpm --filter @hubber/web dev     # http://localhost:3000
-pnpm --filter @hubber/web build && pnpm --filter @hubber/web start
+pnpm --filter @hubbr/web dev     # http://localhost:3000
+pnpm --filter @hubbr/web build && pnpm --filter @hubbr/web start
 ```
 
 Next.js 16 differs from older versions: read `node_modules/next/dist/docs/` (see `AGENTS.md`) before changing conventions.

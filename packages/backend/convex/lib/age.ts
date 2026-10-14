@@ -1,6 +1,6 @@
 import { ConvexError } from "convex/values";
 
-/** Hubber is for adults only (docs/DESIGN.md: under-18s are out of scope). */
+/** Hubbr is for adults only (docs/DESIGN.md: under-18s are out of scope). */
 export const MINIMUM_AGE = 18;
 
 const osloDate = new Intl.DateTimeFormat("en-CA", {

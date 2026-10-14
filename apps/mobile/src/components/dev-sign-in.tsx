@@ -1,5 +1,5 @@
 import { useAuthActions } from "@convex-dev/auth/react";
-import { api } from "@hubber/backend/api";
+import { api } from "@hubbr/backend/api";
 import { useQuery } from "convex/react";
 import { router } from "expo-router";
 import { useState } from "react";

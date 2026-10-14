@@ -1,4 +1,4 @@
-import { colors } from "@hubber/shared";
+import { colors } from "@hubbr/shared";
 import { MapPin } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";

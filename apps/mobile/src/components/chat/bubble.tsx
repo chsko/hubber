@@ -1,4 +1,4 @@
-import { formatTime, type Locale } from "@hubber/i18n";
+import { formatTime, type Locale } from "@hubbr/i18n";
 import { useTranslation } from "react-i18next";
 import { Image, Pressable, Text, View } from "react-native";
 import { Avatar } from "@/components/avatar";

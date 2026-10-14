@@ -1,4 +1,4 @@
-import { colors, type ColorToken } from "@hubber/shared";
+import { colors, type ColorToken } from "@hubbr/shared";
 import { vars } from "nativewind";
 import type { ReactNode } from "react";
 import { View } from "react-native";

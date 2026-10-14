@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-import { colors, type ColorToken } from "@hubber/shared";
+import { colors, type ColorToken } from "@hubbr/shared";
 
 // nativewind/preset ships broken type declarations ("is not a module").
 // eslint-disable-next-line @typescript-eslint/no-require-imports

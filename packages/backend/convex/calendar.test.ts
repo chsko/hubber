@@ -115,7 +115,7 @@ describe("toIcs", () => {
         endsAt: NOW + HOUR,
         place: null,
         description: "Linje 1\nLinje 2",
-        url: "hubber://event/abc",
+        url: "hubbr://event/abc",
         cancelled: true,
         updatedAt: NOW,
       },

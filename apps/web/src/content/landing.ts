@@ -13,7 +13,7 @@ export type LandingContent = {
 
 export const landing: Record<"nb" | "en", LandingContent> = {
   nb: {
-    metaTitle: "Hubber – grupper og arrangementer, ingenting annet",
+    metaTitle: "Hubbr – grupper og arrangementer, ingenting annet",
     metaDescription:
       "Chat, planlegg og samle klassen, familien eller vennegjengen – uten feed, uten reklame og uten algoritmer. Bare ekte personer, verifisert med Vipps.",
     switchLanguage: { label: "In English", href: "/en" },
@@ -43,7 +43,7 @@ export const landing: Record<"nb" | "en", LandingContent> = {
     footer: "Laget i Norge · Data lagret i EU",
   },
   en: {
-    metaTitle: "Hubber – your groups and events, nothing else",
+    metaTitle: "Hubbr – your groups and events, nothing else",
     metaDescription:
       "Chat, plan and gather your class, family or friends – no feed, no ads, no algorithms. Only real people, verified with Vipps.",
     switchLanguage: { label: "På norsk", href: "/" },

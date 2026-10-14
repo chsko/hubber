@@ -1,5 +1,5 @@
-import { api } from "@hubber/backend/api";
-import type { Id } from "@hubber/backend/dataModel";
+import { api } from "@hubbr/backend/api";
+import type { Id } from "@hubbr/backend/dataModel";
 import { useMutation } from "convex/react";
 import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";

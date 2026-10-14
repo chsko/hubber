@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Values come from @hubber/shared via src/lib/theme-css.ts. */
+/* Values come from @hubbr/shared via src/lib/theme-css.ts. */
 @theme inline {
   --color-bg: var(--hb-bg);
   --color-surface: var(--hb-surface);

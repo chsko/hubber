@@ -1,4 +1,4 @@
-import { colors } from "@hubber/shared";
+import { colors } from "@hubbr/shared";
 import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";

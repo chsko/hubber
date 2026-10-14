@@ -9,7 +9,7 @@ import {
   useFonts,
 } from "@expo-google-fonts/figtree";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
-import { colors } from "@hubber/shared";
+import { colors } from "@hubbr/shared";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";

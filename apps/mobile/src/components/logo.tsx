@@ -1,4 +1,4 @@
-import { colors } from "@hubber/shared";
+import { colors } from "@hubbr/shared";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";

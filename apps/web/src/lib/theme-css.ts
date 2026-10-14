@@ -1,4 +1,4 @@
-import { colors, type ColorScheme, type ColorToken } from "@hubber/shared";
+import { colors, type ColorScheme, type ColorToken } from "@hubbr/shared";
 
 const declarations = (scheme: ColorScheme) =>
   (Object.keys(colors[scheme]) as ColorToken[])
@@ -6,7 +6,7 @@ const declarations = (scheme: ColorScheme) =>
     .join("");
 
 /**
- * Colour tokens from @hubber/shared as CSS variables, switched by the OS colour
+ * Colour tokens from @hubbr/shared as CSS variables, switched by the OS colour
  * scheme in CSS only (no flash before hydration). globals.css maps them into
  * Tailwind's theme.
  */

@@ -225,7 +225,7 @@ export const onMessage = internalMutation({
       const user = await ctx.db.get(member.userId);
       if (user === null || user.deletedAt !== undefined) continue;
       const t = pushText(user.locale);
-      const authorName = author.name ?? "Hubber";
+      const authorName = author.name ?? "Hubbr";
       const mentioned = message.mentions.includes(user._id);
       const repliedTo = quoted?.authorId === user._id;
       if (mentioned || repliedTo) {

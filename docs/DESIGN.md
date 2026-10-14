@@ -1,10 +1,10 @@
-# Hubber — Product & Design
+# Hubbr — Product & Design
 
-> Working name **Hubber** (from "hub"). Replaces "Hubby" (English slang for husband). Domain: **hubbr.no** (2026-10-12: public name Hubbr chosen; the app is still called Hubber in code until renamed). Trademark check at Patentstyret still pending.
+> Name **Hubbr** (from "hub"), domain **hubbr.no**, chosen 2026-10-12. It replaced the working names "Hubby" (English slang for husband) and "Hubber" (also the Norwegian plural of "hub", so the app's "Hubber" tab means "Hubs"). Trademark check at Patentstyret still pending.
 
-## 1. Why Hubber exists
+## 1. Why Hubbr exists
 
-Many Norwegians keep Facebook only to stay in their groups and to see events. Hubber gives them exactly that — groups, chat and events — and nothing else.
+Many Norwegians keep Facebook only to stay in their groups and to see events. Hubbr gives them exactly that — groups, chat and events — and nothing else.
 
 **Product principles**
 
@@ -38,7 +38,7 @@ User (Vipps-verified adult)
       └── Members (roles: owner, admin, member)
 
 Public events (not tied to a hub's privacy)
- └── visible to every Hubber user, discoverable by kommune + date, shareable link
+ └── visible to every Hubbr user, discoverable by kommune + date, shareable link
 ```
 
 - **Hub:** a group, created from a template (Class, Kindergarten, Family, Friends, Other). The template sets a default icon, the welcome text and the default notification rules.
@@ -160,5 +160,5 @@ Filters: kommune (defaults to the one from the user's Vipps address or a manual 
 
 - Free core forever, with a written "no ads, no data selling" promise.
 - **Phase 2:** payments via Vipps ePayment with a small fee (shared costs, event payments, class funds), and an **org plan** for clubs and associations.
-- **Phase 3:** ticketing for public events, and **Hubber Pluss** for individuals.
+- **Phase 3:** ticketing for public events, and **Hubbr Pluss** for individuals.
 - Ruled out: promoted/sponsored content and affiliate links. Jev scored these lowest on brand fit (see the decision log in `docs/PLAN.md`).

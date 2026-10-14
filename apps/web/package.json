@@ -1,5 +1,5 @@
 {
-  "name": "@hubber/web",
+  "name": "@hubbr/web",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@hubber/shared": "workspace:*",
+    "@hubbr/shared": "workspace:*",
     "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"

@@ -1,4 +1,4 @@
-# Hubber: instructions for coding agents
+# Hubbr: instructions for coding agents
 
 ## Git workflow (applies to every session)
 
@@ -9,7 +9,7 @@
 ## Project management
 
 - **Current focus: the mobile app (iOS and Android) only.** The web target is paused: don't build new features in `apps/web` or for Expo web. Keep `apps/web` compiling. Expo's web export is still fine as a way to test the app from the cloud.
-- Work is tracked in Linear: team `HUB`, project "Hubber". Move an issue to _In Progress_ when starting it, comment what was done and how it was verified, and set it to _Done_ when its "Done when" criteria are met.
+- Work is tracked in Linear: team `HUB`, project "Hubbr". Move an issue to _In Progress_ when starting it, comment what was done and how it was verified, and set it to _Done_ when its "Done when" criteria are met.
 - Scope and decisions live in `docs/DESIGN.md` and `docs/PLAN.md`; the visual design is the canvas linked in `README.md`.
 
 ## Decision-making with Jev

@@ -34,7 +34,7 @@ async function Invite({ params }: { params: Promise<{ code: string }> }) {
     <>
       <h1 className="text-3xl font-extrabold tracking-tight">Du er invitert til en hub</h1>
       <a
-        href={`hubber://i/${code}`}
+        href={`hubbr://i/${code}`}
         className="rounded-xl bg-primary px-4 py-4 text-center text-[17px] font-bold text-surface hover:bg-primaryStrong"
       >
         Åpne i Hubbr-appen

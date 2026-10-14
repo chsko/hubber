@@ -1,4 +1,4 @@
-import { api } from "@hubber/backend/api";
+import { api } from "@hubbr/backend/api";
 import { useMutation } from "convex/react";
 import { Linking } from "react-native";
 import { siteUrl } from "./site-url";

@@ -4,7 +4,7 @@ import { RequestTime } from "@/components/request-time";
 
 // Stub: real, server-rendered event pages with link previews arrive in HUB-31.
 export const metadata: Metadata = {
-  title: "Arrangement – Hubber",
+  title: "Arrangement – Hubbr",
   robots: { index: false },
   alternates: {}, // not a language variant of the landing page
 };
@@ -14,8 +14,8 @@ export default function EventPage() {
     <>
       <RequestTime />
       <OpenInApp
-        title="Et arrangement på Hubber"
-        body="Åpne lenken i Hubber-appen for å se arrangementet og svare. Appen kommer snart."
+        title="Et arrangement på Hubbr"
+        body="Åpne lenken i Hubbr-appen for å se arrangementet og svare. Appen kommer snart."
       />
     </>
   );

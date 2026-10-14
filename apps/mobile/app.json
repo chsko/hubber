@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Hubber",
+    "name": "Hubbr",
     "slug": "hubber",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "hubber",
+    "scheme": ["hubbr", "hubber"],
     "userInterfaceStyle": "automatic",
     "runtimeVersion": {
       "policy": "sdkVersion"
@@ -69,8 +69,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Hubber uses your photos so you can share them in chats and choose a profile picture.",
-          "cameraPermission": "Hubber uses the camera so you can take photos to share in chats.",
+          "photosPermission": "Hubbr uses your photos so you can share them in chats and choose a profile picture.",
+          "cameraPermission": "Hubbr uses the camera so you can take photos to share in chats.",
           "microphonePermission": false
         }
       ],

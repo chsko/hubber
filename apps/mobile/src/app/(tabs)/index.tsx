@@ -1,5 +1,5 @@
-import { api } from "@hubber/backend/api";
-import { timeZone } from "@hubber/i18n";
+import { api } from "@hubbr/backend/api";
+import { timeZone } from "@hubbr/i18n";
 import { useQuery } from "convex/react";
 import { Link } from "expo-router";
 import { useTranslation } from "react-i18next";

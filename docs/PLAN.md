@@ -1,6 +1,6 @@
-# Hubber — Technical Plan
+# Hubbr — Technical Plan
 
-Companion to [`DESIGN.md`](./DESIGN.md). Project management happens in Linear: [Hubber project](https://linear.app/elug/project/hubber-d87743f1ed72) (team `HUB`). Each milestone below is a Linear milestone (M0–M6), and each bullet is an issue (HUB-1 … HUB-36). Commits reference the Linear issue (`HUB-<n>: …`).
+Companion to [`DESIGN.md`](./DESIGN.md). Project management happens in Linear: [project](https://linear.app/elug/project/hubbr-d87743f1ed72) (team `HUB`). Each milestone below is a Linear milestone (M0–M6), and each bullet is an issue (HUB-1 … HUB-36). Commits reference the Linear issue (`HUB-<n>: …`).
 
 ## 1. Architecture
 
@@ -137,7 +137,7 @@ No fixed dates; milestones are ordered by dependency. Sizes: S ≈ ≤1 day, M �
 
 ### Later (Phase 2+)
 
-Vipps ePayment (shared costs, event payments) with a fee · org plan for clubs and associations · direct messages · polls · files and albums · ticketing · Hubber Pluss.
+Vipps ePayment (shared costs, event payments) with a fee · org plan for clubs and associations · direct messages · polls · files and albums · ticketing · Hubbr Pluss.
 
 ## 6. Decision log (Jev-assisted)
 
@@ -152,8 +152,8 @@ Decisions are scored with **Jev** (TypeSafe System One) by calling the API direc
 | 2026-10-11 | Leading segment      | School parents 0.64 / friends & families 0.36 (confidence 0.28)                                                                       | Low confidence; **school parents** lead, both are supported via templates                                                                   |
 | 2026-10-11 | Name                 | Hubber 0.97 vs Hubby; "has unwanted meaning" 0.37 (inconclusive)                                                                      | **Hubber** as working name, pending trademark and domain check                                                                              |
 | 2026-10-12 | Tab bar              | Custom JS tabs 1.00 (asked twice, options reversed, downsides stated) vs NativeTabs                                                   | **Expo Router JS Tabs** styled to the design, Lucide icons                                                                                  |
-| 2026-10-12 | Name and domain      | Not asked (owner's choice)                                                                                                            | **Hubbr**, domain **hubbr.no** (bought). Invite and universal links use hubbr.no; app and repo keep the name Hubber until renamed           |
-| 2026-10-12 | Styling              | Not asked: NativeWind 4.2.7 officially supports Expo SDK 57; v5 is still a release candidate                                          | **NativeWind 4.2.7 + Tailwind 3.4**, colours as CSS variables from `@hubber/shared`                                                         |
+| 2026-10-12 | Name and domain      | Not asked (owner's choice)                                                                                                            | **Hubbr**, domain **hubbr.no** (bought). Invite and universal links use hubbr.no; app renamed to Hubbr on 2026-10-14                        |
+| 2026-10-12 | Styling              | Not asked: NativeWind 4.2.7 officially supports Expo SDK 57; v5 is still a release candidate                                          | **NativeWind 4.2.7 + Tailwind 3.4**, colours as CSS variables from `@hubbr/shared`                                                          |
 | 2026-10-12 | Platform focus       | Not asked (founder's call)                                                                                                            | **Mobile app only (iOS, Android).** Next.js site (`apps/web`) and Expo web paused; code kept. HUB-4/31/32 to Backlog, HUB-16 is in-app only |
 | 2026-10-13 | Bundle ID            | Not asked (follows the owned domain)                                                                                                  | **`no.hubbr.app`** on iOS and Android, set before Apple registration; see [TESTFLIGHT.md](./TESTFLIGHT.md)                                  |
 

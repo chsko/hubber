@@ -1,4 +1,4 @@
-import { api } from "@hubber/backend/api";
+import { api } from "@hubbr/backend/api";
 import { useMutation } from "convex/react";
 import { useState } from "react";
 import { pickSquareImage, useUploadImage } from "@/lib/image-upload";

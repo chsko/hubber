@@ -1,5 +1,5 @@
-import { api } from "@hubber/backend/api";
-import type { Id } from "@hubber/backend/dataModel";
+import { api } from "@hubbr/backend/api";
+import type { Id } from "@hubbr/backend/dataModel";
 import { insertAtTop, useMutation, usePaginatedQuery, useQuery } from "convex/react";
 import { type ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";

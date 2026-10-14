@@ -1,4 +1,4 @@
-import { formatLongDate, type Locale, osloDateParts } from "@hubber/i18n";
+import { formatLongDate, type Locale, osloDateParts } from "@hubbr/i18n";
 import type { TFunction } from "i18next";
 
 const DAY = 24 * 60 * 60 * 1000;

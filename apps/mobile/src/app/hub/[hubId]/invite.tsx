@@ -1,6 +1,6 @@
-import { api } from "@hubber/backend/api";
-import type { Id } from "@hubber/backend/dataModel";
-import { colors } from "@hubber/shared";
+import { api } from "@hubbr/backend/api";
+import type { Id } from "@hubbr/backend/dataModel";
+import { colors } from "@hubbr/shared";
 import { useMutation, useQuery } from "convex/react";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -22,7 +22,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { NotAMember } from "@/components/not-a-member";
 import { StackHeader } from "@/components/stack-header";
 import { formatCode, inviteUrl } from "@/lib/invite-link";
-import { formatDate } from "@hubber/i18n";
+import { formatDate } from "@hubbr/i18n";
 import { useLocale } from "@/lib/i18n";
 import { useScheme } from "@/lib/use-scheme";
 

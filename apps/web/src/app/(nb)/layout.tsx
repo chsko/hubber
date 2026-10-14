@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: landing.nb.metaTitle,
   description: landing.nb.metaDescription,
   alternates: { canonical: "/", languages: { nb: "/", en: "/en" } },
-  openGraph: { type: "website", locale: "nb_NO", siteName: "Hubber" },
+  openGraph: { type: "website", locale: "nb_NO", siteName: "Hubbr" },
 };
 
 export default function NbLayout({ children }: { children: React.ReactNode }) {

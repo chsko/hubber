@@ -1,12 +1,12 @@
-import type { Id } from "@hubber/backend/dataModel";
+import type { Id } from "@hubbr/backend/dataModel";
 import {
   formatCompactDate,
   formatCompactDateWithWeekday,
   osloDateParts,
   osloTimeParts,
   osloToEpoch,
-} from "@hubber/i18n";
-import { colors, kommuneName } from "@hubber/shared";
+} from "@hubbr/i18n";
+import { colors, kommuneName } from "@hubbr/shared";
 import { type ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {

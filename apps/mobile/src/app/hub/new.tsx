@@ -1,5 +1,5 @@
-import { api } from "@hubber/backend/api";
-import { colors } from "@hubber/shared";
+import { api } from "@hubbr/backend/api";
+import { colors } from "@hubbr/shared";
 import { useMutation } from "convex/react";
 import { router } from "expo-router";
 import { useState } from "react";

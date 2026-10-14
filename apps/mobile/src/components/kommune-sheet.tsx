@@ -1,4 +1,4 @@
-import { colors, kommuner } from "@hubber/shared";
+import { colors, kommuner } from "@hubbr/shared";
 import { Check, Search } from "lucide-react-native";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";

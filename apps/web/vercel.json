@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "installCommand": "npx --yes pnpm@12.11.2 install --frozen-lockfile --filter @hubber/web...",
+  "installCommand": "npx --yes pnpm@12.11.2 install --frozen-lockfile --filter @hubbr/web...",
   "regions": ["arn1"]
 }

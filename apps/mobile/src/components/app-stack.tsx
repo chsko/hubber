@@ -1,4 +1,4 @@
-import { api } from "@hubber/backend/api";
+import { api } from "@hubbr/backend/api";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { router, Stack } from "expo-router";
 import { useEffect, useState } from "react";

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: landing.en.metaTitle,
   description: landing.en.metaDescription,
   alternates: { canonical: "/en", languages: { nb: "/", en: "/en" } },
-  openGraph: { type: "website", locale: "en_GB", siteName: "Hubber" },
+  openGraph: { type: "website", locale: "en_GB", siteName: "Hubbr" },
 };
 
 export default function EnLayout({ children }: { children: React.ReactNode }) {

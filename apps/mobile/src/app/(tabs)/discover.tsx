@@ -1,6 +1,6 @@
-import { api } from "@hubber/backend/api";
-import { osloDateParts, osloToEpoch, osloWeekdayIndex } from "@hubber/i18n";
-import { colors, kommuneName } from "@hubber/shared";
+import { api } from "@hubbr/backend/api";
+import { osloDateParts, osloToEpoch, osloWeekdayIndex } from "@hubbr/i18n";
+import { colors, kommuneName } from "@hubbr/shared";
 import { useMutation, useQuery } from "convex/react";
 import { Link } from "expo-router";
 import { ChevronDown, MapPin, Plus, Search } from "lucide-react-native";

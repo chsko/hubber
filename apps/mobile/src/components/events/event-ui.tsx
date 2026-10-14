@@ -1,5 +1,5 @@
-import { formatShortDate, formatTime, type Locale, osloDateParts } from "@hubber/i18n";
-import { colors } from "@hubber/shared";
+import { formatShortDate, formatTime, type Locale, osloDateParts } from "@hubbr/i18n";
+import { colors } from "@hubbr/shared";
 import { router } from "expo-router";
 import { CalendarDays } from "lucide-react-native";
 import { useTranslation } from "react-i18next";

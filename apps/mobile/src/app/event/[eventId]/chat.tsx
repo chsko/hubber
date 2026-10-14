@@ -1,5 +1,5 @@
-import { api } from "@hubber/backend/api";
-import type { Id } from "@hubber/backend/dataModel";
+import { api } from "@hubbr/backend/api";
+import type { Id } from "@hubbr/backend/dataModel";
 import { useQuery } from "convex/react";
 import { useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
