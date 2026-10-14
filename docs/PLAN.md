@@ -68,7 +68,7 @@ Companion to [`DESIGN.md`](./DESIGN.md). Project management happens in Linear: [
 
 ## 4. Quality and operations
 
-- **Tests:** Vitest + `convex-test` for backend rules (membership, RSVP, invites, age gate); React Native Testing Library for components; Playwright for `apps/web`; Maestro flows for mobile smoke tests (later).
+- **Tests:** Vitest + `convex-test` for backend rules (membership, RSVP, invites, age gate); React Native Testing Library for components; Playwright for `apps/web`; CI bundles the mobile app for iOS and Android as a smoke test; Maestro flows on EAS for on-device smoke tests (later). See `docs/TESTING.md`.
 - **CI (GitHub Actions):** typecheck, lint (ESLint + Prettier), unit tests, i18n key check, and Convex schema validation on every pull request. Preview deploys of `apps/web` on Vercel (EU region).
 - **Mobile builds:** EAS Build plus EAS Update; TestFlight and Play internal testing for the beta.
 - **Monitoring:** Sentry (EU data region) for the apps and the backend. Product analytics stay minimal and privacy-friendly (PostHog EU, cookieless; or none in the first version).

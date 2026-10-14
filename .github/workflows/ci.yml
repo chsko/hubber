@@ -47,12 +47,45 @@ jobs:
       - name: i18n key check
         run: pnpm i18n:check
 
+  # Smoke test for the phone app: catches what typecheck and unit tests miss but
+  # would break the EAS Update published on every push to main (Metro/Babel
+  # resolution, a missing or unhoisted module, native package versions that no
+  # longer match the Expo SDK). It doesn't start the app; see docs/TESTING.md.
+  mobile-bundle:
+    name: Mobile bundle (iOS + Android)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: apps/mobile
+    env:
+      EXPO_NO_TELEMETRY: 1
+      # Public URL, not a secret (same as publish-update.yml).
+      EXPO_PUBLIC_CONVEX_URL: https://tangible-ox-76.eu-west-1.convex.cloud
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Native packages match the Expo SDK
+        run: pnpm exec expo install --check
+
+      - name: Bundle for iOS and Android
+        run: pnpm exec expo export --platform ios --platform android --output-dir "$RUNNER_TEMP/export"
+
   # Merges Dependabot's grouped dev-tooling and GitHub Actions PRs once the
-  # check above passes. Everything else, including security updates and
+  # checks above pass. Everything else, including security updates and
   # anything that ships to phones, waits for a person. See docs/DEPENDENCIES.md.
   dependabot-automerge:
     name: Dependabot auto-merge
-    needs: check
+    needs: [check, mobile-bundle]
     if: github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 5

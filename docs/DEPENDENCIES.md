@@ -13,7 +13,7 @@ Dependabot (`.github/dependabot.yml`) checks for updates every Monday morning an
 
 Other pins Dependabot respects: TypeScript stays on 6.0.x (typescript-eslint supports <6.1), Tailwind stays on 3 and NativeWind on 4 (NativeWind 4 needs Tailwind 3), `@types/node` stays on 22. A 3-day cooldown keeps it in line with pnpm's `minimumReleaseAge`.
 
-The auto-merge is the `Dependabot auto-merge` job in `.github/workflows/ci.yml`. It runs only after the check job passes, and only merges the exact commit CI checked.
+The auto-merge is the `Dependabot auto-merge` job in `.github/workflows/ci.yml`. It runs only after the check and mobile bundle jobs pass, and only merges the exact commit CI checked.
 
 ## One-time GitHub settings
 
