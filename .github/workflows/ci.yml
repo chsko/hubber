@@ -74,8 +74,13 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Offline: compares against the installed SDK's own version table, so CI
+      # doesn't turn red each time Expo publishes a newer patch. Those patches
+      # are picked up with `pnpm expo install --fix` (docs/DEPENDENCIES.md).
       - name: Native packages match the Expo SDK
         run: pnpm exec expo install --check
+        env:
+          EXPO_OFFLINE: 1
 
       - name: Bundle for iOS and Android
         run: pnpm exec expo export --platform ios --platform android --output-dir "$RUNNER_TEMP/export"
