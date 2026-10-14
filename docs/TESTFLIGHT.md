@@ -14,9 +14,10 @@ Bundle ID: `no.hubbr.app`.
 
    ```sh
    cd apps/mobile
-   npx eas-cli@latest build --platform ios --profile beta
+   pnpm dlx eas-cli@latest build --platform ios --profile beta
    ```
 
+   If pnpm asks which packages may run build scripts, press Enter without selecting any.
    Sign in with your Apple ID when asked and let EAS create everything: bundle ID,
    distribution certificate, provisioning profile, and **yes** to the push notification key
    (needed for push outside Expo Go).
@@ -27,7 +28,7 @@ Bundle ID: `no.hubbr.app`.
 4. **First upload**:
 
    ```sh
-   npx eas-cli@latest submit --platform ios --profile beta --latest
+   pnpm dlx eas-cli@latest submit --platform ios --profile beta --latest
    ```
 
    Let EAS create an App Store Connect API key, so later uploads need no Apple sign-in.

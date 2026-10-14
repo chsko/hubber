@@ -17,7 +17,7 @@ pnpm --filter @hubbr/mobile web               # in the browser
 pnpm --filter @hubbr/mobile build:web         # static web build in dist/
 ```
 
-Add native libraries with `npx expo install <pkg>` so versions match the SDK. See `AGENTS.md` for Expo-specific rules.
+Add native libraries with `pnpm expo install <pkg>` so versions match the SDK. See `AGENTS.md` for Expo-specific rules.
 
 ## Updates without a rebuild (EAS Update)
 
