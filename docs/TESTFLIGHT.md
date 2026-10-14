@@ -41,10 +41,18 @@ Bundle ID: `no.hubbr.app`.
 
 ## Every later build
 
-Run the **TestFlight beta** workflow on expo.dev (or `eas workflow:run testflight.yml`). It
-builds, uploads, and the build appears in TestFlight after Apple's processing. The build
-number increments automatically. Export compliance is answered in `app.json`
-(`usesNonExemptEncryption: false`, the app only uses HTTPS).
+**Nightly:** the **Nightly TestFlight** workflow (`apps/mobile/.eas/workflows/nightly-testflight.yml`)
+runs at 01:00 UTC. It compares `main` with the commit of the newest finished `beta` iOS build and
+only builds and uploads when the app changed: anything under `apps/mobile`, `packages`, the root
+`package.json`, `pnpm-lock.yaml` or `pnpm-workspace.yaml`, except Markdown files. A night with no
+app changes costs no build.
+
+**On demand:** run the **TestFlight beta** workflow on expo.dev (or
+`pnpm dlx eas-cli@latest workflow:run testflight.yml`).
+
+Either way the build appears in TestFlight after Apple's processing. The build number increments
+automatically. Export compliance is answered in `app.json` (`usesNonExemptEncryption: false`, the
+app only uses HTTPS).
 
 Beta builds are on the `beta` update channel, so pushes to `main` (channel `main`) don't reach
 them; testers get new code with each new build.

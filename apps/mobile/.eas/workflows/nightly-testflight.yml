@@ -1,0 +1,58 @@
+# Runs on Expo's servers via the GitHub connection on expo.dev (base directory: apps/mobile).
+# Every night, builds the iOS app with the "beta" profile and uploads it to TestFlight, but only
+# when main has app changes since the newest finished beta build (nightly or manual). Markdown-only
+# and apps/web commits don't count. Manual builds: testflight.yml.
+name: Nightly TestFlight
+
+on:
+  schedule:
+    # 01:00 UTC = 02:00 (winter) / 03:00 (summer) in Oslo.
+    - cron: "0 1 * * *"
+
+jobs:
+  check_changes:
+    name: Check for app changes
+    steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
+      - id: compare
+        name: Compare with the last beta build
+        run: |
+          set -eu
+          head=$(git rev-parse HEAD)
+          last=$(pnpm dlx eas-cli@latest build:list --platform ios --build-profile beta --status finished \
+            --limit 1 --json --non-interactive | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const b=JSON.parse(s)[0];process.stdout.write(b?.gitCommitHash??"")})')
+          echo "HEAD: $head, last beta build: ${last:-none}"
+          root=$(git rev-parse --show-toplevel)
+          changed=true
+          if [ "$last" = "$head" ]; then
+            changed=false
+          elif [ -n "$last" ]; then
+            git cat-file -e "$last^{commit}" 2>/dev/null || git fetch --quiet --unshallow origin 2>/dev/null || true
+            if git cat-file -e "$last^{commit}" 2>/dev/null && git -C "$root" diff --quiet "$last" "$head" -- \
+              apps/mobile packages package.json pnpm-lock.yaml pnpm-workspace.yaml ':(exclude)*.md'; then
+              changed=false
+            fi
+          fi
+          echo "App changed since last beta build: $changed"
+          set-output changed "$changed"
+    outputs:
+      changed: ${{ steps.compare.outputs.changed }}
+
+  build_ios:
+    name: Build iOS
+    needs: [check_changes]
+    if: ${{ needs.check_changes.outputs.changed == 'true' }}
+    type: build
+    params:
+      platform: ios
+      profile: beta
+
+  submit_ios:
+    name: Submit to TestFlight
+    needs: [check_changes, build_ios]
+    if: ${{ needs.check_changes.outputs.changed == 'true' }}
+    type: submit
+    params:
+      build_id: ${{ needs.build_ios.outputs.build_id }}
+      profile: beta
